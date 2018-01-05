@@ -59,7 +59,7 @@ class InfiniteScroller extends React.Component {
 
     this.resetSizeCache(props);
     this.cached = false;
-    this.derp = true;
+    this.preventInitialAdjust = true;
     this.needsScrollUpdate = false;
   }
 
@@ -353,8 +353,8 @@ class InfiniteScroller extends React.Component {
   }
 
   adjustHeight() {
-    if (this.derp) {
-      this.derp = false;
+    if (this.preventInitialAdjust) {
+      this.preventInitialAdjust = false;
       return;
     }
     if (this.contentNode) {
