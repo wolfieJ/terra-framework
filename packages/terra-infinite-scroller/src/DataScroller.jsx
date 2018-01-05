@@ -37,26 +37,26 @@ class DataScroller extends React.Component {
     this.enableListeners = this.enableListeners.bind(this);
     this.disableListeners = this.disableListeners.bind(this);
     this.setContentNode = this.setContentNode.bind(this);
-    this.newItemCleanUp = this.newItemCleanUp.bind(this);
-    this.resetSizeCache = this.resetSizeCache.bind(this);
+    this.updateItemCache = this.updateItemCache.bind(this);
+    this.initializeItemCache = this.initializeItemCache.bind(this);
 
-    this.resetSizeCache(props);
+    this.initializeItemCache(props);
   }
 
   componentDidMount() {
     if (!this.listenersAdded) {
       this.enableListeners();
     }
-    this.update();
+    this.triggerItemRequest();
   }
 
   componentWillReceiveProps(newProps) {
     const newChildCount = React.Children.count(newProps.children);
     if (newChildCount > this.childCount) {
       this.forcedMaxIndex = this.childCount;
-      this.newItemCleanUp(newProps);// temp
+      this.updateItemCache(newProps);
     } else if (newChildCount < this.childCount) {
-      this.resetSizeCache(newProps);
+      this.initializeItemCache(newProps);
     }
   }
 
@@ -64,10 +64,7 @@ class DataScroller extends React.Component {
     if (!this.listenersAdded) {
       this.enableListeners();
     }
-
-    if (!this.hasForcedItems && this.forceRequestItems && this.props.onRequestItems) {
-      this.props.onRequestItems();
-    }
+    this.update(); // ensure this works if not enough data as well
   }
 
   componentWillUnmount() {
@@ -78,16 +75,29 @@ class DataScroller extends React.Component {
     this.contentNode = node;
   }
 
-  newItemCleanUp(props) {
-    this.childCount = React.Children.count(props.children);
-    this.forceRequestItems = false;
-    this.hasScrolledItems = false;
-    this.hasForcedItems = false;
+  triggerItemRequest() {
+    if (!this.props.isFinishedLoading && !this.hasRequestedItems && this.props.onRequestItems) {
+      this.hasRequestedItems = true;
+      this.props.onRequestItems();
+    }
   }
 
-  resetSizeCache(props) {
+  updateItemCache(props) {
     this.childCount = React.Children.count(props.children);
     this.childrenArray = React.Children.toArray(props.children);
+    this.hasRequestedItems = false;
+  }
+
+  initializeItemCache(props) {
+    this.itemsByIndex = [];
+    this.scrollGroups = [];
+    this.boundary = {
+      topBoundryIndex: -1,
+      hiddenTopHeight: -1,
+      bottomBoundryIndex: -1,
+      hiddenBottomHeight: -1,
+    };
+    this.updateItemCache(props);
   }
 
   enableListeners() {
@@ -107,12 +117,6 @@ class DataScroller extends React.Component {
   }
 
   update() {
-    if (!this.hasRequestedItems && this.forceRequestItems && this.props.onRequestItems) {
-      this.hasForcedItems = true;
-      this.props.onRequestItems();
-      return;
-    }
-
     if (!this.contentNode) {
       return;
     }
@@ -122,10 +126,10 @@ class DataScroller extends React.Component {
     const scrollHeight = this.contentNode.scrollHeight;
     const clientHeight = this.contentNode.clientHeight;
     const shouldTriggerRequest = scrollHeight - (scrollTop + clientHeight) < clientHeight;
+    const notEnoughData = scrollHeight <= clientHeight;
 
-    if (!this.props.isFinishedLoading && shouldTriggerRequest && this.props.onRequestItems && !this.hasScrolledItems) {
-      this.hasScrolledItems = true;
-      this.props.onRequestItems();
+    if (shouldTriggerRequest || notEnoughData) {
+      this.triggerItemRequest();
     }
   }
 
@@ -138,7 +142,6 @@ class DataScroller extends React.Component {
     } = this.props;
 
     if (this.childCount <= 0 && !isFinishedLoading) {
-      this.forceRequestItems = true;
       return (
         <OverlayContainer className={cx(['full-loading'])} key="scroller-full-Loading">
           <LoadingOverlay isOpen isAnimated isRelativeToContainer backgroundStyle="dark" />
