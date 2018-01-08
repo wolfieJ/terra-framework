@@ -75,7 +75,7 @@ class DataScroller extends React.Component {
     }
     this.renderNewChildren = false;
     this.preventUpdate = false;
-    this.update(); // ensure this works if not enough data as well
+    this.lastChildIndex = this.childCount;
   }
 
   componentWillUnmount() {
@@ -102,6 +102,7 @@ class DataScroller extends React.Component {
 
   initializeItemCache(props) {
     this.loadingIndex = 0;
+    this.lastChildIndex = -1;
     this.itemsByIndex = [];
     this.scrollGroups = [];
     this.boundary = {
@@ -306,12 +307,28 @@ class DataScroller extends React.Component {
       ...customProps
     } = this.props;
 
+    let topSpacer;
+    if (this.boundary.hiddenTopHeight > 0) {
+      topSpacer = createSpacer(`${this.boundary.hiddenTopHeight}px`, 0);
+    } else {
+      topSpacer = createSpacer(`${0}px`, 0);
+    }
+
+    let bottomSpacer;
+    if (this.boundary.hiddenBottomHeight > 0) {
+      bottomSpacer = createSpacer(`${this.boundary.hiddenBottomHeight}px`, 1);
+    } else {
+      bottomSpacer = createSpacer(`${0}px`, 1);
+    }
+
     if (this.childCount <= 0 && !isFinishedLoading) {
       return (
         <div {...customProps} className={cx(['infinite-scroller', customProps.className])} ref={this.setContentNode}>
+          {topSpacer}
           <OverlayContainer className={cx(['full-loading'])} key="scroller-full-Loading">
             <LoadingOverlay isOpen isAnimated isRelativeToContainer backgroundStyle="dark" />
           </OverlayContainer>
+          {bottomSpacer}
         </div>
       );
     }
@@ -325,28 +342,14 @@ class DataScroller extends React.Component {
       );
     }
 
-    let bottomIndex;
-    if (this.renderNewChildren) {
-      bottomIndex = this.boundary.bottomBoundryIndex >= 0 ? this.boundary.bottomBoundryIndex : this.lastChildIndex;
-    } else {
-      bottomIndex = this.boundary.bottomBoundryIndex;
-    }
-
-    let topSpacer;
-    if (this.boundary.hiddenTopHeight > 0) {
-      topSpacer = createSpacer(this.boundary.hiddenTopHeight, 0);
-    }
-
-    let bottomSpacer;
-    if (this.boundary.hiddenBottomHeight > 0) {
-      bottomSpacer = createSpacer(this.boundary.hiddenBottomHeight, 1);
-    }
-
     let forcedChildren;
-    if (this.renderNewChildren) {
+    let visibleChildren;
+    if ((!this.scrollGroups.length && this.lastChildIndex <= 0) || !this.renderNewChildren) {
+      visibleChildren = ScrollerUtils.getVisibleChildren(this.scrollGroups, this.childrenArray, this.boundary.topBoundryIndex, this.boundary.bottomBoundryIndex, this.wrapChild, this.childCount);
+    } else {
+      visibleChildren = ScrollerUtils.getVisibleChildren(this.scrollGroups, this.childrenArray, this.boundary.topBoundryIndex, this.boundary.bottomBoundryIndex, this.wrapChild, this.lastChildIndex);
       forcedChildren = ScrollerUtils.getForcedChildren(this.lastChildIndex, this.childrenArray, this.wrapChild);
     }
-    const visibleChildren = ScrollerUtils.getVisibleChildren(this.scrollGroups, this.childrenArray, this.boundary.topBoundryIndex, bottomIndex, this.wrapChild);
 
     return (
       <div {...customProps} className={cx(['infinite-scroller', customProps.className])} ref={this.setContentNode}>

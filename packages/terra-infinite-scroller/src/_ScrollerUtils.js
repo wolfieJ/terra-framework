@@ -110,7 +110,7 @@ const getContentData = (contentNode) => {
 
 const shouldTriggerItemRequest = contentData => contentData.scrollHeight - (contentData.scrollTop + contentData.clientHeight) < contentData.clientHeight;
 
-const getVisibleChildren = (scrollGroups, childrenArray, topIndex, bottomIndex, wrapperFunction) => {
+const getVisibleChildren = (scrollGroups, childrenArray, topIndex, bottomIndex, wrapperFunction, previousCount) => {
   if (!childrenArray.length) {
     return null;
   }
@@ -127,8 +127,8 @@ const getVisibleChildren = (scrollGroups, childrenArray, topIndex, bottomIndex, 
     noBottomIndex = true;
   }
 
+  const visibleChildren = [];
   if (!noTopIndex || !noBottomIndex) {
-    const visibleChildren = [];
     for (let i = validTopIndex + 1; i < validBottomIndex; i += 1) {
       const scrollGroup = scrollGroups[i].items;
       const scrollGroupLength = scrollGroup.length;
@@ -139,9 +139,10 @@ const getVisibleChildren = (scrollGroups, childrenArray, topIndex, bottomIndex, 
     }
     return visibleChildren;
   }
-  return childrenArray.map((child, i) => (
-    wrapperFunction(child, i, true)
-  ));
+  for (let i = 0; i < previousCount; i += 1) {
+    visibleChildren.push(wrapperFunction(childrenArray[i], i, true));
+  }
+  return visibleChildren;
 };
 
 const getForcedChildren = (lastCount, childrenArray, wrapperFunction) => {
