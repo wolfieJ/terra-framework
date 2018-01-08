@@ -54,7 +54,10 @@ const getBottomFromBottomUp = (scrollGroups, index, validBottom) => {
   return lastHidden;
 };
 
-const getHiddenItems = (scrollGroups, scrollTop, scrollHeight, clientHeight, validTop, validBottom, previousTopIndex, previousBottomIndex) => {
+const getHiddenItems = (scrollGroups, contentData, previousTopIndex, previousBottomIndex) => {
+  const validTop = contentData.validTop;
+  const validBottom = contentData.validBottom;
+  const scrollHeight = contentData.scrollHeight;
   let topHiddenItem;
   if (validTop > 0) {
     let nextIndex = previousTopIndex;
@@ -64,9 +67,9 @@ const getHiddenItems = (scrollGroups, scrollTop, scrollHeight, clientHeight, val
 
     const topItem = scrollGroups[nextIndex];
     if (topItem.offsetTop + topItem.height <= validTop) {
-      topHiddenItem = getTopFromTopDown(nextIndex, validTop);
+      topHiddenItem = getTopFromTopDown(scrollGroups, nextIndex, validTop);
     } else {
-      topHiddenItem = getTopFromBottomUp(nextIndex, validTop);
+      topHiddenItem = getTopFromBottomUp(scrollGroups, nextIndex, validTop);
     }
   } else {
     topHiddenItem = { index: -1, height: -1 };
@@ -81,9 +84,9 @@ const getHiddenItems = (scrollGroups, scrollTop, scrollHeight, clientHeight, val
 
     const bottomItem = scrollGroups[nextIndex];
     if (bottomItem.offsetTop >= validBottom) {
-      bottomHiddenItem = getBottomFromBottomUp(nextIndex, validBottom);
+      bottomHiddenItem = getBottomFromBottomUp(scrollGroups, nextIndex, validBottom);
     } else {
-      bottomHiddenItem = getBottomFromTopDown(nextIndex, validBottom);
+      bottomHiddenItem = getBottomFromTopDown(scrollGroups, nextIndex, validBottom);
     }
   } else {
     bottomHiddenItem = { index: -1, height: -1 };
@@ -141,9 +144,9 @@ const getVisibleChildren = (scrollGroups, childrenArray, topIndex, bottomIndex, 
   ));
 };
 
-const getForcedChildren = (lastIndex, childrenArray, wrapperFunction) => {
+const getForcedChildren = (lastCount, childrenArray, wrapperFunction) => {
   const forcedChildren = [];
-  for (let i = lastIndex + 1; i < childrenArray.length; i += 1) {
+  for (let i = lastCount; i < childrenArray.length; i += 1) {
     forcedChildren.push(wrapperFunction(childrenArray[i], i, true));
   }
   return forcedChildren;

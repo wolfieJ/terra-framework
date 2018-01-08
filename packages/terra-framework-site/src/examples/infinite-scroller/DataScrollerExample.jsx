@@ -36,7 +36,7 @@ class scrollerExample extends React.Component {
   render() {
     const rows = [];
     for (let i = 0; i <= this.state.numberOfPages; i += 1) {
-      rows.push(<div style={{ height: '800px', width: '100%', backgroundColor: colors[i] }} />);
+      rows.push(<div style={{ height: '800px', width: '100%', backgroundColor: colors[i] }} key={`data-item-${i}`} />);
     }
 
     return (

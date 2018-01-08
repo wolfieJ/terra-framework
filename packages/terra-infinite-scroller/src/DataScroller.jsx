@@ -62,6 +62,7 @@ class DataScroller extends React.Component {
     const newChildCount = React.Children.count(newProps.children);
     if (newChildCount > this.childCount) {
       this.lastChildIndex = this.childCount;
+      this.loadingIndex += 1;
       this.updateItemCache(newProps);
     } else if (newChildCount < this.childCount) {
       this.initializeItemCache(newProps);
@@ -73,6 +74,7 @@ class DataScroller extends React.Component {
       this.enableListeners();
     }
     this.renderNewChildren = false;
+    this.preventUpdate = false;
     this.update(); // ensure this works if not enough data as well
   }
 
@@ -99,6 +101,7 @@ class DataScroller extends React.Component {
   }
 
   initializeItemCache(props) {
+    this.loadingIndex = 0;
     this.itemsByIndex = [];
     this.scrollGroups = [];
     this.boundary = {
@@ -305,27 +308,52 @@ class DataScroller extends React.Component {
 
     if (this.childCount <= 0 && !isFinishedLoading) {
       return (
-        <OverlayContainer className={cx(['full-loading'])} key="scroller-full-Loading">
-          <LoadingOverlay isOpen isAnimated isRelativeToContainer backgroundStyle="dark" />
-        </OverlayContainer>
+        <div {...customProps} className={cx(['infinite-scroller', customProps.className])} ref={this.setContentNode}>
+          <OverlayContainer className={cx(['full-loading'])} key="scroller-full-Loading">
+            <LoadingOverlay isOpen isAnimated isRelativeToContainer backgroundStyle="dark" />
+          </OverlayContainer>
+        </div>
       );
     }
 
     let loadingSpinner;
     if (!isFinishedLoading) {
       loadingSpinner = (
-        <OverlayContainer className={cx(['loading'])} key="scroller-Loading">
+        <OverlayContainer className={cx(['loading'])} key={`scroller-Loading-${this.loadingIndex}`}>
           <LoadingOverlay isOpen isAnimated isRelativeToContainer backgroundStyle="dark" />
         </OverlayContainer>
       );
     }
 
+    let bottomIndex;
+    if (this.renderNewChildren) {
+      bottomIndex = this.boundary.bottomBoundryIndex >= 0 ? this.boundary.bottomBoundryIndex : this.lastChildIndex;
+    } else {
+      bottomIndex = this.boundary.bottomBoundryIndex;
+    }
+
+    let topSpacer;
+    if (this.boundary.hiddenTopHeight > 0) {
+      topSpacer = createSpacer(this.boundary.hiddenTopHeight, 0);
+    }
+
+    let bottomSpacer;
+    if (this.boundary.hiddenBottomHeight > 0) {
+      bottomSpacer = createSpacer(this.boundary.hiddenBottomHeight, 1);
+    }
+
+    let forcedChildren;
+    if (this.renderNewChildren) {
+      forcedChildren = ScrollerUtils.getForcedChildren(this.lastChildIndex, this.childrenArray, this.wrapChild);
+    }
+    const visibleChildren = ScrollerUtils.getVisibleChildren(this.scrollGroups, this.childrenArray, this.boundary.topBoundryIndex, bottomIndex, this.wrapChild);
+
     return (
       <div {...customProps} className={cx(['infinite-scroller', customProps.className])} ref={this.setContentNode}>
-        {createSpacer(this.boundary.hiddenTopHeight, 0)}
-        {ScrollerUtils.getVisibleChildren(this.scrollGroups, this.childrenArray, this.topBoundryIndex, this.bottomBoundryIndex, this.wrapChild)}
-        {createSpacer(this.boundary.hiddenBottomHeight, 1)}
-        {this.renderNewChildren && ScrollerUtils.getForcedChildren(this.lastChildIndex, this.childrenArray, this.wrapChild)}
+        {topSpacer}
+        {visibleChildren}
+        {bottomSpacer}
+        {forcedChildren}
         {loadingSpinner}
       </div>
     );
