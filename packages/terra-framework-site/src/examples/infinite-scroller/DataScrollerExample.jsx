@@ -1,6 +1,5 @@
 import React from 'react';
-import DataScroller from 'terra-infinite-scroller/lib/DataScroller';
-import List from 'terra-list';
+import DataScroller from 'terra-infinite-scroller/lib/data-scroller/DataScroller';
 import IconPerson from 'terra-icon/lib/icon/IconPerson';
 import IconAlert from 'terra-icon/lib/icon/IconAlert';
 import IconInformation from 'terra-icon/lib/icon/IconInformation';
@@ -20,9 +19,9 @@ class scrollerExample extends React.Component {
 
   addMoreData() {
     const newNumberOfPages = this.state.numberOfPages + 1;
-    if (newNumberOfPages > 4) {
+    if (newNumberOfPages > 100) {
       return;
-    } else if (newNumberOfPages > 3) {
+    } else if (newNumberOfPages > 99) {
       this.setState({ stillLoading: false, numberOfPages: newNumberOfPages });
     }
     this.setState({ numberOfPages: newNumberOfPages });

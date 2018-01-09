@@ -1,7 +1,7 @@
-const getTopFromTopDown = (scrollGroups, index, validTop) => {
+const getTopFromTopDown = (scrollItems, index, validTop) => {
   const lastHidden = { index: -1, height: -1 };
-  for (let i = index; i < scrollGroups.length; i += 1) {
-    const item = scrollGroups[i];
+  for (let i = index; i < scrollItems.length; i += 1) {
+    const item = scrollItems[i];
     if (item.offsetTop + item.height <= validTop) {
       lastHidden.index = i;
       lastHidden.height = item.offsetTop + item.height;
@@ -12,10 +12,10 @@ const getTopFromTopDown = (scrollGroups, index, validTop) => {
   return lastHidden;
 };
 
-const getTopFromBottomUp = (scrollGroups, index, validTop) => {
+const getTopFromBottomUp = (scrollItems, index, validTop) => {
   const nextHidden = { index: -1, height: -1 };
   for (let i = index; i >= 0; i -= 1) {
-    const item = scrollGroups[i];
+    const item = scrollItems[i];
     if (item.offsetTop + item.height <= validTop) {
       nextHidden.index = i;
       nextHidden.height = item.offsetTop + item.height;
@@ -25,11 +25,11 @@ const getTopFromBottomUp = (scrollGroups, index, validTop) => {
   return nextHidden;
 };
 
-const getBottomFromTopDown = (scrollGroups, index, validBottom) => {
+const getBottomFromTopDown = (scrollItems, index, validBottom) => {
   const nextHidden = { index: -1, height: -1 };
-  const finalItem = scrollGroups[scrollGroups.length - 1];
-  for (let i = index; i < scrollGroups.length; i += 1) {
-    const item = scrollGroups[i];
+  const finalItem = scrollItems[scrollItems.length - 1];
+  for (let i = index; i < scrollItems.length; i += 1) {
+    const item = scrollItems[i];
     if (item.offsetTop >= validBottom) {
       nextHidden.index = i;
       nextHidden.height = (finalItem.offsetTop + finalItem.height) - item.offsetTop;
@@ -39,11 +39,11 @@ const getBottomFromTopDown = (scrollGroups, index, validBottom) => {
   return nextHidden;
 };
 
-const getBottomFromBottomUp = (scrollGroups, index, validBottom) => {
+const getBottomFromBottomUp = (scrollItems, index, validBottom) => {
   const lastHidden = { index: -1, height: -1 };
-  const finalItem = scrollGroups[scrollGroups.length - 1];
+  const finalItem = scrollItems[scrollItems.length - 1];
   for (let i = index; i >= 0; i -= 1) {
-    const item = scrollGroups[i];
+    const item = scrollItems[i];
     if (item.offsetTop >= validBottom) {
       lastHidden.index = i;
       lastHidden.height = (finalItem.offsetTop + finalItem.height) - item.offsetTop;
@@ -54,7 +54,7 @@ const getBottomFromBottomUp = (scrollGroups, index, validBottom) => {
   return lastHidden;
 };
 
-const getHiddenItems = (scrollGroups, contentData, previousTopIndex, previousBottomIndex) => {
+const getHiddenItems = (scrollItems, contentData, previousTopIndex, previousBottomIndex) => {
   const validTop = contentData.validTop;
   const validBottom = contentData.validBottom;
   const scrollHeight = contentData.scrollHeight;
@@ -65,11 +65,11 @@ const getHiddenItems = (scrollGroups, contentData, previousTopIndex, previousBot
       nextIndex = 0;
     }
 
-    const topItem = scrollGroups[nextIndex];
+    const topItem = scrollItems[nextIndex];
     if (topItem.offsetTop + topItem.height <= validTop) {
-      topHiddenItem = getTopFromTopDown(scrollGroups, nextIndex, validTop);
+      topHiddenItem = getTopFromTopDown(scrollItems, nextIndex, validTop);
     } else {
-      topHiddenItem = getTopFromBottomUp(scrollGroups, nextIndex, validTop);
+      topHiddenItem = getTopFromBottomUp(scrollItems, nextIndex, validTop);
     }
   } else {
     topHiddenItem = { index: -1, height: -1 };
@@ -82,11 +82,11 @@ const getHiddenItems = (scrollGroups, contentData, previousTopIndex, previousBot
       nextIndex = 0;
     }
 
-    const bottomItem = scrollGroups[nextIndex];
+    const bottomItem = scrollItems[nextIndex];
     if (bottomItem.offsetTop >= validBottom) {
-      bottomHiddenItem = getBottomFromBottomUp(scrollGroups, nextIndex, validBottom);
+      bottomHiddenItem = getBottomFromBottomUp(scrollItems, nextIndex, validBottom);
     } else {
-      bottomHiddenItem = getBottomFromTopDown(scrollGroups, nextIndex, validBottom);
+      bottomHiddenItem = getBottomFromTopDown(scrollItems, nextIndex, validBottom);
     }
   } else {
     bottomHiddenItem = { index: -1, height: -1 };
@@ -110,7 +110,21 @@ const getContentData = (contentNode) => {
 
 const shouldTriggerItemRequest = contentData => contentData.scrollHeight - (contentData.scrollTop + contentData.clientHeight) < contentData.clientHeight;
 
-const getVisibleChildren = (scrollGroups, childrenArray, topIndex, bottomIndex, wrapperFunction, previousCount) => {
+const getVisibleChildren = (childrenArray, topIndex, bottomIndex, wrapperFunction) => {
+  if (!childrenArray.length) {
+    return null;
+  }
+  const validTopIndex = topIndex < 0 ? -1 : topIndex;
+  const validBottomIndex = bottomIndex < 0 ? childrenArray.length : bottomIndex;
+
+  const visibleChildren = [];
+  for (let i = validTopIndex + 1; i < validBottomIndex; i += 1) {
+    visibleChildren.push(wrapperFunction(childrenArray[i], i, true));
+  }
+  return visibleChildren;
+};
+
+const getVisibleScrollGroups = (scrollGroups, childrenArray, topIndex, bottomIndex, wrapperFunction, previousCount) => {
   if (!childrenArray.length) {
     return null;
   }
@@ -158,6 +172,7 @@ const ScrollUtils = {
   getContentData,
   getForcedChildren,
   getVisibleChildren,
+  getVisibleScrollGroups,
   shouldTriggerItemRequest,
 };
 

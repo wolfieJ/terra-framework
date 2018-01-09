@@ -5,7 +5,7 @@ import 'terra-base/lib/baseStyles';
 import LoadingOverlay from 'terra-overlay/lib/LoadingOverlay';
 import OverlayContainer from 'terra-overlay/lib/OverlayContainer';
 import ResizeObserver from 'resize-observer-polyfill';
-import ScrollerUtils from './_ScrollerUtils';
+import ScrollerUtils from '../utils/_ScrollerUtils';
 import ScrollerItem from './_DataScrollerItem';
 import styles from './DataScroller.scss';
 
@@ -234,6 +234,9 @@ class DataScroller extends React.Component {
         this.itemsByIndex[index].height = node.clientHeight;
         updatedHeight = true;
       }
+      if (!this.itemsByIndex[index].offsetTop || Math.abs(this.itemsByIndex[index].offsetTop - node.offsetTop) > 1) {
+        this.itemsByIndex[index].offsetTop = node.offsetTop;
+      }
       if (this.itemsByIndex.length === this.childCount) {
         if (!this.scrollGroups.length) {
           this.updateScrollGroups();
@@ -345,9 +348,9 @@ class DataScroller extends React.Component {
     let forcedChildren;
     let visibleChildren;
     if ((!this.scrollGroups.length && this.lastChildIndex <= 0) || !this.renderNewChildren) {
-      visibleChildren = ScrollerUtils.getVisibleChildren(this.scrollGroups, this.childrenArray, this.boundary.topBoundryIndex, this.boundary.bottomBoundryIndex, this.wrapChild, this.childCount);
+      visibleChildren = ScrollerUtils.getVisibleScrollGroups(this.scrollGroups, this.childrenArray, this.boundary.topBoundryIndex, this.boundary.bottomBoundryIndex, this.wrapChild, this.childCount);
     } else {
-      visibleChildren = ScrollerUtils.getVisibleChildren(this.scrollGroups, this.childrenArray, this.boundary.topBoundryIndex, this.boundary.bottomBoundryIndex, this.wrapChild, this.lastChildIndex);
+      visibleChildren = ScrollerUtils.getVisibleScrollGroups(this.scrollGroups, this.childrenArray, this.boundary.topBoundryIndex, this.boundary.bottomBoundryIndex, this.wrapChild, this.lastChildIndex);
       forcedChildren = ScrollerUtils.getForcedChildren(this.lastChildIndex, this.childrenArray, this.wrapChild);
     }
 

@@ -10,6 +10,7 @@ const propTypes = {
   isRenderable: PropTypes.bool,
   numberOfImages: PropTypes.number,
   refCallback: PropTypes.func,
+  scrollProps: PropTypes.object,
   title: PropTypes.string,
 };
 
@@ -28,13 +29,11 @@ class Mock extends React.Component {
 
   render() {
     const {
-      isMountable,
-      isPersistent,
       isRenderable,
       numberOfImages,
       refCallback,
+      scrollProps,
       title,
-      ...customProps
     } = this.props;
 
     if (!isRenderable) {
@@ -54,7 +53,7 @@ class Mock extends React.Component {
     }
 
     return (
-      <div {...customProps} ref={refCallback} key={title}>
+      <div {...scrollProps} ref={refCallback} key={title}>
         <div style={{ height: '40px', backgroundColor: 'lightGray', width: '100%' }}>
           {title}
         </div>

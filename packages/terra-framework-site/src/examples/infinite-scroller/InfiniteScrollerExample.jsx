@@ -1,5 +1,5 @@
 import React from 'react';
-import InfiniteScroller from 'terra-infinite-scroller';
+import InfiniteScroller from 'terra-infinite-scroller/lib/aggregator-scroller/AggregatorScroller';
 // import ScrollerItem from 'terra-infinite-scroller/lib/_ScrollerItem';
 // import IconPerson from 'terra-icon/lib/icon/IconPerson';
 // import IconAlert from 'terra-icon/lib/icon/IconAlert';
