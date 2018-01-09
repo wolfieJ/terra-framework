@@ -43,7 +43,6 @@ class AggregatorScroller extends React.Component {
     this.wrapChild = this.wrapChild.bind(this);
 
     this.resetSizeCache(props);
-    this.cached = false;
     this.preventInitialAdjust = true;
     this.needsScrollUpdate = false;
   }
