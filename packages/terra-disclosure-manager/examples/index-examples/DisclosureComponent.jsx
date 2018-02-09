@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import Button from 'terra-button';
 import ContentContainer from 'terra-content-container';
-import TextField from 'terra-form/lib/TextField';
 import AppDelegate from 'terra-app-delegate';
 import ActionHeader from 'terra-clinical-action-header';
 
@@ -15,6 +14,8 @@ const propTypes = {
   app: AppDelegate.propType,
   name: PropTypes.string,
   disclosureType: PropTypes.string,
+  display: PropTypes.node,
+  displayId: PropTypes.number,
 };
 
 const defaultProps = {
@@ -54,7 +55,7 @@ class DisclosureComponent extends React.Component {
   }
 
   render() {
-    const { app, name, disclosureType } = this.props;
+    const { app, name, disclosureType, display, displayId } = this.props;
 
     return (
       <ContentContainer
@@ -70,9 +71,7 @@ class DisclosureComponent extends React.Component {
         )}
       >
         <div className={cx('content-wrapper')}>
-          <h3>{name}</h3>
-          <p>The disclosed component can disclose content within the same panel.</p>
-          <p>It can also render a header (like above) that implements the various DisclosureManager control functions.</p>
+          {display[displayId]}
           <Button
             text="Dismiss"
             onClick={() => {
@@ -90,22 +89,13 @@ class DisclosureComponent extends React.Component {
                 size: 'small',
                 content: {
                   key: `Nested ${name}`,
-                  component: <DisclosureComponent name={`Nested ${name}`} disclosureType={disclosureType} />,
+                  component: <DisclosureComponent name={`Nested ${name}`} disclosureType={disclosureType} display={display} displayId={displayId + 1} />,
                 },
               });
             }}
           />
           <br />
           <br />
-          <p>The disclosed component can register a dismiss check function that can interrupt and prevent dismissal. This component will prompt the user if text is detected in the input field below.</p>
-          <TextField
-            value={this.state.text || ''}
-            onChange={(event) => {
-              this.setState({
-                text: event.target.value,
-              });
-            }}
-          />
           {this.state.text && this.state.text.length ? <p>Component has unsaved changes!</p> : null}
         </div>
       </ContentContainer>
