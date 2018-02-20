@@ -10,6 +10,11 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const I18nAggregatorPlugin = require('terra-i18n-plugin');
 const i18nSupportedLocales = require('terra-i18n/lib/i18nSupportedLocales');
+// const theComponent = require('../dist/index.386deb23ed815fe69bb8');
+
+// const theComponent = `define(function(){return function(e){function m(t){if(n[t])return n[t].exports;var r=n[t]={i:t,l:!1,exports:{}};return e[t].call(r.exports,r,r.exports,m),r.l=!0,r.exports}var n={};return m.m=e,m.c=n,m.d=function(e,n,t){m.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:t})},m.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return m.d(n,"a",n),n},m.o=function(e,m){return Object.prototype.hasOwnProperty.call(e,m)},m.p="http://localhost:9000/",m(m.s=0)}([function(e,m){throw new Error("Module build failed: SyntaxError: Unexpected token, expected , (6:44)\n\n[0m [90m 4 | [39m\n [90m 5 | [39m[36mexport[39m [36mdefault[39m (props) [33m=>[39m (\n[31m[1m>[22m[39m[90m 6 | [39m  __webpack_public_path__ [33m=[39m props[33m.[39mpublicPath[33m;[39m \n [90m   | [39m                                            [31m[1m^[22m[39m\n [90m 7 | [39m\n [90m 8 | [39m  [36mreturn[39m [33m<[39m[33mStatusView[39m\n [90m 9 | [39m  isAlignedTop[33m=[39m{[36mfalse[39m}[0m\n")}]).default});`;
+
+const theComponent = 'console.log("whassup??");';
 
 module.exports = {
   entry: {
@@ -92,22 +97,11 @@ module.exports = {
   },
   devtool: 'cheap-source-map',
   devServer: {
-    host: '0.0.0.0',
-    disableHostCheck: true,
-    stats: {
-      assets: true,
-      children: false,
-      chunks: false,
-      hash: false,
-      modules: false,
-      publicPath: false,
-      timings: true,
-      version: true,
-      warnings: true,
-    },
-    overlay: {
-      warnings: true,
-      errors: true,
+    setup(app) {
+      // Mocks component
+      app.get('/test/:file', (req, res) => {
+        res.sendFile(path.join(__dirname, '../../dist/' + req.params.file));
+      });
     },
   },
   resolveLoader: {

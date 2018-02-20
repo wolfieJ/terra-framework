@@ -1,9 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EmbeddedComponent should render a default component 1`] = `
-<div
-  className="embedded-component"
->
-  default
-</div>
-`;
+exports[`EmbeddedComponent should render a default component 1`] = `null`;

@@ -9,16 +9,17 @@ window.define = window.SystemJS.amdDefine;
 window.require = window.requirejs = SystemJS.amdRequire;
 
 const DefaultTimeout = () => <p>Component mounting is timed out.</p>;
+const DefaultPlaceholder = () => <p>Loading</p>;
 
 const propTypes = {
 
- /**
-  * The basePath to load the manifest and manifest asset dependencies from.
-  * */
+  /**
+   * The basePath to load the manifest and manifest asset dependencies from.
+   * */
   basePath: PropTypes.string.isRequired,
 
   /**
-   * A placeholder to display while the component is laoding.
+   * A placeholder to display while the component is loading.
    * */
   placeholder: PropTypes.element,
 
@@ -49,6 +50,7 @@ const defaultProps = {
   entry: 'index.js',
   timeoutInterval: 3000,
   timeoutComponent: <DefaultTimeout />,
+  placeholder: null,
 };
 
 
@@ -64,7 +66,9 @@ class EmbeddedComponent extends React.Component {
   }
 
   componentDidMount() {
+    console.log("about to fetch manifest");
     this.fetchManifest().then((manifest) => {
+      console.log("manifest recieved: ", manifest);
       this.loadCSS(manifest);
       this.loadModule(this.getAbsolutePath(manifest[this.props.entry]));
     });
@@ -121,7 +125,7 @@ class EmbeddedComponent extends React.Component {
   * @param {String} url - The url to load
   */
   loadModule(url) {
-    SystemJS.amdRequire(url, module => this.setState({ module }));
+    SystemJS.amdRequire([url], module => this.setState({ module }));
   }
 
   render() {
