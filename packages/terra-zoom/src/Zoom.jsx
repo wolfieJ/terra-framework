@@ -158,11 +158,13 @@ class Zoom extends React.Component {
         const step = (newDistance - cachedDistance) / 10;
 
         this.setState((prevState) => {
-          let scaleValue = prevState.scaleValue;
-          if (step + scaleValue > 3) {
-            scaleValue = prevState.scaleValue;
-          } else if (step + scaleValue < 0) {
-            scaleValue = 0;
+          let scaleValue = prevState.scaleValue + step;
+          if (scaleValue > 2) {
+            // 2X Zoom is Max
+            scaleValue = 2;
+          } else if (scaleValue < 1) {
+            // 1X Zoom is Min
+            scaleValue = 1;
           }
           return { scaleValue };
         });
