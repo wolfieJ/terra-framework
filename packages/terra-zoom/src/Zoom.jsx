@@ -41,19 +41,19 @@ class Zoom extends React.Component {
 
   componentDidMount() {
     if (this.zoomNode) {
-      // add listener
+      this.enableTouchStartListener();
     }
   }
 
   componentDidUpdate() {
     if (this.zoomNode) {
-      // update listener
+      this.enableTouchStartListener();
     }
   }
 
   componentWillUnmount() {
     if (this.zoomNode) {
-      // remove listener
+      this.disableTouchStartListener();
     }
   }
 
