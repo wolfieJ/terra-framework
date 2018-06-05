@@ -36,7 +36,7 @@ class Zoom extends React.Component {
     this.disableTouchMoveListener = this.disableTouchMoveListener.bind(this);
     this.enableTouchEndListener = this.enableTouchEndListener.bind(this);
     this.disableTouchEndListener = this.disableTouchEndListener.bind(this);
-    this.state = { style: 0 };
+    this.state = { scaleValue: 0 };
   }
 
   componentDidMount() {
