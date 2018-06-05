@@ -185,6 +185,7 @@ class Zoom extends React.Component {
       customProps.className,
     ]);
 
+    // TODO: Either need to scale the child, or scale a div container the child.
     return (
       <div className={zoomClassNames} style={{ transform: `scale(${this.state.scaleValue})` }} ref={this.setZoomNode}>
         {children}
