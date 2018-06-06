@@ -4,9 +4,9 @@ import Zoom from 'terra-zoom/lib/Zoom';
 /* eslint-enable import/no-extraneous-dependencies, import/no-unresolved, import/extensions */
 
 const ZoomExample = () => (
-  <div style={{ height: '500px', width: '500px', border: '1px dashed black' }}>
+  <div style={{ height: '500px', width: '500px', maxWidth: '100%', border: '1px dashed black' }}>
     <Zoom>
-      <p style={{ height: '500px', width: '500px', overflow: 'hidden' }}>
+      <p style={{ width: '495px', overflow: 'hidden' }}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis facilisis dapibus erat,
         eget facilisis nunc ornare in. Vestibulum ut posuere neque. Maecenas nibh lacus, euismod sit amet magna sit amet,
         porttitor sollicitudin sapien. Vivamus nec lacus vel tortor ultrices efficitur vitae sit amet ipsum.
