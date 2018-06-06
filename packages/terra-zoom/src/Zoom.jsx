@@ -217,6 +217,7 @@ class Zoom extends React.Component {
       customProps.className,
     ]);
 
+    // TODO: this render needs to incorporate the cached values, as so not lose style on re-render
     return (
       <ContentContainer
         fill
