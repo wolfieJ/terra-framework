@@ -171,6 +171,7 @@ class Zoom extends React.Component {
           const cached1 = { x: this.touchTargets[point1].clientX, y: this.touchTargets[point1].clientY };
           const cached2 = { x: this.touchTargets[point2].clientX, y: this.touchTargets[point2].clientY };
           this.previousDistance = calcDistance(cached1, cached2);
+          // TODO: when using cached value, we need an origin point to focus on
         }
 
         let scaleValue = this.previousScale + ((newDistance - this.previousDistance) / 250);
