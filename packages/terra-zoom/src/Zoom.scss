@@ -4,7 +4,14 @@
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     -ms-overflow-style: -ms-autohiding-scrollbar; // Ensures scrollbars do not affect width in IE10
-    position: relative;
+    position: absolute;
     width: 100%;
+  }
+
+  .scale {
+    min-height: 100%;
+    min-width: 100;
+    position: absolute;
+    transform-origin: 0 0 0;
   }
 }

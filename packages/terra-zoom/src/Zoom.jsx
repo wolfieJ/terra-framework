@@ -32,6 +32,7 @@ class Zoom extends React.Component {
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
     this.onTouchEnd = this.onTouchEnd.bind(this);
+    this.updateScale = this.updateScale.bind(this);
     this.enableTouchStartListener = this.enableTouchStartListener.bind(this);
     this.disableTouchStartListener = this.disableTouchStartListener.bind(this);
     this.enableTouchMoveListener = this.enableTouchMoveListener.bind(this);
@@ -71,6 +72,7 @@ class Zoom extends React.Component {
   }
 
   onTouchStart(event) {
+    // TODO: either this or move needs to validate touches correctly.
     if (event.targetTouches.length === 2) {
       event.preventDefault();
       for (let i = 0; i < event.targetTouches.length; i += 1) {
@@ -83,9 +85,12 @@ class Zoom extends React.Component {
   }
 
   onTouchMove(event) {
+    // TODO: either this or start needs to validate touches correctly.
     if (event.touches.length === 2 && event.targetTouches.length === 2) {
       event.preventDefault();
-      this.calculateState(event);
+      if (event.changedTouches.length > 0) {
+        this.updateScale(event);
+      }
     }
   }
 
@@ -148,49 +153,62 @@ class Zoom extends React.Component {
     }
   }
 
-  calculateState(event) {
-    if (event.targetTouches.length === 2 && event.changedTouches.length === 2) {
-      let point1;
-      let point2;
-      for (let i = 0; i < this.touchTargets.length; i += 1) {
-        if (this.touchTargets[i].identifier === event.targetTouches[0].identifier) {
-          point1 = i;
-        }
-        if (this.touchTargets[i].identifier === event.targetTouches[1].identifier) {
-          point2 = i;
-        }
+  updateScale(event) {
+    let point1;
+    let point2;
+    for (let i = 0; i < this.touchTargets.length; i += 1) {
+      if (this.touchTargets[i].identifier === event.targetTouches[0].identifier) {
+        point1 = i;
+      }
+      if (this.touchTargets[i].identifier === event.targetTouches[1].identifier) {
+        point2 = i;
+      }
+    }
+
+    if (point1 >= 0 && point2 >= 0) {
+      const new1 = { x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY };
+      const new2 = { x: event.targetTouches[1].clientX, y: event.targetTouches[1].clientY };
+      const newDistance = calcDistance(new1, new2);
+
+      if (this.previousDistance <= 0) {
+        // calc using cached, assume a new touch
+        const cached1 = { x: this.touchTargets[point1].clientX, y: this.touchTargets[point1].clientY };
+        const cached2 = { x: this.touchTargets[point2].clientX, y: this.touchTargets[point2].clientY };
+        this.previousDistance = calcDistance(cached1, cached2);
+        this.touchOrigin = { x: (cached1.x + cached2.x) / 2, y: (cached1.y + cached2.y) / 2 };
+
+        const rect = this.zoomNode.getBoundingClientRect();
+        this.zoomOrigin = { x: this.touchOrigin.x - rect.left, y: this.touchOrigin.y - rect.top };
+        this.scaleOrigin = { x: this.zoomOrigin.x + this.zoomNode.scrollLeft, y: this.zoomOrigin.y + this.zoomNode.scrollTop };
+        this.initialScale = this.previousScale;
       }
 
-      if (point1 >= 0 && point2 >= 0) {
-        const new1 = { x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY };
-        const new2 = { x: event.targetTouches[1].clientX, y: event.targetTouches[1].clientY };
-        const newDistance = calcDistance(new1, new2);
+      // get initial scalar value
+      let scaleValue = this.previousScale + ((newDistance - this.previousDistance) / 250);
 
-        if (this.previousDistance <= 0) {
-          // calc using cached, assume a new touch
-          const cached1 = { x: this.touchTargets[point1].clientX, y: this.touchTargets[point1].clientY };
-          const cached2 = { x: this.touchTargets[point2].clientX, y: this.touchTargets[point2].clientY };
-          this.previousDistance = calcDistance(cached1, cached2);
-          // TODO: when using cached value, we need an origin point to focus on
-        }
+      // round the scalar value to 3 decimal places, it will cause fewer refreshes for trivial scale value differences.
+      scaleValue = Math.round(scaleValue * 1000) / 1000;
+      if (scaleValue > 2) {
+        // 2X Zoom is Max
+        scaleValue = 2;
+      } else if (scaleValue < 1) {
+        // 1X Zoom is Min
+        scaleValue = 1;
+      }
 
-        let scaleValue = this.previousScale + ((newDistance - this.previousDistance) / 250);
-        if (scaleValue > 2) {
-          // 2X Zoom is Max
-          scaleValue = 2;
-        } else if (scaleValue < 1) {
-          // 1X Zoom is Min
-          scaleValue = 1;
-        }
-
-        this.previousDistance = newDistance;
+      this.previousDistance = newDistance;
+      if (this.previousScale !== scaleValue) {
         this.previousScale = scaleValue;
-        window.requestAnimationFrame(() => { this.scaleNode.style.transform = `scale(${this.previousScale})`; });
-      } else {
-        // empty cache
-        this.touchTargets = [];
-        this.previousDistance = -1;
+        window.requestAnimationFrame(() => {
+          this.scaleNode.style.transform = `scale(${this.previousScale})`;
+          this.zoomNode.scrollLeft = ((this.scaleOrigin.x / this.initialScale) * this.previousScale) - this.zoomOrigin.x;
+          this.zoomNode.scrollTop = ((this.scaleOrigin.y / this.initialScale) * this.previousScale) - this.zoomOrigin.y;
+        });
       }
+    } else {
+      // empty cache
+      this.touchTargets = [];
+      this.previousDistance = -1;
     }
   }
 
@@ -207,7 +225,6 @@ class Zoom extends React.Component {
   }
 
   render() {
-    console.log('render');
     const {
       children,
       ...customProps
@@ -217,7 +234,7 @@ class Zoom extends React.Component {
       customProps.className,
     ]);
 
-    // TODO: this render needs to incorporate the cached values, as so not lose style on re-render
+    // TODO: Incorporate the terra-scroll when possible for the zoomNode.
     return (
       <ContentContainer
         fill
@@ -228,8 +245,8 @@ class Zoom extends React.Component {
           </div>
         }
       >
-        <div ref={this.setZoomNode}>
-          <div ref={this.setScaleNode}>
+        <div className={zoomClassNames} ref={this.setZoomNode}>
+          <div className={cx('scale')} ref={this.setScaleNode} style={{ transform: `scale(${this.previousScale})` }}>
             {children}
           </div>
         </div>
@@ -237,7 +254,6 @@ class Zoom extends React.Component {
     );
   }
 }
-// style={{ transform: `scale(${this.state.scaleValue})`
 
 Zoom.propTypes = propTypes;
 Zoom.defaultProps = defaultProps;
