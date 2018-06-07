@@ -72,12 +72,10 @@ class Zoom extends React.Component {
   }
 
   onTouchStart(event) {
-    // TODO: either this or move needs to validate touches correctly.
-    if (event.targetTouches.length === 2) {
+    const validTouches = this.validStartTouches(event);
+    if (validTouches.length === 2) {
       event.preventDefault();
-      for (let i = 0; i < event.targetTouches.length; i += 1) {
-        this.touchTargets.push(event.targetTouches[i]);
-      }
+      this.touchTargets = validTouches;
       this.previousDistance = -1;
       this.enableTouchMoveListener();
       this.enableTouchEndListener();
@@ -85,17 +83,21 @@ class Zoom extends React.Component {
   }
 
   onTouchMove(event) {
-    // TODO: either this or start needs to validate touches correctly.
-    if (event.touches.length === 2 && event.targetTouches.length === 2) {
+    const validTouches = this.validMoveTouches(event);
+    if (validTouches.length === 2) {
       event.preventDefault();
       if (event.changedTouches.length > 0) {
-        this.updateScale(event);
+        this.updateScale(validTouches);
       }
+    } else {
+      // empty cache
+      this.touchTargets = [];
+      this.previousDistance = -1;
     }
   }
 
   onTouchEnd(event) {
-    if (event.targetTouches.length === 0) {
+    if (event.touches.length === 0) {
       this.disableTouchMoveListener();
       this.disableTouchEndListener();
       this.touchTargets = [];
@@ -109,6 +111,36 @@ class Zoom extends React.Component {
 
   setScaleNode(node) {
     this.scaleNode = node;
+  }
+
+  validStartTouches(event) {
+    const validTouches = [];
+    if (event.targetTouches.length === 2) {
+      validTouches.push(event.targetTouches[0], event.targetTouches[1]);
+    } else if (event.touches.length === 2) {
+      for (let i = 0; i < event.touches.length; i += 1) {
+        const touch = event.touches[i];
+        if (touch.target === this.zoomNode || this.zoomNode.contains(touch.target)) {
+          validTouches.push(touch);
+        }
+      }
+    }
+    return validTouches;
+  }
+
+  validMoveTouches(event) {
+    const validTouches = [];
+    if (event.touches.length === 2 && event.targetTouches.length === 2) {
+      validTouches.push(event.targetTouches[0], event.targetTouches[1]);
+    } else if (event.touches.length === 2) {
+      const identifiers = [this.touchTargets[0].identifier, this.touchTargets[1].identifier];
+      for (let i = 0; i < event.touches.length; i += 1) {
+        if (identifiers.indexOf(event.touches[i].identifier) >= 0) {
+          validTouches.push(event.touches[i]);
+        }
+      }
+    }
+    return validTouches;
   }
 
   enableTouchStartListener() {
@@ -153,62 +185,44 @@ class Zoom extends React.Component {
     }
   }
 
-  updateScale(event) {
-    let point1;
-    let point2;
-    for (let i = 0; i < this.touchTargets.length; i += 1) {
-      if (this.touchTargets[i].identifier === event.targetTouches[0].identifier) {
-        point1 = i;
-      }
-      if (this.touchTargets[i].identifier === event.targetTouches[1].identifier) {
-        point2 = i;
-      }
+  updateScale(touches) {
+    const new1 = { x: touches[0].clientX, y: touches[0].clientY };
+    const new2 = { x: touches[1].clientX, y: touches[1].clientY };
+    const newDistance = calcDistance(new1, new2);
+
+    if (this.previousDistance <= 0) {
+      // calc using cached, assume a new touch
+      const cached1 = { x: this.touchTargets[0].clientX, y: this.touchTargets[0].clientY };
+      const cached2 = { x: this.touchTargets[1].clientX, y: this.touchTargets[1].clientY };
+      this.previousDistance = calcDistance(cached1, cached2);
+      this.touchOrigin = { x: (cached1.x + cached2.x) / 2, y: (cached1.y + cached2.y) / 2 };
+
+      const rect = this.zoomNode.getBoundingClientRect();
+      this.zoomOrigin = { x: this.touchOrigin.x - rect.left, y: this.touchOrigin.y - rect.top };
+      this.scaleOrigin = { x: this.zoomOrigin.x + this.zoomNode.scrollLeft, y: this.zoomOrigin.y + this.zoomNode.scrollTop };
+      this.initialScale = this.previousScale;
     }
 
-    if (point1 >= 0 && point2 >= 0) {
-      const new1 = { x: event.targetTouches[0].clientX, y: event.targetTouches[0].clientY };
-      const new2 = { x: event.targetTouches[1].clientX, y: event.targetTouches[1].clientY };
-      const newDistance = calcDistance(new1, new2);
+    // get initial scalar value
+    let scaleValue = this.previousScale + ((newDistance - this.previousDistance) / 250);
+    // round the scalar value to 3 decimal places, it will cause fewer refreshes for trivial scale value differences.
+    scaleValue = Number(`${Math.round(`${scaleValue}e3`)}e-3`);
+    if (scaleValue > 2) {
+      // 2X Zoom is Max
+      scaleValue = 2;
+    } else if (scaleValue < 1) {
+      // 1X Zoom is Min
+      scaleValue = 1;
+    }
 
-      if (this.previousDistance <= 0) {
-        // calc using cached, assume a new touch
-        const cached1 = { x: this.touchTargets[point1].clientX, y: this.touchTargets[point1].clientY };
-        const cached2 = { x: this.touchTargets[point2].clientX, y: this.touchTargets[point2].clientY };
-        this.previousDistance = calcDistance(cached1, cached2);
-        this.touchOrigin = { x: (cached1.x + cached2.x) / 2, y: (cached1.y + cached2.y) / 2 };
-
-        const rect = this.zoomNode.getBoundingClientRect();
-        this.zoomOrigin = { x: this.touchOrigin.x - rect.left, y: this.touchOrigin.y - rect.top };
-        this.scaleOrigin = { x: this.zoomOrigin.x + this.zoomNode.scrollLeft, y: this.zoomOrigin.y + this.zoomNode.scrollTop };
-        this.initialScale = this.previousScale;
-      }
-
-      // get initial scalar value
-      let scaleValue = this.previousScale + ((newDistance - this.previousDistance) / 250);
-
-      // round the scalar value to 3 decimal places, it will cause fewer refreshes for trivial scale value differences.
-      scaleValue = Math.round(scaleValue * 1000) / 1000;
-      if (scaleValue > 2) {
-        // 2X Zoom is Max
-        scaleValue = 2;
-      } else if (scaleValue < 1) {
-        // 1X Zoom is Min
-        scaleValue = 1;
-      }
-
-      this.previousDistance = newDistance;
-      if (this.previousScale !== scaleValue) {
-        this.previousScale = scaleValue;
-        window.requestAnimationFrame(() => {
-          this.scaleNode.style.transform = `scale(${this.previousScale})`;
-          this.zoomNode.scrollLeft = ((this.scaleOrigin.x / this.initialScale) * this.previousScale) - this.zoomOrigin.x;
-          this.zoomNode.scrollTop = ((this.scaleOrigin.y / this.initialScale) * this.previousScale) - this.zoomOrigin.y;
-        });
-      }
-    } else {
-      // empty cache
-      this.touchTargets = [];
-      this.previousDistance = -1;
+    this.previousDistance = newDistance;
+    if (this.previousScale !== scaleValue) {
+      this.previousScale = scaleValue;
+      window.requestAnimationFrame(() => {
+        this.scaleNode.style.transform = `scale(${this.previousScale})`;
+        this.zoomNode.scrollLeft = (this.scaleOrigin.x * (this.previousScale / this.initialScale)) - this.zoomOrigin.x;
+        this.zoomNode.scrollTop = (this.scaleOrigin.y * (this.previousScale / this.initialScale)) - this.zoomOrigin.y;
+      });
     }
   }
 
