@@ -2,7 +2,7 @@
   "name": "terra-zoom",
   "main": "lib/Zoom.js",
   "version": "0.0.0",
-  "description": "A 'React by Magic'® product.",
+  "description": "A React by Magic® product.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cerner/terra-framework.git"
@@ -24,7 +24,6 @@
   "peerDependencies": {
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
-
   },
   "dependencies": {
     "classnames": "^2.2.5",
