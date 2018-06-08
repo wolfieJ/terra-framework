@@ -28,6 +28,8 @@ const calcDistance = (point1, point2) => {
 class Zoom extends React.Component {
   constructor(props) {
     super(props);
+
+    // TODO: evaluate need to all bindings.
     this.setScaleNode = this.setScaleNode.bind(this);
     this.setZoomNode = this.setZoomNode.bind(this);
     this.onTouchStart = this.onTouchStart.bind(this);
@@ -42,6 +44,8 @@ class Zoom extends React.Component {
     this.disableTouchMoveListener = this.disableTouchMoveListener.bind(this);
     this.enableTouchEndListener = this.enableTouchEndListener.bind(this);
     this.disableTouchEndListener = this.disableTouchEndListener.bind(this);
+    this.enableMouseWheelListener = this.enableMouseWheelListener.bind(this);
+    this.disableMouseWheelListener = this.disableMouseWheelListener.bind(this);
     this.enableDblclickListener = this.enableDblclickListener.bind(this);
     this.disableDblclickListener = this.disableDblclickListener.bind(this);
     this.updateDblclickScale = this.updateDblclickScale.bind(this);
