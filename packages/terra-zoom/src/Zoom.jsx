@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import ContentContainer from 'terra-content-container';
+import LodashDebounce from 'lodash.debounce';
 import 'terra-base/lib/baseStyles';
 import styles from './Zoom.scss';
 
@@ -34,6 +35,7 @@ class Zoom extends React.Component {
     this.onTouchEnd = this.onTouchEnd.bind(this);
     this.onWheel = this.onWheel.bind(this);
     this.onDblclick = this.onDblclick.bind(this);
+    this.invalidateCapture = LodashDebounce(this.invalidateCapture.bind(this), 500);
     this.enableTouchStartListener = this.enableTouchStartListener.bind(this);
     this.disableTouchStartListener = this.disableTouchStartListener.bind(this);
     this.enableTouchMoveListener = this.enableTouchMoveListener.bind(this);
@@ -53,9 +55,13 @@ class Zoom extends React.Component {
     this.touchStartListenerAdded = false;
     this.touchMoveListenerAdded = false;
     this.touchEndListenerAdded = false;
+    this.dblclickListenerAdded = false;
+    this.mouseWheelListenerAdded = false;
+
     this.touchTargets = [];
     this.previousDistance = -1;
-    this.previousScale = 1;
+    this.currentScale = 1;
+    this.isInitialValid = true;
   }
 
   componentDidMount() {
@@ -236,20 +242,50 @@ class Zoom extends React.Component {
     }
   }
 
+  captureInitialValues(clientOrigin) {
+    const validCursor = this.initialClientOrigin && this.initialClientOrigin.x === clientOrigin.x && this.initialClientOrigin.y === clientOrigin.y;
+    if (validCursor && this.isInitialValid) {
+      return;
+    }
+
+    this.initialScale = this.currentScale;
+    this.initialScrollLeft = this.zoomNode.scrollLeft;
+    this.initialScrollTop = this.zoomNode.scrollTop;
+    this.initialClientOrigin = clientOrigin;
+
+    const zoomRect = this.zoomNode.getBoundingClientRect();
+    const scaleRect = this.scaleNode.getBoundingClientRect();
+    this.initialZoomOrigin = { x: clientOrigin.x - zoomRect.left, y: clientOrigin.y - zoomRect.top };
+    this.initialScaleOrigin = { x: clientOrigin.x - scaleRect.left, y: clientOrigin.y - scaleRect.top };
+    this.isInitialValid = true;
+  }
+
+  invalidateCapture() {
+    this.isInitialValid = false;
+  }
+
   updateDblclickScale(event) {
+    if (this.isUpdating) {
+      return;
+    }
+
+    // don't need to find a way to only do this once, already works
     const clickOrigin = { x: event.clientX, y: event.clientY };
+    this.captureInitialValues(clickOrigin);
 
     // get scalar value
     let scaleValue = 2;
-    if (this.previousScale > 1) {
+    if (this.currentScale > 1) {
       scaleValue = 1;
     }
-
-    this.updateOrigin(clickOrigin);
     this.updateScale(scaleValue);
   }
 
   updateTouchScale(touches) {
+    if (this.isUpdating) {
+      return;
+    }
+
     const new1 = { x: touches[0].clientX, y: touches[0].clientY };
     const new2 = { x: touches[1].clientX, y: touches[1].clientY };
     const newDistance = calcDistance(new1, new2);
@@ -261,34 +297,36 @@ class Zoom extends React.Component {
       const touchOrigin = { x: (cached1.x + cached2.x) / 2, y: (cached1.y + cached2.y) / 2 };
 
       this.previousDistance = calcDistance(cached1, cached2);
-      this.updateOrigin(touchOrigin);
+      this.captureInitialValues(touchOrigin);
     }
 
     // get scalar value
-    const scaleValue = this.previousScale + ((newDistance - this.previousDistance) / 250);
+    const scaleValue = this.currentScale + ((newDistance - this.previousDistance) / 250);
     this.previousDistance = newDistance;
     this.updateScale(scaleValue);
   }
 
   updateWheelScale(event) {
+    if (this.isUpdating) {
+      return;
+    }
+
+    // need to find a way to only do this once, reliably...
     const wheelOrigin = { x: event.clientX, y: event.clientY };
-    this.updateOrigin(wheelOrigin);
+    this.captureInitialValues(wheelOrigin);
 
     // get scalar value
-    const scaleValue = this.previousScale + (event.deltaY / 50);
+    const scaleValue = this.currentScale + (event.deltaY / 50);
     this.updateScale(scaleValue);
-  }
 
-  updateOrigin(origin) {
-    const rect = this.zoomNode.getBoundingClientRect();
-    this.zoomOrigin = { x: origin.x - rect.left, y: origin.y - rect.top };
-    this.scaleOrigin = { x: this.zoomOrigin.x + this.zoomNode.scrollLeft, y: this.zoomOrigin.y + this.zoomNode.scrollTop };
-    this.initialScale = this.previousScale;
+    // invalidate here
+    this.invalidateCapture();
   }
 
   updateScale(scaleValue) {
     // round the scalar value to 3 decimal places, it will cause fewer refreshes for trivial scale value differences.
-    let newScale = Number(`${Math.round(`${scaleValue}e3`)}e-3`);
+    // let newScale = Number(`${Math.round(`${scaleValue}e4`)}e-3`);
+    let newScale = scaleValue;
     if (scaleValue > 2) {
       // 2X Zoom is Max
       newScale = 2;
@@ -297,26 +335,28 @@ class Zoom extends React.Component {
       newScale = 1;
     }
 
-    if (this.previousScale !== newScale) {
-      this.previousScale = newScale;
+    if (this.currentScale !== newScale) {
+      this.isUpdating = true;
+      this.currentScale = newScale;
       window.requestAnimationFrame(() => {
-        this.scaleNode.style.transform = `scale(${this.previousScale})`;
-        this.zoomNode.scrollLeft = (this.scaleOrigin.x * (this.previousScale / this.initialScale)) - this.zoomOrigin.x;
-        this.zoomNode.scrollTop = (this.scaleOrigin.y * (this.previousScale / this.initialScale)) - this.zoomOrigin.y;
+        this.scaleNode.style.transform = `scale(${this.currentScale})`;
+        this.zoomNode.scrollLeft = (this.initialScaleOrigin.x * (this.currentScale / this.initialScale)) - this.initialZoomOrigin.x;
+        this.zoomNode.scrollTop = (this.initialScaleOrigin.y * (this.currentScale / this.initialScale)) - this.initialZoomOrigin.y;
+        this.isUpdating = false;
       });
     }
   }
 
   resetZoomCache() {
     this.touchTargets = [];
-    this.previousScale = 1;
-    window.requestAnimationFrame(() => { this.scaleNode.style.transform = `scale(${this.previousScale})`; });
+    this.currentScale = 1;
+    window.requestAnimationFrame(() => { this.scaleNode.style.transform = `scale(${this.currentScale})`; });
   }
 
   maxZoomCache() {
     this.touchTargets = [];
-    this.previousScale = 2;
-    window.requestAnimationFrame(() => { this.scaleNode.style.transform = `scale(${this.previousScale})`; });
+    this.currentScale = 2;
+    window.requestAnimationFrame(() => { this.scaleNode.style.transform = `scale(${this.currentScale})`; });
   }
 
   render() {
@@ -341,7 +381,7 @@ class Zoom extends React.Component {
         }
       >
         <div className={zoomClassNames} ref={this.setZoomNode}>
-          <div className={cx('scale')} ref={this.setScaleNode} style={{ transform: `scale(${this.previousScale})` }}>
+          <div className={cx('scale')} ref={this.setScaleNode} style={{ transform: `scale(${this.currentScale})` }}>
             {children}
           </div>
         </div>
