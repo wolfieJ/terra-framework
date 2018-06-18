@@ -20,6 +20,8 @@ import NotificationDialogWithLongText from './example/NotificationDialogWithLong
 import NotificationDialogWithLongTextSrc from '!raw-loader!../../../src/terra-dev-site/doc/example/NotificationDialogWithLongText.jsx';
 import NotificationDialogOnModalManager from './example/NotificationDialogOnModalManager';
 import NotificationDialogOnModalManagerSrc from '!raw-loader!../../../src/terra-dev-site/doc/example/NotificationDialogOnModalManager.jsx';
+import WithNotificationDialog from './example/WithNotificationDialog';
+import WithNotificationDialogSrc from '!raw-loader!../../../src/terra-dev-site/doc/example/WithNotificationDialog.jsx';
 
 const DocPage = () => (
   <DocTemplate
@@ -51,6 +53,11 @@ const DocPage = () => (
         title: 'Notification Dialog On Modal Manager',
         example: <NotificationDialogOnModalManager />,
         source: NotificationDialogOnModalManagerSrc,
+      },
+      {
+        title: 'Notification Dialog Synchronous',
+        example: <WithNotificationDialog />,
+        source: WithNotificationDialogSrc,
       },
     ]}
     propsTables={[
