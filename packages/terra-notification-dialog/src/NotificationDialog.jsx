@@ -46,7 +46,7 @@ const propTypes = {
   }),
   /**
    * The variant of notification to be rendered.
-   * Use one of alert, error, warning, info, success, custom.
+   * Use one of `alert`, `error`, `warning`, `info`, `success`, `custom`.
    */
   variant: PropTypes.oneOf([
     variants.ALERT,
