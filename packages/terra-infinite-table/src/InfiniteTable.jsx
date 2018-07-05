@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import 'terra-base/lib/baseStyles';
 import ResizeObserver from 'resize-observer-polyfill';
-import List from 'terra-list';
-import SelectableUtils from 'terra-list/lib/SelectableUtils';
+import Table from 'terra-table';
+import ContentContainer from 'terrra-content-container';
+import SelectableUtils from 'terra-table/lib/SelectableUtils';
 import InfiniteUtils from './_InfiniteUtils';
-import styles from './InfiniteList.scss';
+import styles from './InfiniteTable.scss';
 
 const cx = classNames.bind(styles);
 
@@ -22,10 +23,12 @@ const propTypes = {
    */
   disableUnselectedItems: PropTypes.bool,
   /**
-   * Whether or not the child list items has a disclosure indicator presented.
-   * The behavior is intended to be used with a single selection style list, as multi selection style list should not perform disclosures.
+   * This is questionable, I need at minimum a ref, potentially attributes on each
+   * Could take an array of header cells
+   * Could take a custom header
+   * Might need to handle cloning
    */
-  hasChevrons: PropTypes.bool,
+  header: PropTypes.element,
   /**
    * An indicator to be displayed when no children are yet present.
    */
@@ -63,7 +66,6 @@ const propTypes = {
 const defaultProps = {
   children: [],
   disableUnselectedItems: false,
-  hasChevrons: false,
   isDivided: false,
   isFinishedLoading: false,
   isSelectable: false,
@@ -76,7 +78,7 @@ const defaultProps = {
  * @param {number} index - Index to use as part of the spacers key.
  */
 const createSpacer = (height, index) => (
-  <List.Item
+  <Table.TableRow
     isSelectable={false}
     className={cx(['spacer'])}
     style={{ height }}
@@ -445,7 +447,6 @@ class InfiniteList extends React.Component {
     const {
       children,
       disableUnselectedItems,
-      hasChevrons,
       initialLoadingIndicator,
       isDivided,
       isFinishedLoading,
@@ -466,7 +467,7 @@ class InfiniteList extends React.Component {
     if (!isFinishedLoading) {
       if (this.childCount > 0) {
         loadingSpinner = (
-          <List.Item
+          <Table.TableRow
             content={progressiveLoadingIndicator}
             isSelectable={false}
             key={`infinite-spinner-row-${this.loadingIndex}`}
@@ -474,7 +475,7 @@ class InfiniteList extends React.Component {
         );
       } else {
         visibleChildren = (
-          <List.Item
+          <Table.TableRow
             content={initialLoadingIndicator}
             isSelectable={false}
             key="infinite-spinner-full"
@@ -492,25 +493,44 @@ class InfiniteList extends React.Component {
         upperChildIndex = this.childCount;
       } else {
         newChildren = (
-          <List {...customProps} isDivided={isDivided} className={cx(['infinite-hidden'])}>
+          <Table {...customProps} className={cx(['infinite-hidden'])}>
+            <Table.TableRows>
             {InfiniteUtils.getNewChildren(this.lastChildIndex, this.childrenArray, this.wrapChild)}
-          </List>
+            </Table.TableRows>
+          </Table>
         );
         this.isRenderingNew = true;
       }
       visibleChildren = InfiniteUtils.getVisibleChildren(this.scrollGroups, this.childrenArray, this.boundary.topBoundryIndex, this.boundary.bottomBoundryIndex, this.wrapChild, upperChildIndex);
     }
 
+    const visibleHeader = (
+      <Table aria-hidden="true">
+        <Table.Header>
+          <Table.HeaderCell />
+        </Table.Header>
+      </Table>
+    );
+
+    const hiddenHeader = React.cloneElement();
+
     return (
-      <React.Fragment>
-        <List {...customProps} isDivided={showDivided} className={cx(['infinite-list', customProps.className])} refCallback={this.setContentNode}>
-          {topSpacer}
-          {visibleChildren}
-          {bottomSpacer}
-          {loadingSpinner}
-        </List>
+      <ContentContainer
+        header={visibleHeader}
+        fill
+        scrollRefCallback={this.setContentNode}
+      >
+        <Table {...customProps} className={cx(['infinite-list', customProps.className])}>
+          {hiddenHeader}
+          <Table.TableRows>
+            {topSpacer}
+            {visibleChildren}
+            {bottomSpacer}
+            {loadingSpinner}
+          </Table.TableRows>
+        </Table>
         {newChildren}
-      </React.Fragment>
+      </ContentContainer>
     );
   }
 }
