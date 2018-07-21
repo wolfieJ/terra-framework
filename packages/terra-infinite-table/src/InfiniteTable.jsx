@@ -12,7 +12,6 @@ import styles from './InfiniteTable.scss';
 const cx = classNames.bind(styles);
 
 const propTypes = {
-  headerCellContent: PropTypes.array,
   /**
    * The child table rows, of type InfiniteTable.TableRow, to be placed within the infinite table.
    * For further documentation of InfiniteTable.TableRow see terra-table's TableRow.
@@ -29,7 +28,7 @@ const propTypes = {
    * Could take a custom header
    * Might need to handle cloning
    */
-  header: PropTypes.element,
+  headerCellContent: PropTypes.array,
   /**
    * An indicator to be displayed when no children are yet present.
    */
@@ -61,9 +60,9 @@ const propTypes = {
 };
 
 const defaultProps = {
-  headerCellContent: [],
   children: [],
   disableUnselectedItems: false,
+  headerCellContent: [],
   isDivided: false,
   isFinishedLoading: false,
   isSelectable: false,
@@ -469,9 +468,9 @@ class InfiniteTable extends React.Component {
 
   render() {
     const {
-      headerCellContent,
       children,
       disableUnselectedItems,
+      headerCellContent,
       initialLoadingIndicator,
       isFinishedLoading,
       isSelectable,
