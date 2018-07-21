@@ -12,9 +12,10 @@ import styles from './InfiniteTable.scss';
 const cx = classNames.bind(styles);
 
 const propTypes = {
+  headerCellContent: PropTypes.array,
   /**
-   * The child list items, of type InfiniteList.Item, to be placed within the infinite list.
-   * For further documentation of InfiniteList.Item see terra-list's ListItem.
+   * The child table rows, of type InfiniteTable.TableRow, to be placed within the infinite table.
+   * For further documentation of InfiniteTable.TableRow see terra-table's TableRow.
    */
   children: PropTypes.node,
   /**
@@ -34,15 +35,11 @@ const propTypes = {
    */
   initialLoadingIndicator: PropTypes.element,
   /**
-   * Whether or not the child list items should have a border color applied.
-   */
-  isDivided: PropTypes.bool,
-  /**
    * Determines whether or not the loading indicator is visible and if callbacks are triggered.
    */
   isFinishedLoading: PropTypes.bool,
   /**
-   * Whether or not the list is selectable.
+   * Whether or not the table rows are selectable.
    */
   isSelectable: PropTypes.bool,
   /**
@@ -50,7 +47,7 @@ const propTypes = {
    */
   onChange: PropTypes.func,
   /**
-   * Callback trigger when new list items are requested.
+   * Callback trigger when new table rows are requested.
    */
   onRequestItems: PropTypes.func,
   /**
@@ -64,6 +61,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+  headerCellContent: [],
   children: [],
   disableUnselectedItems: false,
   isDivided: false,
@@ -73,8 +71,8 @@ const defaultProps = {
 };
 
 /**
- * Returns a ListItem sized according to the provided height to use as a spacer.
- * @param {number} height - Height to set on the ListItem.
+ * Returns a TableRow sized according to the provided height to use as a spacer.
+ * @param {number} height - Height to set on the TableRow.
  * @param {number} index - Index to use as part of the spacers key.
  */
 const createSpacer = (height, index) => (
@@ -86,7 +84,33 @@ const createSpacer = (height, index) => (
   />
 );
 
-class InfiniteList extends React.Component {
+const headerCellsFromContent = (cellContent) => {
+  const visible = [];
+  const hidden = [];
+  cellContent.forEach((content, index) => {
+    const cellKey = `cell-${index}`;
+    visible.push(
+      <Table.HeaderCell
+        key={cellKey}
+        className={cx(['visible-header-cell'])}
+        data-infinte-table-header-cell="index"
+        content={content}
+      />,
+    );
+    hidden.push(
+      <Table.HeaderCell
+        key={cellKey}
+        className={cx(['hidden-header'])}
+        data-infinte-table-header-cell="index"
+        aria-hidden="true"
+        content={content}
+      />,
+    );
+  });
+  return { visible, hidden };
+}
+
+class InfiniteTable extends React.Component {
   constructor(props) {
     super(props);
 
@@ -139,7 +163,7 @@ class InfiniteList extends React.Component {
 
   /**
    * Sets the html node of contentNode and if it was previously undefined trigger updateScrollGroups.
-   * @param {node} node - Html node of the List.
+   * @param {node} node - Html node of the Table.
    */
   setContentNode(node) {
     const wasUndefined = !this.contentNode;
@@ -187,7 +211,7 @@ class InfiniteList extends React.Component {
   }
 
   /**
-   * Set the initial state of the virtualization values for the list.
+   * Set the initial state of the virtualization values for the table.
    * @param {object} props - React element props.
    */
   initializeItemCache(props) {
@@ -378,7 +402,7 @@ class InfiniteList extends React.Component {
   adjustHeight() {
     if (this.contentNode) {
       this.itemsByIndex.forEach((item, itemIndex) => {
-        const scrollItemNode = this.contentNode.querySelector(`[data-infinite-list-index="${itemIndex}"]`);
+        const scrollItemNode = this.contentNode.querySelector(`[data-infinite-table-index="${itemIndex}"]`);
         if (scrollItemNode) {
           const newHeight = scrollItemNode.getBoundingClientRect().height;
           if (!this.itemsByIndex[itemIndex].height || Math.abs(newHeight - this.itemsByIndex[itemIndex].height) > 1) {
@@ -434,21 +458,21 @@ class InfiniteList extends React.Component {
     if (this.props.isSelectable) {
       const wrappedOnClick = SelectableUtils.wrappedOnClickForItem(child, index, this.props.onChange);
       const wrappedOnKeyDown = SelectableUtils.wrappedOnKeyDownForItem(child, index, this.props.onChange);
-      newProps = SelectableUtils.newPropsForItem(child, index, wrappedOnClick, wrappedOnKeyDown, this.props.hasChevrons, this.props.selectedIndexes, this.props.disableUnselectedItems);
+      newProps = SelectableUtils.newPropsForItem(child, index, wrappedOnClick, wrappedOnKeyDown, this.props.selectedIndexes, this.props.disableUnselectedItems);
     }
 
     newProps.refCallback = wrappedCallBack;
-    newProps['data-infinite-list-index'] = index;
+    newProps['data-infinite-table-index'] = index;
     newProps.style = child.props.style ? Object.assign({}, child.props.style, { overflow: 'hidden' }) : { overflow: 'hidden' };
     return React.cloneElement(child, newProps);
   }
 
   render() {
     const {
+      headerCellContent,
       children,
       disableUnselectedItems,
       initialLoadingIndicator,
-      isDivided,
       isFinishedLoading,
       isSelectable,
       onRequestItems,
@@ -462,7 +486,6 @@ class InfiniteList extends React.Component {
 
     let loadingSpinner;
     let visibleChildren;
-    let showDivided = isDivided;
 
     if (!isFinishedLoading) {
       if (this.childCount > 0) {
@@ -482,7 +505,6 @@ class InfiniteList extends React.Component {
             style={{ height: '100%', position: 'relative' }}
           />
         );
-        showDivided = false;
       }
     }
 
@@ -495,7 +517,7 @@ class InfiniteList extends React.Component {
         newChildren = (
           <Table {...customProps} className={cx(['infinite-hidden'])}>
             <Table.TableRows>
-            {InfiniteUtils.getNewChildren(this.lastChildIndex, this.childrenArray, this.wrapChild)}
+              {InfiniteUtils.getNewChildren(this.lastChildIndex, this.childrenArray, this.wrapChild)}
             </Table.TableRows>
           </Table>
         );
@@ -504,15 +526,23 @@ class InfiniteList extends React.Component {
       visibleChildren = InfiniteUtils.getVisibleChildren(this.scrollGroups, this.childrenArray, this.boundary.topBoundryIndex, this.boundary.bottomBoundryIndex, this.wrapChild, upperChildIndex);
     }
 
+    const headerCells = headerCellsFromContent(headerCellContent);
+
     const visibleHeader = (
-      <Table aria-hidden="true">
+      <Table>
         <Table.Header>
-          <Table.HeaderCell />
+          {headerCells.visible}
         </Table.Header>
       </Table>
     );
 
-    const hiddenHeader = React.cloneElement();
+    const hiddenHeader = (
+      <Table className={cx(['hidden-header'])} aria-hidden="true">
+        <Table.Header className={cx(['hidden-header'])} aria-hidden="true">
+          {headerCells.hidden}
+        </Table.Header>
+      </Table>
+    );
 
     return (
       <ContentContainer
@@ -520,7 +550,7 @@ class InfiniteList extends React.Component {
         fill
         scrollRefCallback={this.setContentNode}
       >
-        <Table {...customProps} className={cx(['infinite-list', customProps.className])}>
+        <Table {...customProps} className={cx(['infinite-table', customProps.className])}>
           {hiddenHeader}
           <Table.TableRows>
             {topSpacer}
@@ -535,8 +565,8 @@ class InfiniteList extends React.Component {
   }
 }
 
-InfiniteList.propTypes = propTypes;
-InfiniteList.defaultProps = defaultProps;
-InfiniteList.Item = List.Item;
+InfiniteTable.propTypes = propTypes;
+InfiniteTable.defaultProps = defaultProps;
+InfiniteTable.TableRow = Table.TableRow;
 
-export default InfiniteList;
+export default InfiniteTable;
