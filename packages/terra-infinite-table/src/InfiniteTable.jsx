@@ -4,7 +4,7 @@ import classNames from 'classnames/bind';
 import 'terra-base/lib/baseStyles';
 import ResizeObserver from 'resize-observer-polyfill';
 import Table from 'terra-table';
-import ContentContainer from 'terrra-content-container';
+import ContentContainer from 'terra-content-container';
 import SelectableUtils from 'terra-table/lib/SelectableUtils';
 import InfiniteUtils from './_InfiniteUtils';
 import styles from './InfiniteTable.scss';
@@ -107,7 +107,7 @@ const headerCellsFromContent = (cellContent) => {
     );
   });
   return { visible, hidden };
-}
+};
 
 class InfiniteTable extends React.Component {
   constructor(props) {
