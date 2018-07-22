@@ -41,6 +41,9 @@ const propTypes = {
    * Whether or not the table rows are selectable.
    */
   isSelectable: PropTypes.bool,
+  /**
+   * Whether or not the rows should be zebra striped
+   */
   isStriped: PropTypes.bool,
   /**
    * A callback event that will be triggered when selection state changes.
@@ -64,9 +67,9 @@ const defaultProps = {
   children: [],
   disableUnselectedItems: false,
   headerCellContent: [],
-  isDivided: false,
   isFinishedLoading: false,
   isSelectable: false,
+  isStriped: false,
   selectedIndexes: [],
 };
 
@@ -76,7 +79,7 @@ const defaultProps = {
  * @param {number} index - Index to use as part of the spacers key.
  */
 const createSpacer = (height, index) => (
-  <Table.TableRow
+  <Table.Row
     isSelectable={false}
     className={cx(['spacer'])}
     style={{ height }}
@@ -475,6 +478,7 @@ class InfiniteTable extends React.Component {
       initialLoadingIndicator,
       isFinishedLoading,
       isSelectable,
+      isStriped,
       onRequestItems,
       progressiveLoadingIndicator,
       selectedIndexes,
@@ -490,7 +494,7 @@ class InfiniteTable extends React.Component {
     if (!isFinishedLoading) {
       if (this.childCount > 0) {
         loadingSpinner = (
-          <Table.TableRow
+          <Table.Row
             content={progressiveLoadingIndicator}
             isSelectable={false}
             key={`infinite-spinner-row-${this.loadingIndex}`}
@@ -498,7 +502,7 @@ class InfiniteTable extends React.Component {
         );
       } else {
         visibleChildren = (
-          <Table.TableRow
+          <Table.Row
             content={initialLoadingIndicator}
             isSelectable={false}
             key="infinite-spinner-full"
@@ -516,9 +520,9 @@ class InfiniteTable extends React.Component {
       } else {
         newChildren = (
           <Table {...customProps} className={cx(['infinite-hidden'])}>
-            <Table.TableRows>
+            <Table.Rows>
               {InfiniteUtils.getNewChildren(this.lastChildIndex, this.childrenArray, this.wrapChild)}
-            </Table.TableRows>
+            </Table.Rows>
           </Table>
         );
         this.isRenderingNew = true;
@@ -537,11 +541,9 @@ class InfiniteTable extends React.Component {
     );
 
     const hiddenHeader = (
-      <Table className={cx(['hidden-header'])} aria-hidden="true">
-        <Table.Header className={cx(['hidden-header'])} aria-hidden="true">
-          {headerCells.hidden}
-        </Table.Header>
-      </Table>
+      <Table.Header className={cx(['hidden-header'])} aria-hidden="true">
+        {headerCells.hidden}
+      </Table.Header>
     );
 
     return (
@@ -552,12 +554,12 @@ class InfiniteTable extends React.Component {
       >
         <Table {...customProps} className={cx(['infinite-table', customProps.className])}>
           {hiddenHeader}
-          <Table.TableRows>
+          <Table.Rows>
             {topSpacer}
             {visibleChildren}
             {bottomSpacer}
             {loadingSpinner}
-          </Table.TableRows>
+          </Table.Rows>
         </Table>
         {newChildren}
       </ContentContainer>
@@ -567,6 +569,11 @@ class InfiniteTable extends React.Component {
 
 InfiniteTable.propTypes = propTypes;
 InfiniteTable.defaultProps = defaultProps;
-InfiniteTable.TableRow = Table.TableRow;
+InfiniteTable.Rows = Table.Rows;
+InfiniteTable.Header = Table.Header;
+InfiniteTable.HeaderCell = Table.HeaderCell;
+InfiniteTable.Row = Table.Row;
+InfiniteTable.Cell = Table.Cell;
+InfiniteTable.Subheader = Table.Subheader;
 
 export default InfiniteTable;
