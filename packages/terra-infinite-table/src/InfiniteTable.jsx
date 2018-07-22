@@ -41,6 +41,7 @@ const propTypes = {
    * Whether or not the table rows are selectable.
    */
   isSelectable: PropTypes.bool,
+  isStriped: PropTypes.bool,
   /**
    * A callback event that will be triggered when selection state changes.
    */
