@@ -13,7 +13,7 @@ class InfiniteTableExample extends React.Component {
   constructor(props) {
     super(props);
 
-    // this.addMoreData = this.debounce(this.addMoreData.bind(this), 1000);
+    this.addMoreData = this.debounce(this.addMoreData.bind(this), 1000);
     this.handleOnChange0 = this.handleOnChange0.bind(this);
     this.handleOnChange1 = this.handleOnChange1.bind(this);
 
