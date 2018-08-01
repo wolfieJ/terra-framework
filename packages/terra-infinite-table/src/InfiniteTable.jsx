@@ -459,9 +459,9 @@ class InfiniteTable extends React.Component {
 
     let newProps = {};
     if (this.props.isSelectable) {
-      const wrappedOnClick = SelectableUtils.wrappedOnClickForItem(child, index, this.props.onChange);
-      const wrappedOnKeyDown = SelectableUtils.wrappedOnKeyDownForItem(child, index, this.props.onChange);
-      newProps = SelectableUtils.newPropsForItem(child, index, wrappedOnClick, wrappedOnKeyDown, this.props.selectedIndexes, this.props.disableUnselectedItems);
+      const wrappedOnClick = SelectableUtils.wrappedOnClickForRow(child, index, this.props.onChange);
+      const wrappedOnKeyDown = SelectableUtils.wrappedOnKeyDownForRow(child, index, this.props.onChange);
+      newProps = SelectableUtils.newPropsForRow(child, index, wrappedOnClick, wrappedOnKeyDown, this.props.selectedIndexes, this.props.disableUnselectedItems);
     }
 
     newProps.refCallback = wrappedCallBack;
