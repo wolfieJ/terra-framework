@@ -501,14 +501,14 @@ class InfiniteTable extends React.Component {
           />
         );
       } else {
-        visibleChildren = (
+        visibleChildren = [
           <Table.Row
             content={initialLoadingIndicator}
             isSelectable={false}
             key="infinite-spinner-full"
             style={{ height: '100%', position: 'relative' }}
           />
-        );
+        ];
       }
     }
 
@@ -546,6 +546,11 @@ class InfiniteTable extends React.Component {
       </Table.Header>
     );
 
+    let rowContent = [ topSpacer ];
+    if (visibleChildren) { rowContent = rowContent.concat(visibleChildren); }
+    rowContent.push(bottomSpacer);
+    if (loadingSpinner) { rowContent.push(loadingSpinner); }
+
     return (
       <ContentContainer
         header={visibleHeader}
@@ -555,10 +560,7 @@ class InfiniteTable extends React.Component {
         <Table {...customProps} className={cx(['infinite-table', customProps.className])}>
           {hiddenHeader}
           <Table.Rows>
-            {topSpacer}
-            {visibleChildren}
-            {bottomSpacer}
-            {loadingSpinner}
+            {rowContent}
           </Table.Rows>
         </Table>
         {newChildren}
