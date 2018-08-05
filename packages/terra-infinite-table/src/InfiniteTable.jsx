@@ -7,7 +7,7 @@ import Table from 'terra-table';
 import ContentContainer from 'terra-content-container';
 import SelectableUtils from 'terra-table/lib/SelectableUtils';
 import InfiniteUtils from './_InfiniteUtils';
-import styles from './InfiniteTable.scss';
+import styles from './InfiniteTable.module.scss';
 
 const cx = classNames.bind(styles);
 
