@@ -1,9 +1,8 @@
 :local {
-  .content-row {
-    display: block;
-    position: relative;
-    width: 100%;
+  [data-infinite-table-content-row] {
+    .content-row {
+      margin: 0;
+      padding: 0;
+    }
   }
 }
-
-

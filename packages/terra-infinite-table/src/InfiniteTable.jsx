@@ -84,6 +84,7 @@ const createSpacer = (height, index) => (
     className={cx(['spacer'])}
     style={{ height }}
     key={`infinite-spacer-${index}`}
+    colSpan={3} // TODO: correct this
   />
 );
 
@@ -497,6 +498,7 @@ class InfiniteTable extends React.Component {
           <InfiniteContentRow
             content={progressiveLoadingIndicator}
             key={`infinite-spinner-row-${this.loadingIndex}`}
+            colSpan={3} // TODO: correct this
           />
         );
       } else {

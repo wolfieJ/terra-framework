@@ -10,7 +10,7 @@ const propTypes = {
   /**
    * Content to be displayed in the subheader row
    */
-  content: PropTypes.node.isRequired,
+  content: PropTypes.node,
   /**
    * Number of columns the subheader must span
    */
@@ -34,8 +34,8 @@ const InfiniteContentRow = ({
 
   // count is based on the number of columns and assigned in the table component which contains this subheader
   return (
-    <tr data-terra-table-subheader-row ref={refCallback}>
-      <td {...customProps} className={cx('content-row', customProps.className)} colSpan={colSpan}>
+    <tr data-infinite-table-content-row ref={refCallback}>
+      <td {...customProps} className={cx(['content-row', customProps.className])} colSpan={colSpan}>
         {content}
       </td>
     </tr>
