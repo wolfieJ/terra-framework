@@ -7,6 +7,7 @@ import Table from 'terra-table';
 import ContentContainer from 'terra-content-container';
 import SelectableUtils from 'terra-table/lib/SelectableUtils';
 import InfiniteUtils from './_InfiniteUtils';
+import InfiniteContentRow from './_InfiniteContentRow';
 import styles from './InfiniteTable.module.scss';
 
 const cx = classNames.bind(styles);
@@ -79,8 +80,7 @@ const defaultProps = {
  * @param {number} index - Index to use as part of the spacers key.
  */
 const createSpacer = (height, index) => (
-  <Table.Row
-    isSelectable={false}
+  <InfiniteContentRow
     className={cx(['spacer'])}
     style={{ height }}
     key={`infinite-spacer-${index}`}
@@ -489,31 +489,32 @@ class InfiniteTable extends React.Component {
     const bottomSpacer = createSpacer(`${this.boundary.hiddenBottomHeight > 0 ? this.boundary.hiddenBottomHeight : 0}px`, 1);
 
     let loadingSpinner;
-    let visibleChildren;
-
+    let fullLoadingSpinner;
+    
     if (!isFinishedLoading) {
       if (this.childCount > 0) {
         loadingSpinner = (
-          <Table.Row
+          <InfiniteContentRow
             content={progressiveLoadingIndicator}
-            isSelectable={false}
             key={`infinite-spinner-row-${this.loadingIndex}`}
           />
         );
       } else {
-        visibleChildren = [
-          <Table.Row
-            content={initialLoadingIndicator}
-            isSelectable={false}
+        fullLoadingSpinner = [
+          <div
             key="infinite-spinner-full"
-            style={{ height: '100%', position: 'relative' }}
-          />
+            style={{ height: '100%', position: 'relative', width: '100%' }}
+          >
+            {initialLoadingIndicator}
+          </div>
         ];
       }
     }
 
     let newChildren;
-    if (!visibleChildren) {
+    let visibleChildren;
+
+    if (!fullLoadingSpinner) {
       let upperChildIndex = this.lastChildIndex;
       if ((!this.scrollGroups.length && this.lastChildIndex <= 0) || !this.renderNewChildren) {
         upperChildIndex = this.childCount;
@@ -557,6 +558,7 @@ class InfiniteTable extends React.Component {
         fill
         scrollRefCallback={this.setContentNode}
       >
+        {fullLoadingSpinner}
         <Table {...customProps} className={cx(['infinite-table', customProps.className])}>
           {hiddenHeader}
           <Table.Rows>

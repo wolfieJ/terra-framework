@@ -13,9 +13,9 @@ import InfiniteTableExample from '../example/InfiniteTableExample';
 
 const DocPage = () => (
   <DocTemplate
-    packageName={name}
-    readme={ReadMe}
-    srcPath={`https://github.com/cerner/terra-framework/tree/master/packages/${name}`}
+    // packageName={name}
+    // readme={ReadMe}
+    // srcPath={`https://github.com/cerner/terra-framework/tree/master/packages/${name}`}
     examples={[
       {
         title: 'Example Infinite List',

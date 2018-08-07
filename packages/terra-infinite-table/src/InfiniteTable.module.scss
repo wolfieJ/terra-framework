@@ -16,36 +16,24 @@
     width: 100%;
   }
 
-  .full-loading {
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-  }
-
   .loading {
     display: block;
     position: relative;
     width: 100%;
   }
 
-  .spacer {
-    display: block;
-    position: relative;
-    width: 100%;
+  div.hidden-header,
+  thead.hidden-header,
+  tr.hidden-header,
+  th.hidden-header {
+    height: 0;
+    line-height: 0;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    overflow-y: hidden;
+    min-height: 0;
   }
 }
 
 
-div.hidden-header,
-thead.hidden-header,
-tr.hidden-header,
-th.hidden-header {
-  height: 0;
-  line-height: 0;
-  margin: 0;
-  border: 0;
-  padding: 0;
-  overflow-y: hidden;
-  min-height: 0;
-}
