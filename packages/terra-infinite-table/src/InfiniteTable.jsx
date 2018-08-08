@@ -122,6 +122,7 @@ class InfiniteTable extends React.Component {
     this.enableListeners = this.enableListeners.bind(this);
     this.disableListeners = this.disableListeners.bind(this);
     this.setContentNode = this.setContentNode.bind(this);
+    this.setVisibleNode = this.setVisibleNode.bind(this);
     this.updateItemCache = this.updateItemCache.bind(this);
     this.initializeItemCache = this.initializeItemCache.bind(this);
     this.updateScrollGroups = this.updateScrollGroups.bind(this);
@@ -176,6 +177,14 @@ class InfiniteTable extends React.Component {
     if (this.contentNode && wasUndefined) {
       this.updateScrollGroups();
     }
+  }
+
+  /**
+   * Sets the html node of visible node, used to query visible component in tableRows.
+   * @param {node} node - Html node of the Table.
+   */
+  setVisibleNode(node) {
+    this.visibleNode = node;
   }
 
   /**
@@ -391,6 +400,7 @@ class InfiniteTable extends React.Component {
         this.itemsByIndex[index].offsetTop = node.offsetTop;
       }
       if (this.itemsByIndex.length === this.childCount) {
+        //TODO: maybe for efficient to allow for new items to just call last index adjust trailing items.
         if (!this.scrollGroups.length) {
           this.updateScrollGroups();
         } else if (updatedHeight) {
@@ -404,9 +414,9 @@ class InfiniteTable extends React.Component {
    * Detects which scroll items are on the dom and reads the heights to see if resize has changed the boundClientRect.
    */
   adjustHeight() {
-    if (this.contentNode) {
+    if (this.visibleNode) {
       this.itemsByIndex.forEach((item, itemIndex) => {
-        const scrollItemNode = this.contentNode.querySelector(`[data-infinite-table-index="${itemIndex}"]`);
+        const scrollItemNode = this.visibleNode.querySelector(`[data-infinite-table-index="${itemIndex}"]`);
         if (scrollItemNode) {
           const newHeight = scrollItemNode.getBoundingClientRect().height;
           if (!this.itemsByIndex[itemIndex].height || Math.abs(newHeight - this.itemsByIndex[itemIndex].height) > 1) {
@@ -563,7 +573,7 @@ class InfiniteTable extends React.Component {
         {fullLoadingSpinner}
         <Table {...customProps} className={cx(['infinite-table', customProps.className])}>
           {hiddenHeader}
-          <Table.Rows>
+          <Table.Rows refCallback={this.setVisibleNode}>
             {rowContent}
           </Table.Rows>
         </Table>
