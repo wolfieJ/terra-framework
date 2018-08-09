@@ -24,7 +24,6 @@ const propTypes = {
 const InfiniteContentRow = ({
   content,
   colSpan,
-  fill,
   refCallback,
   ...customProps
 }) => {

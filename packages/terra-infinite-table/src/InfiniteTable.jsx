@@ -88,7 +88,7 @@ const createSpacer = (height, index) => (
   />
 );
 
-const headerCellsFromContent = (cellContent) => {
+const headerCellsFromContent = (cellContent, visibleWidths) => {
   const visible = [];
   const hidden = [];
   cellContent.forEach((content, index) => {
@@ -97,15 +97,16 @@ const headerCellsFromContent = (cellContent) => {
       <Table.HeaderCell
         key={cellKey}
         className={cx(['visible-header-cell'])}
-        data-infinte-table-header-cell="index"
+        data-infinte-table-header-cell={index}
         content={content}
+        style={{ width: visibleWidths[index] }}
       />,
     );
     hidden.push(
       <Table.HeaderCell
         key={cellKey}
         className={cx(['hidden-header'])}
-        data-infinte-table-header-cell="index"
+        data-infinte-table-header-cell={index}
         aria-hidden="true"
         content={content}
       />,
@@ -130,7 +131,11 @@ class InfiniteTable extends React.Component {
     this.handleResize = this.resizeDebounce(this.handleResize.bind(this));
     this.resetTimeout = this.resetTimeout.bind(this);
     this.wrapChild = this.wrapChild.bind(this);
+    this.syncHeaders = this.syncHeaders.bind(this);
+    this.setVisibleHeaderNode = this.setVisibleHeaderNode.bind(this);
+    this.setHiddenHeaderNode = this.setHiddenHeaderNode.bind(this);
 
+    this.visibleWidths = [];
     this.initializeItemCache(props);
   }
 
@@ -188,6 +193,38 @@ class InfiniteTable extends React.Component {
   }
 
   /**
+   * Sets the html node of visible node, used to query visible component in tableRows.
+   * @param {node} node - Html node of the Table.
+   */
+  setVisibleHeaderNode(node) {
+    this.visibleHeaderNode = node;
+  }
+
+  /**
+   * Sets the html node of visible node, used to query visible component in tableRows.
+   * @param {node} node - Html node of the Table.
+   */
+  setHiddenHeaderNode(node) {
+    this.hiddenHeaderNode = node;
+  }
+
+  syncHeaders() {
+    this.visibleWidths = [];
+
+    const hiddenChildren = this.hiddenHeaderNode.querySelectorAll('[data-infinte-table-header-cell]');
+    const visibleChildren = this.visibleHeaderNode.querySelectorAll('[data-infinte-table-header-cell]');
+    const childLength = hiddenChildren.length;
+    for (let i = 0; i < childLength; i += 1) {
+      const hiddenChild = hiddenChildren[i];
+      const width = hiddenChild.getBoundingClientRect().width;
+      this.visibleWidths.push(width);
+
+      const visibleChild = visibleChildren[i];
+      visibleChild.style.width = width;
+    }
+  }
+
+  /**
    * If a request for items has not been made and/or updates are not pending trigger onRequestItems.
    */
   triggerItemRequest() {
@@ -201,6 +238,8 @@ class InfiniteTable extends React.Component {
    * Following a render reset newChildren values. If new items were render trigger an update calculation.
    */
   handleRenderCompletion() {
+    this.syncHeaders();
+
     this.renderNewChildren = false;
     this.preventUpdate = false;
     this.lastChildIndex = this.childCount;
@@ -400,7 +439,7 @@ class InfiniteTable extends React.Component {
         this.itemsByIndex[index].offsetTop = node.offsetTop;
       }
       if (this.itemsByIndex.length === this.childCount) {
-        //TODO: maybe for efficient to allow for new items to just call last index adjust trailing items.
+        // TODO: maybe for efficient to allow for new items to just call last index adjust trailing items.
         if (!this.scrollGroups.length) {
           this.updateScrollGroups();
         } else if (updatedHeight) {
@@ -501,7 +540,7 @@ class InfiniteTable extends React.Component {
 
     let loadingSpinner;
     let fullLoadingSpinner;
-    
+
     if (!isFinishedLoading) {
       if (this.childCount > 0) {
         loadingSpinner = (
@@ -518,7 +557,7 @@ class InfiniteTable extends React.Component {
             style={{ height: '100%', position: 'relative', width: '100%' }}
           >
             {initialLoadingIndicator}
-          </div>
+          </div>,
         ];
       }
     }
@@ -543,23 +582,23 @@ class InfiniteTable extends React.Component {
       visibleChildren = InfiniteUtils.getVisibleChildren(this.scrollGroups, this.childrenArray, this.boundary.topBoundryIndex, this.boundary.bottomBoundryIndex, this.wrapChild, upperChildIndex);
     }
 
-    const headerCells = headerCellsFromContent(headerCellContent);
+    const headerCells = headerCellsFromContent(headerCellContent, this.visibleWidths);
 
     const visibleHeader = (
       <Table>
-        <Table.Header>
+        <Table.Header refCallback={this.setVisibleHeaderNode}>
           {headerCells.visible}
         </Table.Header>
       </Table>
     );
 
     const hiddenHeader = (
-      <Table.Header className={cx(['hidden-header'])} aria-hidden="true">
+      <Table.Header className={cx(['hidden-header'])} aria-hidden="true" refCallback={this.setHiddenHeaderNode}>
         {headerCells.hidden}
       </Table.Header>
     );
 
-    let rowContent = [ topSpacer ];
+    let rowContent = [topSpacer];
     if (visibleChildren) { rowContent = rowContent.concat(visibleChildren); }
     rowContent.push(bottomSpacer);
     if (loadingSpinner) { rowContent.push(loadingSpinner); }
