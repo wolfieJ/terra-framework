@@ -5,9 +5,12 @@ import NavigationLayout from 'terra-navigation-layout';
 import { routeConfigPropType } from 'terra-navigation-layout/lib/configurationPropTypes';
 import { matchPath } from 'react-router-dom';
 import { withModalManager } from 'terra-modal-manager';
-
+import NavigationSideMenu from 'terra-navigation-side-menu';
+import LayoutSlidePanel from './_LayoutSlidePanel';
 import RoutingMenu from './menu/RoutingMenu';
+
 import ApplicationMenuWrapper from './menu/_ApplicationMenuWrapper';
+import ApplicationMenu from './menu/_ApplicationMenu';
 import ApplicationHeader from './header/_ApplicationHeader';
 import ApplicationLayoutPropTypes from './utils/propTypes';
 import Helpers from './utils/helpers';
@@ -71,16 +74,18 @@ class ApplicationLayout extends React.Component {
   static buildMenuNavigationItems(props) {
     const { navigationItems, routingConfig } = props;
 
-    if (!routingConfig.menu) {
-      return navigationItems;
-    }
+    // if (!routingConfig.menu) {
+    //   return navigationItems;
+    // }
 
     const menuPaths = Object.keys(routingConfig.menu).map(key => (routingConfig.menu[key].path));
     return navigationItems.map(navigationItem => ({
-      externalLink: navigationItem.externalLink,
-      path: navigationItem.path,
+      key: navigationItem.path,
       text: navigationItem.text,
-      hasSubMenu: menuPaths.filter(menuPath => matchPath(navigationItem.path, { path: menuPath })).length > 0,
+      isRootMenu: true,
+      metaData: {
+        path: navigationItem.path,
+      },
     }));
   }
 
@@ -173,17 +178,18 @@ class ApplicationLayout extends React.Component {
   static buildRoutingConfig(props) {
     const { routingConfig } = props;
 
-    const updatedConfig = Object.assign({}, routingConfig, {
-      menu: ApplicationLayout.buildApplicationMenus(props, Object.assign({}, routingConfig.menu, ApplicationLayout.buildNavigationMenuConfig(props))),
-    });
+    // const updatedConfig = Object.assign({}, routingConfig, {
+    //   menu: ApplicationLayout.buildApplicationMenus(props, Object.assign({}, routingConfig.menu, ApplicationLayout.buildNavigationMenuConfig(props))),
+    // });
 
-    return updatedConfig;
+    return routingConfig;
   }
 
   constructor(props) {
     super(props);
 
     this.state = {
+      menuIsOpen: false,
       applicationLayoutRoutingConfig: ApplicationLayout.buildRoutingConfig(this.props),
     };
   }
@@ -204,30 +210,67 @@ class ApplicationLayout extends React.Component {
     const {
       app, nameConfig, utilityConfig, navigationAlignment, navigationItems, indexPath, extensions,
     } = this.props;
-    const { applicationLayoutRoutingConfig } = this.state;
+    const { applicationLayoutRoutingConfig, menuIsOpen } = this.state;
 
-    return (
-      <NavigationLayout
-        app={app}
-        config={applicationLayoutRoutingConfig}
-        header={(
-          <ApplicationHeader
-            nameConfig={nameConfig}
-            utilityConfig={utilityConfig}
-            extensions={extensions}
-            applicationLinks={{
-              alignment: navigationAlignment,
-              links: navigationItems ? navigationItems.map((route, index) => ({
-                id: `application-layout-tab-${index}`,
-                path: route.path,
-                text: route.text,
-                externalLink: route.externalLink,
-              })) : undefined,
-            }}
+    const menuComponent = (
+      <ApplicationMenu
+        extensions={extensions}
+        nameConfig={nameConfig}
+        utilityConfig={utilityConfig}
+        layoutConfig={{
+          size: 'tiny',
+          toggleMenu: () => {
+            this.setState({ menuIsOpen: !this.state.menuIsOpen })
+          },
+          menuIsOpen,
+        }}
+        routingStackDelegate={{}}
+        content={(
+          <NavigationSideMenu
+            menuItems={ApplicationLayout.buildMenuNavigationItems(this.props)}
+            selectedMenuKey="/components"
+            onChange={() => {}}
           />
         )}
-        indexPath={indexPath}
       />
+    );
+
+    return (
+      <LayoutSlidePanel
+        panelContent={menuComponent}
+        panelBehavior="overlay"
+        size="tiny"
+        toggleMenu={() => {
+          this.setState({ menuIsOpen: !this.state.menuIsOpen })
+        }}
+        isOpen={menuIsOpen}
+        isAnimated
+      >
+        <NavigationLayout
+          app={app}
+          config={applicationLayoutRoutingConfig}
+          header={(
+            <ApplicationHeader
+              toggleMenu={() => {
+                this.setState({ menuIsOpen: !this.state.menuIsOpen })
+              }}
+              nameConfig={nameConfig}
+              utilityConfig={utilityConfig}
+              extensions={extensions}
+              applicationLinks={{
+                alignment: navigationAlignment,
+                links: navigationItems ? navigationItems.map((route, index) => ({
+                  id: `application-layout-tab-${index}`,
+                  path: route.path,
+                  text: route.text,
+                  externalLink: route.externalLink,
+                })) : undefined,
+              }}
+            />
+          )}
+          indexPath={indexPath}
+        />
+      </LayoutSlidePanel>
     );
   }
 }

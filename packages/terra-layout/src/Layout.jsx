@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ContentContainer from 'terra-content-container';
 import LodashDebounce from 'lodash.debounce';
+import SlidePanel from 'terra-slide-panel';
 
 import LayoutSlidePanel from './_LayoutSlidePanel';
 import {
@@ -146,23 +147,19 @@ class Layout extends React.Component {
     } = this.state;
     const shouldAllowMenuToggle = isToggleMenu && menuIsPresent;
 
-    return (
-      <ContentContainer
-        fill
-        header={isToggleMenu && this.renderHeader()}
-        style={{ outline: 'none' }}
-      >
-        {children
-          ? React.cloneElement(children, {
-            layoutConfig: {
-              size,
-              toggleMenu: shouldAllowMenuToggle ? this.toggleMenu : undefined,
-              menuIsOpen,
-            },
-          }) : null
-        }
-      </ContentContainer>
-    );
+    if (children) {
+      return (
+        React.cloneElement(children, {
+          layoutConfig: {
+            size,
+            toggleMenu: shouldAllowMenuToggle ? this.toggleMenu : undefined,
+            menuIsOpen,
+          },
+        })
+      )
+    }
+
+    return null;
   }
 
   render() {
@@ -174,10 +171,10 @@ class Layout extends React.Component {
     return (
       <ContentContainer
         fill
-        header={!isToggleMenu && this.renderHeader()}
+        header={this.renderHeader()}
         {...getCustomProps(this.props, propTypes)}
       >
-        <LayoutSlidePanel
+        {/* <LayoutSlidePanel
           panelContent={this.renderMenu()}
           panelBehavior={menuIsPinned || isFixedMenu ? 'squish' : 'overlay'}
           size={size}
@@ -185,9 +182,17 @@ class Layout extends React.Component {
           toggleText={menuText}
           isOpen={menuIsOpen}
           isAnimated
-        >
-          {this.renderContent()}
-        </LayoutSlidePanel>
+        > */}
+          <SlidePanel
+            mainContent={this.renderContent()}
+            panelContent={this.renderMenu()}
+            panelBehavior={menuIsPinned || isFixedMenu ? 'squish' : 'overlay'}
+            panelPosition="start"
+            panelSize="small"
+            isOpen={menuIsOpen}
+            fill
+          />
+        {/* </LayoutSlidePanel> */}
       </ContentContainer>
     );
   }
