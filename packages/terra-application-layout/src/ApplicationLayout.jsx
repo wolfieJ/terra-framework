@@ -3,20 +3,22 @@ import PropTypes from 'prop-types';
 import AppDelegate from 'terra-app-delegate';
 import NavigationLayout from 'terra-navigation-layout';
 import { routeConfigPropType } from 'terra-navigation-layout/lib/configurationPropTypes';
-import { matchPath } from 'react-router-dom';
+import { withRouter, matchPath } from 'react-router-dom';
 import { withModalManager } from 'terra-modal-manager';
 import NavigationSideMenu from 'terra-navigation-side-menu';
+import {
+  getBreakpointSize,
+} from 'terra-layout/lib/LayoutUtils';
+
+import { ManagedRoutingProvider } from './ManagedRouting';
 import LayoutSlidePanel from './_LayoutSlidePanel';
 import RoutingMenu from './menu/RoutingMenu';
 
-import ApplicationMenuWrapper from './menu/_ApplicationMenuWrapper';
 import ApplicationMenu from './menu/_ApplicationMenu';
 import ApplicationHeader from './header/_ApplicationHeader';
 import ApplicationLayoutPropTypes from './utils/propTypes';
 import Helpers from './utils/helpers';
 import UtilityHelpers from './utils/utilityHelpers';
-
-const navigationLayoutSizes = ['default', 'tiny', 'small', 'medium', 'large', 'huge'];
 
 const propTypes = {
   /**
@@ -61,10 +63,17 @@ const propTypes = {
    * The configuration values for the ApplicationUtility component.
    */
   utilityConfig: ApplicationLayoutPropTypes.utilityConfigPropType,
+  location: PropTypes.shape({
+    pathname: PropTypes.string,
+  }).isRequired,
+  history: PropTypes.shape({}),
+  routeNotFoundComponent: PropTypes.node,
+  router: PropTypes.element,
 };
 
 const defaultProps = {
   navigationItems: [],
+  nameConfig: {},
 };
 
 class ApplicationLayout extends React.Component {
@@ -72,204 +81,185 @@ class ApplicationLayout extends React.Component {
    * Builds and returns the menu items for the PrimaryNavigationSideMenu from the navigationItems.
    */
   static buildMenuNavigationItems(props) {
-    const { navigationItems, routingConfig } = props;
+    const { navigationItems } = props;
 
-    // if (!routingConfig.menu) {
-    //   return navigationItems;
-    // }
-
-    const menuPaths = Object.keys(routingConfig.menu).map(key => (routingConfig.menu[key].path));
     return navigationItems.map(navigationItem => ({
       key: navigationItem.path,
       text: navigationItem.text,
-      isRootMenu: true,
       metaData: {
         path: navigationItem.path,
+        externalLink: navigationItem.externalLink,
+        navigationItem,
       },
     }));
   }
 
-  /**
-   * Builds and returns the routing configuration object for the RoutingMenu that renders the top navigation items at
-   * compact breakpoints.
-   */
-  static buildNavigationMenuConfig(props) {
-    const menuNavigationItems = ApplicationLayout.buildMenuNavigationItems(props);
-
-    const componentConfig = {
-      componentClass: RoutingMenu,
-      props: {
-        menuItems: menuNavigationItems,
-      },
-      refuseRoutingStackNavigation: menuNavigationItems.length === 0,
-    };
-
-    /**
-     * The configuration for the primary navigation menu is specified for the
-     * tiny and small breakpoints only. The menu will only be visible when the ApplicationLayout
-     * is compact.
-     */
-    return {
-      '/': {
-        path: '/',
-        component: {
-          tiny: componentConfig,
-          small: componentConfig,
-        },
-      },
-    };
-  }
-
-  /**
-   * Builds and returns the routing configuration object for all menus with ApplicationMenuWrappers
-   * wrapped around each component entry.
-   */
-  static buildApplicationMenus(props, originalMenuConfig) {
-    const { nameConfig, utilityConfig, extensions } = props;
-
-    if (!originalMenuConfig) {
-      return undefined;
+  static getActiveNavigationItem(location, navigationItems) {
+    for (let i = 0, numberOfNavigationItems = navigationItems.length; i < numberOfNavigationItems; i += 1) {
+      if (matchPath(location.pathname, navigationItems[i].path)) {
+        return navigationItems[i];
+      }
     }
 
-    const config = {};
-    Object.keys(originalMenuConfig).forEach((menuKey) => {
-      const menuConfig = Object.assign({}, originalMenuConfig[menuKey]);
-
-      const menuComponentConfig = Object.assign({}, menuConfig.component);
-
-      /**
-       * Every supplied menu component is wrapped with an ApplicationMenuWrapper.
-       */
-      navigationLayoutSizes.forEach((size) => {
-        if (!menuComponentConfig[size]) {
-          return;
-        }
-
-        const componentConfig = Object.assign({}, menuComponentConfig[size]);
-        const componentProps = Object.assign({}, componentConfig.props);
-
-        /**
-         * ApplicationMenuWrapper-specific props are injected into the props object with a prop
-         * called `applicationMenuWrapperProps`.
-         */
-        componentProps.applicationMenuWrapperProps = {
-          contentComponentClass: componentConfig.componentClass,
-          nameConfig,
-          utilityConfig,
-          extensions,
-        };
-        componentConfig.props = componentProps;
-        componentConfig.componentClass = ApplicationMenuWrapper;
-
-        menuComponentConfig[size] = componentConfig;
-      });
-
-      menuConfig.component = menuComponentConfig;
-      config[menuKey] = menuConfig;
-    });
-
-    return config;
+    return undefined;
   }
 
-  /**
-   * Builds and returns the routing configuration object for the ApplicationLayout by injecting the RoutingMenu for top navigation
-   * and ApplicationMenuWrapper's as necessary.
-   */
-  static buildRoutingConfig(props) {
-    const { routingConfig } = props;
+  static hasMatchingRoute(location, routingConfig) {
+    const menuRoutePaths = routingConfig.menu && Object.keys(routingConfig.menu).map(menuKey => routingConfig.menu[menuKey].path);
+    const contentRoutePaths = routingConfig.content && Object.keys(routingConfig.content).map(contentKey => routingConfig.content[contentKey].path);
+    const searchPaths = [].concat(menuRoutePaths, contentRoutePaths);
 
-    // const updatedConfig = Object.assign({}, routingConfig, {
-    //   menu: ApplicationLayout.buildApplicationMenus(props, Object.assign({}, routingConfig.menu, ApplicationLayout.buildNavigationMenuConfig(props))),
-    // });
+    for (let i = 0, numberOfPaths = searchPaths.length; i < numberOfPaths; i += 1) {
+      if (matchPath(location.pathname, searchPaths[i])) {
+        return true;
+      }
+    }
 
-    return routingConfig;
+    return false;
   }
 
   constructor(props) {
     super(props);
 
+    this.updateSize = this.updateSize.bind(this);
+
     this.state = {
+      size: getBreakpointSize(),
       menuIsOpen: false,
-      applicationLayoutRoutingConfig: ApplicationLayout.buildRoutingConfig(this.props),
+      activeNavigationItem: ApplicationLayout.getActiveNavigationItem(props.location, props.navigationItems),
     };
   }
 
+  componentDidMount() {
+    window.addEventListener('resize', this.updateSize);
+  }
+
   componentWillReceiveProps(nextProps) {
-    if (this.props.nameConfig !== nextProps.nameConfig
-        || this.props.utilityConfig !== nextProps.utilityConfig
-        || this.props.routingConfig !== nextProps.routingConfig
-        || this.props.navigationItems !== nextProps.navigationItems
-        || this.props.indexPath !== nextProps.indexPath) {
-      this.setState({
-        applicationLayoutRoutingConfig: ApplicationLayout.buildRoutingConfig(nextProps),
-      });
-    }
+    this.setState({
+      activeNavigationItem: ApplicationLayout.getActiveNavigationItem(nextProps.location, nextProps.navigationItems),
+    });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateSize);
+  }
+
+  updateSize() {
+    this.setState({
+      size: getBreakpointSize(),
+    });
   }
 
   render() {
     const {
-      app, nameConfig, utilityConfig, navigationAlignment, navigationItems, indexPath, extensions,
+      app, nameConfig, utilityConfig, navigationAlignment, navigationItems, indexPath, extensions, routingConfig, location, history, routeNotFoundComponent, router,
     } = this.props;
-    const { applicationLayoutRoutingConfig, menuIsOpen } = this.state;
+    const { menuIsOpen, activeNavigationItem, size } = this.state;
+
+    if (!ApplicationLayout.hasMatchingRoute(location, routingConfig)) {
+      return routeNotFoundComponent;
+    }
+
+    const menuNavigationItems = ApplicationLayout.buildMenuNavigationItems(this.props);
 
     const menuComponent = (
       <ApplicationMenu
+        app={app}
         extensions={extensions}
         nameConfig={nameConfig}
         utilityConfig={utilityConfig}
-        layoutConfig={{
-          size: 'tiny',
-          toggleMenu: () => {
-            this.setState({ menuIsOpen: !this.state.menuIsOpen })
-          },
-          menuIsOpen,
-        }}
-        routingStackDelegate={{}}
+        size={size}
         content={(
           <NavigationSideMenu
-            menuItems={ApplicationLayout.buildMenuNavigationItems(this.props)}
-            selectedMenuKey="/components"
-            onChange={() => {}}
+            menuItems={[{
+              childKeys: menuNavigationItems.map(item => item.key),
+              key: 'root',
+              text: 'Root Menu',
+              isRootMenu: true,
+            }].concat(menuNavigationItems)}
+            selectedMenuKey="root"
+            selectedChildKey={activeNavigationItem && activeNavigationItem.path}
+            onChange={(event, data) => {
+              if (data.metaData.externalLink) {
+                window.open(data.metaData.externalLink.path, data.metaData.externalLink.target || '_blank');
+              } else if (activeNavigationItem === data.metaData.navigationItem) {
+                this.setState({
+                  menuIsOpen: false,
+                });
+              } else {
+                this.setState({
+                  activeNavigationItem: data.metaData.navigationItem,
+                  menuIsOpen: false,
+                }, () => {
+                  history.push(data.metaData.path);
+                });
+              }
+            }}
           />
         )}
       />
     );
 
+    const isCompactLayout = size === 'tiny' || size === 'small';
+
+    const navigationLayout = (
+      <NavigationLayout
+        app={app}
+        config={routingConfig}
+        header={(
+          <ApplicationHeader
+            toggleMenu={isCompactLayout ? () => {
+              this.setState({ menuIsOpen: !this.state.menuIsOpen });
+            } : null}
+            nameConfig={{
+              accessory: nameConfig.accessory,
+              title: isCompactLayout && activeNavigationItem ? `${nameConfig.title} | ${activeNavigationItem.text}` : nameConfig.title,
+            }}
+            utilityConfig={utilityConfig}
+            extensions={extensions}
+            applicationLinks={{
+              alignment: navigationAlignment,
+              links: navigationItems ? navigationItems.map((route, index) => ({
+                id: `application-layout-tab-${index}`,
+                path: route.path,
+                text: route.text,
+                externalLink: route.externalLink,
+              })) : undefined,
+            }}
+          />
+        )}
+        indexPath={indexPath}
+      />
+    );
+
+    let routerComponent;
+    if (router) {
+      routerComponent = React.cloneElement(router, {
+        getUserConfirmation: (message, callback) => {
+          console.log('Application layout router');
+          callback(window.confirm(message));
+        },
+        children: navigationLayout,
+      });
+    } else {
+      routerComponent = navigationLayout;
+    }
+
     return (
       <LayoutSlidePanel
         panelContent={menuComponent}
         panelBehavior="overlay"
-        size="tiny"
-        toggleMenu={() => {
-          this.setState({ menuIsOpen: !this.state.menuIsOpen })
+        size={size}
+        isToggleEnabled={isCompactLayout}
+        onToggle={() => {
+          this.setState({
+            menuIsOpen: !this.state.menuIsOpen,
+          });
         }}
         isOpen={menuIsOpen}
         isAnimated
       >
-        <NavigationLayout
-          app={app}
-          config={applicationLayoutRoutingConfig}
-          header={(
-            <ApplicationHeader
-              toggleMenu={() => {
-                this.setState({ menuIsOpen: !this.state.menuIsOpen })
-              }}
-              nameConfig={nameConfig}
-              utilityConfig={utilityConfig}
-              extensions={extensions}
-              applicationLinks={{
-                alignment: navigationAlignment,
-                links: navigationItems ? navigationItems.map((route, index) => ({
-                  id: `application-layout-tab-${index}`,
-                  path: route.path,
-                  text: route.text,
-                  externalLink: route.externalLink,
-                })) : undefined,
-              }}
-            />
-          )}
-          indexPath={indexPath}
-        />
+        {routerComponent}
       </LayoutSlidePanel>
     );
   }
@@ -282,7 +272,34 @@ ApplicationLayout.defaultProps = defaultProps;
  * The ApplicationLayout is wrapped with a ModalManager on export to provide modal functionality
  * for utility presentation and content convenience.
  */
-export default withModalManager(ApplicationLayout);
+const ExtendedApplicationLayout = withRouter(withModalManager(ApplicationLayout));
+
+class ApplicationLayoutWrapper extends React.Component {
+  componentDidMount() {
+    console.log('mounted');
+  }
+
+  render() {
+    const { router, ...applicationLayoutProps } = this.props;
+
+    if (router) {
+      return React.cloneElement(router, {
+        getUserConfirmation: (message, callback) => {
+          console.log('Custom confirmation message');
+          callback(window.confirm(message));
+        },
+        children: (
+          <ManagedRoutingProvider>
+            <ExtendedApplicationLayout {...applicationLayoutProps} />
+          </ManagedRoutingProvider>
+        ),
+      });
+    }
+    return <ExtendedApplicationLayout {...applicationLayoutProps} />;
+  }
+}
+
+export default withModalManager(ApplicationLayoutWrapper);
 
 const Utils = {
   helpers: Helpers,

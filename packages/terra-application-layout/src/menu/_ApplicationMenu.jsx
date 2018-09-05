@@ -4,7 +4,6 @@ import classNames from 'classnames/bind';
 import AppDelegate from 'terra-app-delegate';
 import ApplicationMenuLayout from 'terra-application-menu-layout';
 import { ApplicationMenuName } from 'terra-application-name';
-import RoutingStackDelegate from 'terra-navigation-layout/lib/RoutingStackDelegate';
 import { ApplicationMenuUtility } from 'terra-application-utility';
 import { disclosureType as modalDisclosureType } from 'terra-modal-manager';
 
@@ -33,21 +32,14 @@ const propTypes = {
    */
   extensions: PropTypes.element,
   /**
-   * The Object of layout-related APIs provided to the components of the Layout.
-   */
-  layoutConfig: ApplicationLayoutPropTypes.layoutConfigPropType.isRequired,
-  /**
    * Configuration values for the ApplicationName component.
    */
   nameConfig: ApplicationLayoutPropTypes.nameConfigPropType,
   /**
-   * Delegate prop that is provided by the NavigationLayout.
-   */
-  routingStackDelegate: RoutingStackDelegate.propType.isRequired,
-  /**
    * Configuration to be provided to the ApplicationUtility component.
    */
   utilityConfig: ApplicationLayoutPropTypes.utilityConfigPropType,
+  size: PropTypes.string,
 };
 
 class ApplicationMenu extends React.Component {
@@ -97,10 +89,10 @@ class ApplicationMenu extends React.Component {
   }
 
   renderExtensions(isCompact) {
-    const { app, layoutConfig, extensions } = this.props;
+    const { app, extensions, size } = this.props;
 
     if (isCompact && extensions) {
-      return React.cloneElement(extensions, { app, layoutConfig });
+      return React.cloneElement(extensions, { app, layoutConfig: { size } });
     }
 
     return null;
@@ -131,10 +123,9 @@ class ApplicationMenu extends React.Component {
       app,
       content,
       extensions,
-      layoutConfig,
       nameConfig,
-      routingStackDelegate,
       utilityConfig,
+      size,
       ...customProps
     } = this.props;
 
@@ -143,11 +134,11 @@ class ApplicationMenu extends React.Component {
       customProps.className,
     ]);
 
-    const isCompact = Helpers.isSizeCompact(layoutConfig.size);
+    const isCompact = Helpers.isSizeCompact(size);
 
     let clonedContent;
     if (content) {
-      clonedContent = React.cloneElement(content, { app, layoutConfig, routingStackDelegate });
+      clonedContent = React.cloneElement(content, { app });
     }
 
     return (

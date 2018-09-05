@@ -156,7 +156,7 @@ class Layout extends React.Component {
             menuIsOpen,
           },
         })
-      )
+      );
     }
 
     return null;
@@ -168,31 +168,24 @@ class Layout extends React.Component {
       menuIsOpen, menuIsPinned, size, isFixedMenu, isToggleMenu,
     } = this.state;
 
+    const shouldBeFullscreen = size === 'tiny' || size === 'small';
+
     return (
       <ContentContainer
         fill
         header={this.renderHeader()}
         {...getCustomProps(this.props, propTypes)}
       >
-        {/* <LayoutSlidePanel
+        <SlidePanel
+          mainContent={this.renderContent()}
           panelContent={this.renderMenu()}
           panelBehavior={menuIsPinned || isFixedMenu ? 'squish' : 'overlay'}
-          size={size}
-          onToggle={this.toggleMenu}
-          toggleText={menuText}
+          panelPosition="start"
+          panelSize="small"
           isOpen={menuIsOpen}
-          isAnimated
-        > */}
-          <SlidePanel
-            mainContent={this.renderContent()}
-            panelContent={this.renderMenu()}
-            panelBehavior={menuIsPinned || isFixedMenu ? 'squish' : 'overlay'}
-            panelPosition="start"
-            panelSize="small"
-            isOpen={menuIsOpen}
-            fill
-          />
-        {/* </LayoutSlidePanel> */}
+          isFullscreen={shouldBeFullscreen}
+          fill
+        />
       </ContentContainer>
     );
   }

@@ -233,6 +233,7 @@ class ApplicationHeader extends React.Component {
       navigationLayoutRoutes,
       navigationLayoutSize,
       intl,
+      toggleMenu,
       ...customProps
     } = this.props;
 

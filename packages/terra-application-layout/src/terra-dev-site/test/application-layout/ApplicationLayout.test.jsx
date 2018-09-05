@@ -1,25 +1,72 @@
 /* eslint-disable import/no-extraneous-dependencies, import/no-webpack-loader-syntax, import/first, import/no-unresolved, import/extensions  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { MemoryRouter, withRouter } from 'react-router-dom';
+import {
+  MemoryRouter, Link, Prompt,
+} from 'react-router-dom';
 import { injectIntl, intlShape } from 'react-intl';
 import Image from 'terra-image';
 import Avatar from 'terra-avatar';
+import ActionHeader from 'terra-action-header';
 import ContentContainer from 'terra-content-container';
 import Button from 'terra-button';
 
 import ApplicationLayout, { RoutingMenu, Utils } from '../../../ApplicationLayout';
+import { withManagedRouting } from '../../../ManagedRouting';
+import ContentPlaceholder from '../../../ContentPlaceholder';
 
-const PageContent = ({ contentName }) => (
-  <div>
-    Page Content:
-    {' '}
-    {contentName}
-  </div>
-);
-PageContent.propTypes = {
-  contentName: PropTypes.string,
-};
+class BaseManagedRoutingPrompt extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    this.unblock = this.props.managedRouting.block(this.props.id, this.props.message);
+  }
+
+  componentWillUnmount() {
+    if (this.unblock) {
+      this.unblock();
+    }
+  }
+
+  render() {
+    return null;
+  }
+}
+
+const ManagedRoutingPrompt = withManagedRouting(BaseManagedRoutingPrompt);
+
+class PageContent extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { isBlockingFirst: false, isBlockingSecond: false };
+  }
+
+  render() {
+    const { layoutConfig, contentName } = this.props;
+    const { isBlockingFirst, isBlockingSecond } = this.state;
+
+    return (
+      <ContentContainer
+        header={(
+          <ActionHeader onBack={layoutConfig.toggleMenu} title={contentName} />
+    )}
+        fill
+      >
+        <div style={{ padding: '5px' }}>
+          {contentName}
+          <br />
+          <Button text={isBlockingFirst ? 'Unblock' : 'Block Routing'} onClick={() => { this.setState({ isBlockingFirst: !isBlockingFirst }); }} />
+          {this.state.isBlockingFirst && <ManagedRoutingPrompt id={`first-block-${contentName}`} message={`Blocking for ${contentName}`} />}
+          <Button text={isBlockingSecond ? 'Unblock' : 'Block Routing Again'} onClick={() => { this.setState({ isBlockingSecond: !isBlockingSecond }); }} />
+          {this.state.isBlockingSecond && <ManagedRoutingPrompt id={`second-content-${contentName}`} message={`Blocking for ${contentName} Again`} />}
+        </div>
+      </ContentContainer>
+    );
+  }
+}
 
 const TestExtensions = () => (
   <Button text="Extensions" />
@@ -31,38 +78,65 @@ const TestExtensions = () => (
  */
 const routingConfig = {
   menu: {
-    '/page_1': {
-      path: '/page_1',
+    '/food': {
+      path: '/food',
       component: {
         default: {
           componentClass: RoutingMenu,
           props: {
-            title: 'Page 1 Menu',
+            title: 'Food Menu',
             menuItems: [{
-              text: 'Item 1',
-              path: '/page_1/item_1',
-              hasSubMenu: true,
+              text: 'Hamburgers',
+              path: '/food/hamburgers',
             }, {
-              text: 'Item 2',
-              path: '/page_1/item_2',
+              text: 'Hot Dogs',
+              path: '/food/hot_dogs',
+            }, {
+              text: 'Pizza',
+              path: '/food/pizza',
+            }, {
+              text: 'Cheese',
+              path: '/food/cheese',
+              hasSubMenu: true,
             }],
           },
         },
       },
     },
-    '/page_1/item_1': {
-      path: '/page_1/item_1',
+    '/food/cheese': {
+      path: '/food/cheese',
       component: {
         default: {
           componentClass: RoutingMenu,
           props: {
-            title: 'Page 1 Item 1 Menu',
+            title: 'Cheese Menu',
             menuItems: [{
-              text: 'Thing 1',
-              path: '/page_1/item_1/thing_1',
+              text: 'Mozzarella',
+              path: '/food/cheese/mozzarella',
             }, {
-              text: 'Thing 2',
-              path: '/page_1/item_1/thing_2',
+              text: 'Cheddar',
+              path: '/food/cheese/cheddar',
+            }],
+          },
+        },
+      },
+    },
+    '/drink': {
+      path: '/drink',
+      component: {
+        default: {
+          componentClass: RoutingMenu,
+          props: {
+            title: 'Drinks Menu',
+            menuItems: [{
+              text: 'Soda',
+              path: '/drink/soda',
+            }, {
+              text: 'Beer',
+              path: '/drink/beer',
+            }, {
+              text: 'Wine',
+              path: '/drink/wine',
             }],
           },
         },
@@ -70,79 +144,126 @@ const routingConfig = {
     },
   },
   content: {
-    '/page_1': {
-      path: '/page_1',
+    '/food': {
+      path: '/food',
       component: {
         default: {
-          componentClass: PageContent,
+          componentClass: ContentPlaceholder,
           props: {
-            contentName: 'Page 1',
+            autoselectPath: '/food/hamburgers',
+            placeholderContent: <div>Wat</div>,
           },
         },
       },
     },
-    '/page_2': {
-      path: '/page_2',
+    '/food/cheese': {
+      path: '/food/cheese',
       component: {
         default: {
-          componentClass: PageContent,
+          componentClass: ContentPlaceholder,
           props: {
-            contentName: 'Page 2',
+            autoselectPath: '/food/cheese/mozzarella',
+            placeholderContent: <div>Wat</div>,
           },
         },
       },
     },
-    '/page_3': {
-      path: '/page_3',
+    '/drink': {
+      path: '/drink',
       component: {
         default: {
-          componentClass: PageContent,
+          componentClass: ContentPlaceholder,
           props: {
-            contentName: 'Page 3',
+            autoselectPath: '/drink/soda',
+            placeholderContent: <div>Wat</div>,
           },
         },
       },
     },
-    '/page_4': {
-      path: '/page_4',
+    '/food/hamburgers': {
+      path: '/food/hamburgers',
       component: {
         default: {
           componentClass: PageContent,
           props: {
-            contentName: 'Page 4',
+            contentName: 'Hamburgers',
           },
         },
       },
     },
-    '/page_5': {
-      path: '/page_5',
+    '/food/hot_dogs': {
+      path: '/food/hot_dogs',
       component: {
         default: {
           componentClass: PageContent,
           props: {
-            contentName: 'Page 5',
+            contentName: 'Hot Dogs',
           },
         },
       },
     },
-    '/page_6': {
-      path: '/page_6',
+    '/food/pizza': {
+      path: '/food/pizza',
       component: {
         default: {
           componentClass: PageContent,
           props: {
-            contentName: 'Page 6',
+            contentName: 'Pizza',
           },
         },
       },
     },
-    '/page_7': {
-      path: '/page_7',
+    '/food/cheese/mozzarella': {
+      path: '/food/cheese/mozzarella',
       component: {
         default: {
           componentClass: PageContent,
           props: {
-            contentName: 'Page 7',
+            contentName: 'Mozzarella',
+          },
+        },
+      },
+    },
+    '/food/cheese/cheddar': {
+      path: '/food/cheese/cheddar',
+      component: {
+        default: {
+          componentClass: PageContent,
+          props: {
+            contentName: 'Cheddar',
+          },
+        },
+      },
+    },
+    '/drink/soda': {
+      path: '/drink/soda',
+      component: {
+        default: {
+          componentClass: PageContent,
+          props: {
+            contentName: 'Soda',
+          },
+        },
+      },
+    },
+    '/drink/beer': {
+      path: '/drink/beer',
+      component: {
+        default: {
+          componentClass: PageContent,
+          props: {
+            contentName: 'Beer',
+          },
+        },
+      },
+    },
+    '/drink/wine': {
+      path: '/drink/wine',
+      component: {
+        default: {
+          componentClass: PageContent,
+          props: {
+            contentName: 'Wine',
           },
         },
       },
@@ -158,33 +279,18 @@ const routingConfig = {
  * With compact rendering, the items will be presented within the layout's menu region within a ApplicationLayout-managed menu.
  */
 const navigationItems = [{
-  path: '/page_1',
-  text: 'Page 1',
+  path: '/food',
+  text: 'Food',
 }, {
-  path: '/page_2',
-  text: 'Page 2',
-}, {
-  path: '/page_3',
-  text: 'Page 3',
-}, {
-  path: '/page_4',
-  text: 'Page 4',
-}, {
-  path: '/page_5',
-  text: 'Page 5',
-}, {
-  path: '/page_6',
-  text: 'Page 6',
-}, {
-  path: '/page_7',
-  text: 'Page 7',
+  path: '/drink',
+  text: 'Drink',
 }];
 
 /**
  * The indexPath will be given to the NavigationLayout to set up the appropriate redirects. If users attempt to navigate to a path unsupported
  * by the routingConfig, they will be redirected to this route. This path should therefore be present in the routingConfig.
  */
-const indexPath = '/page_1';
+const indexPath = '/food';
 
 const userAvatar = (
   <Avatar
@@ -217,6 +323,12 @@ class ApplicationLayoutTest extends React.Component {
     this.state = {
       checkboxItemEnabled: false,
     };
+  }
+
+  componentDidMount() {
+    // if (!matchPath(this.props.location.pathname, '/food') || !matchPath(this.props.location.pathname, '/drink')) {
+    //   this.props.history.push('/food');
+    // }
   }
 
   render() {
@@ -269,10 +381,7 @@ class ApplicationLayoutTest extends React.Component {
     });
 
     return (
-      <ContentContainer
-        fill
-        id="application-layout-test"
-      >
+      <div style={{ height: '100%' }}>
         <ApplicationLayout
           nameConfig={nameConfig}
           utilityConfig={utilityConfig}
@@ -280,8 +389,15 @@ class ApplicationLayoutTest extends React.Component {
           navigationItems={navigationItems}
           extensions={<TestExtensions />}
           indexPath={indexPath}
+          routeNotFoundComponent={(
+            <div style={{ height: '100%' }}>
+              <h1>404 Page Not Found</h1>
+              <Link to="/food">Go to Food</Link>
+            </div>
+          )}
+          router={<MemoryRouter initialEntries={['/food']} initialIndex={0} />}
         />
-      </ContentContainer>
+      </div>
     );
   }
 }
@@ -290,14 +406,10 @@ ApplicationLayoutTest.propTypes = {
   intl: intlShape,
 };
 
-const WrappedApplication = withRouter(injectIntl((ApplicationLayoutTest)));
+const WrappedApplication = injectIntl(ApplicationLayoutTest);
 
 const AppRouter = () => (
-  <div style={{ height: '100%' }}>
-    <MemoryRouter>
-      <WrappedApplication />
-    </MemoryRouter>
-  </div>
+  <WrappedApplication />
 );
 
 export default AppRouter;

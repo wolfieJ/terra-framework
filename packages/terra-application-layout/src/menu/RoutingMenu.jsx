@@ -5,6 +5,7 @@ import { withRouter, matchPath } from 'react-router-dom';
 import NavigationSideMenu from 'terra-navigation-side-menu';
 import RoutingStackDelegate from 'terra-navigation-layout/lib/RoutingStackDelegate';
 import ApplicationLayoutPropTypes from '../utils/propTypes';
+import { withManagedRouting } from '../ManagedRouting';
 
 const propTypes = {
   /**
@@ -34,6 +35,7 @@ const propTypes = {
   location: PropTypes.shape({
     pathname: PropTypes.string,
   }).isRequired,
+  managedRouting: PropTypes.shape({}),
 };
 
 const routingMenuRootMenuKey = 'routingMenuRootMenuKey';
@@ -100,15 +102,19 @@ class RoutingMenu extends React.Component {
   handleMenuChange(event, data) {
     const { routingStackDelegate, layoutConfig } = this.props;
 
-
     let routeFunc;
-    if (data.metaData.externalLink) {
+    if (matchPath(this.props.location.pathname, data.metaData.path) && !data.metaData.hasSubMenu) {
+      // We do not want to re-route to the current path. However, we have to route if the item indicates
+      // that it has a submenu.
+      routeFunc = () => {};
+    } else if (data.metaData.externalLink) {
       routeFunc = () => window.open(data.metaData.externalLink.path, data.metaData.externalLink.target || '_blank');
     } else {
-      this.setState({
-        selectedChildKey: data.selectedChildKey,
-      });
-      routeFunc = () => routingStackDelegate.show({ path: data.metaData.path });
+      routeFunc = () => {
+        routingStackDelegate.show({ path: data.metaData.path });
+        return Promise.resolve();
+        // this.props.managedRouting.push(data.metaData.path);
+      };
     }
 
     /**
@@ -117,15 +123,13 @@ class RoutingMenu extends React.Component {
      * to close the menu before navigating.
      */
     if (!data.metaData.hasSubMenu && layoutConfig.toggleMenu) {
-      return layoutConfig.toggleMenu().then(() => {
-        routeFunc();
-      });
+      return layoutConfig.toggleMenu().then(() => routeFunc()).catch((error) => { console.log(error); });
     }
 
     /**
      * Otherwise, the layout is left alone and navigation occurs immediately.
      */
-    return Promise.resolve().then(() => routeFunc());
+    return Promise.resolve().then(() => routeFunc().catch((error) => { console.log(error); }));
   }
 
   render() {
@@ -164,4 +168,4 @@ class RoutingMenu extends React.Component {
 
 RoutingMenu.propTypes = propTypes;
 
-export default withRouter(RoutingMenu);
+export default withRouter(withManagedRouting(RoutingMenu));

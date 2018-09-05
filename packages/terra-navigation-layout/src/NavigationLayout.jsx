@@ -176,7 +176,7 @@ class NavigationLayout extends React.Component {
 
     const headerComponent = header || <NavigationLayoutContent />;
 
-    const contentComponent = children || <NavigationLayoutContent redirectPath={indexPath} />;
+    const contentComponent = children || <NavigationLayoutContent />;
 
     let menuComponent = menu;
     // The routes for the menu are examined for evidence of a valid component for the current location.

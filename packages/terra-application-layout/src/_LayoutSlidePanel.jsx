@@ -150,7 +150,7 @@ class LayoutSlidePanel extends React.Component {
           {panelContent}
         </div>
         <OverlayContainer className={cx('content')}>
-          <Overlay isRelativeToContainer onRequestClose={onToggle} isOpen={isOverlayOpen} backgroundStyle={overlayBackground} />
+          <Overlay isRelativeToContainer onRequestClose={onToggle} isOpen={isOverlayOpen} backgroundStyle={overlayBackground} style={{ zIndex: '1500' }} />
           {children}
         </OverlayContainer>
       </div>
