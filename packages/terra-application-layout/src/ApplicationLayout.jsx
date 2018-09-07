@@ -123,9 +123,13 @@ class ApplicationLayout extends React.Component {
 
     this.updateSize = this.updateSize.bind(this);
 
+    const size = getBreakpointSize();
+
+    const isCompactLayout = size === 'tiny' || size === 'small';
+
     this.state = {
       size: getBreakpointSize(),
-      menuIsOpen: false,
+      menuIsOpen: isCompactLayout,
       activeNavigationItem: ApplicationLayout.getActiveNavigationItem(props.location, props.navigationItems),
     };
   }

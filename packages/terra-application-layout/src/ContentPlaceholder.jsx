@@ -13,17 +13,22 @@ class ContentPlaceholder extends React.Component {
   render() {
     const { layoutConfig, autoselectPath, placeholderContent } = this.props;
 
-    if (layoutConfig.size !== 'tiny' && layoutConfig.size !== 'small') {
-      if (autoselectPath) {
-        return <Redirect to={autoselectPath} />;
+    if (autoselectPath) {
+      const matchParams = this.props.match.params;
+      const pathWithCurrentParameters = Object.keys(matchParams).reduce((updatedString, paramId) => {
+        const paramTest = new RegExp(`:${paramId}`);
+        return updatedString.replace(paramTest, matchParams[paramId]);
+      }, autoselectPath);
+
+
+      if (layoutConfig.size !== 'tiny' && layoutConfig.size !== 'small' && autoselectPath) {
+        return <Redirect to={pathWithCurrentParameters} />;
       }
-    } else {
-      return placeholderContent;
     }
 
-
-    return <div>huh</div>;
+    return placeholderContent || <div>Default Placeholder</div>;
   }
 }
+
 
 export default withRouter(ContentPlaceholder);

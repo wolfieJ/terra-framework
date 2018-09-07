@@ -10,6 +10,8 @@ import Avatar from 'terra-avatar';
 import ActionHeader from 'terra-action-header';
 import ContentContainer from 'terra-content-container';
 import Button from 'terra-button';
+import SelectableList from 'terra-list/lib/SelectableList';
+import DemographicsBanner from 'terra-demographics-banner';
 
 import ApplicationLayout, { RoutingMenu, Utils } from '../../../ApplicationLayout';
 import { withManagedRouting } from '../../../ManagedRouting';
@@ -37,6 +39,17 @@ class BaseManagedRoutingPrompt extends React.Component {
 
 const ManagedRoutingPrompt = withManagedRouting(BaseManagedRoutingPrompt);
 
+const ContentComponent = ({ layoutConfig, title, children }) => (
+  <ContentContainer
+    header={(
+      (layoutConfig.size === 'tiny' || layoutConfig.size === 'small') && <ActionHeader onBack={layoutConfig.toggleMenu} title={title} />
+    )}
+    fill
+  >
+    {children}
+  </ContentContainer>
+);
+
 class PageContent extends React.Component {
   constructor(props) {
     super(props);
@@ -49,12 +62,7 @@ class PageContent extends React.Component {
     const { isBlockingFirst, isBlockingSecond } = this.state;
 
     return (
-      <ContentContainer
-        header={(
-          <ActionHeader onBack={layoutConfig.toggleMenu} title={contentName} />
-    )}
-        fill
-      >
+      <ContentComponent title={contentName} layoutConfig={layoutConfig}>
         <div style={{ padding: '5px' }}>
           {contentName}
           <br />
@@ -63,6 +71,153 @@ class PageContent extends React.Component {
           <Button text={isBlockingSecond ? 'Unblock' : 'Block Routing Again'} onClick={() => { this.setState({ isBlockingSecond: !isBlockingSecond }); }} />
           {this.state.isBlockingSecond && <ManagedRoutingPrompt id={`second-content-${contentName}`} message={`Blocking for ${contentName} Again`} />}
         </div>
+      </ContentComponent>
+    );
+  }
+}
+
+class ChiefComplaintComponent extends React.Component {
+  render() {
+    return (
+      <ContentContainer
+        header={(
+          <React.Fragment>
+            <DemographicsBanner
+              age="25 Years"
+              dateOfBirth="May 9, 1993"
+              gender="Male"
+              personName="Jonathon Doe"
+              preferredFirstName="John"
+            />
+            <ActionHeader
+              onBack={this.props.layoutConfig.toggleMenu}
+              title="Chief Complaint"
+            />
+          </React.Fragment>
+        )}
+        fill
+      >
+        <div style={{ padding: '0.714rem' }}>Chief Complaint SVG goes here</div>
+      </ContentContainer>
+    )
+  }
+}
+
+class OrderComponent extends React.Component {
+  render() {
+    return (
+      <ContentContainer
+        header={(
+          <React.Fragment>
+            <DemographicsBanner
+              age="25 Years"
+              dateOfBirth="May 9, 1993"
+              gender="Male"
+              personName="Jonathon Doe"
+              preferredFirstName="John"
+            />
+            <ActionHeader
+              onBack={this.props.layoutConfig.toggleMenu}
+              title="Order"
+            />
+          </React.Fragment>
+        )}
+        fill
+      >
+        <div style={{ padding: '0.714rem' }}>Order SVG goes here</div>
+      </ContentContainer>
+    )
+  }
+}
+
+class ListDetailComponent extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.renderContent = this.renderContent.bind(this);
+
+    this.state = {
+      mode: 'list',
+      items: this.props.items,
+    };
+  }
+
+  renderContent() {
+    let content;
+    if (this.state.mode === 'list') {
+      content = (
+        <SelectableList
+          isDivided
+          hasChevrons
+          onChange={(event, selectedIndex) => {
+            this.setState({
+              mode: 'detail',
+              detailItem: this.state.items[selectedIndex],
+            });
+          }}
+        >
+          {this.state.items.map((item) => (
+            <SelectableList.Item content={<p>{item.display}</p>} key={item.id} />
+          ))}
+        </SelectableList>
+      )
+    } else if (this.state.mode === 'detail' && this.state.detailItem) {
+      if (this.state.detailItem.id === '1') {
+        content = <div>SVG here</div>;
+      } else {
+        content = <div>Placeholder</div>;
+      }
+    }
+
+    return (
+      <div style={{ height: '100%', padding: '0.714rem'}}>{content}</div>
+    )
+  }
+
+  render() {
+    return (
+      <ContentContainer
+        header={(
+          <React.Fragment>
+            <DemographicsBanner
+              age="25 Years"
+              dateOfBirth="May 9, 1993"
+              gender="Male"
+              personName="Jonathon Doe"
+              preferredFirstName="John"
+            />
+            <ActionHeader
+              onBack={this.state.mode === 'detail' ? () => { this.setState({ mode: 'list', detailItem: undefined })} : this.props.layoutConfig.toggleMenu }
+              title={(this.state.detailItem && this.state.detailItem.display) || this.props.title}
+            />
+          </React.Fragment>
+        )}
+        fill
+      >
+        {this.renderContent()}
+      </ContentContainer>
+    )
+  }
+}
+
+class DemographicsRoutingMenu extends React.Component {
+  render() {
+    const isCompact = this.props.layoutConfig.size === 'tiny' || this.props.layoutConfig.size === 'small'
+
+    return (
+      <ContentContainer
+        header={isCompact ? (
+          <DemographicsBanner
+            age="25 Years"
+            dateOfBirth="May 9, 1993"
+            gender="Male"
+            personName="Jonathon Doe"
+            preferredFirstName="John"
+          />
+        ) : undefined}
+        fill
+      >
+        <RoutingMenu {...this.props} />
       </ContentContainer>
     );
   }
@@ -72,71 +227,101 @@ const TestExtensions = () => (
   <Button text="Extensions" />
 );
 
+const blankPlaceholder = <div style={{ height: '100%', width: '100%', backgroundColor: 'grey', boxShadow: 'inset 0 0 5px black' }} />;
+
 /**
  * The routingConfig API matches that of the NavigationLayout. Routing specifications for the
  * menu and content regions are supported; the header region is not configurable.
  */
 const routingConfig = {
   menu: {
-    '/food': {
-      path: '/food',
+    '/patient_list': {
+      path: '/patient_list',
       component: {
         default: {
           componentClass: RoutingMenu,
           props: {
-            title: 'Food Menu',
+            title: 'Patient List',
             menuItems: [{
-              text: 'Hamburgers',
-              path: '/food/hamburgers',
+              text: 'Patient 1',
+              path: '/patient_list/1/chart',
+              hasSubMenu: true,
             }, {
-              text: 'Hot Dogs',
-              path: '/food/hot_dogs',
+              text: 'Patient 2',
+              path: '/patient_list/2/chart',
+              hasSubMenu: true,
             }, {
-              text: 'Pizza',
-              path: '/food/pizza',
-            }, {
-              text: 'Cheese',
-              path: '/food/cheese',
+              text: 'Patient 3',
+              path: '/patient_list/3/chart',
               hasSubMenu: true,
             }],
           },
         },
       },
     },
-    '/food/cheese': {
-      path: '/food/cheese',
+    '/patient_list/:patient_id/chart': {
+      path: '/patient_list/:patient_id/chart',
       component: {
         default: {
-          componentClass: RoutingMenu,
+          componentClass: DemographicsRoutingMenu,
           props: {
-            title: 'Cheese Menu',
+            title: 'Patient Chart',
             menuItems: [{
-              text: 'Mozzarella',
-              path: '/food/cheese/mozzarella',
+              text: 'Review',
+              path: '/patient_list/:patient_id/chart/review',
+              hasSubMenu: true,
             }, {
-              text: 'Cheddar',
-              path: '/food/cheese/cheddar',
+              text: 'Order',
+              path: '/patient_list/:patient_id/chart/order',
+            }, {
+              text: 'Document',
+              path: '/patient_list/:patient_id/chart/document',
+              hasSubMenu: true,
             }],
           },
         },
       },
     },
-    '/drink': {
-      path: '/drink',
+    '/patient_list/:patient_id/chart/review': {
+      path: '/patient_list/:patient_id/chart/review',
       component: {
         default: {
-          componentClass: RoutingMenu,
+          componentClass: DemographicsRoutingMenu,
           props: {
-            title: 'Drinks Menu',
+            title: 'Review',
             menuItems: [{
-              text: 'Soda',
-              path: '/drink/soda',
+              text: 'Chief Complaint',
+              path: '/patient_list/:patient_id/chart/review/chief_complaint',
             }, {
-              text: 'Beer',
-              path: '/drink/beer',
+              text: 'Allergies',
+              path: '/patient_list/:patient_id/chart/review/allergies',
             }, {
-              text: 'Wine',
-              path: '/drink/wine',
+              text: 'Problems',
+              path: '/patient_list/:patient_id/chart/review/problems',
+            }, {
+              text: 'Labs',
+              path: '/patient_list/:patient_id/chart/review/labs',
+            }],
+          },
+        },
+      },
+    },
+    '/patient_list/:patient_id/chart/document': {
+      path: '/patient_list/:patient_id/chart/document',
+      component: {
+        default: {
+          componentClass: DemographicsRoutingMenu,
+          props: {
+            title: 'Document',
+            menuItems: [{
+              text: 'My Notes',
+              path: '/patient_list/:patient_id/chart/document/my_notes',
+            }, {
+              text: 'Physician Notes',
+              path: '/patient_list/:patient_id/chart/document/physician_notes',
+            }, {
+              text: 'Nurse Notes',
+              path: '/patient_list/:patient_id/chart/document/nurse_notes',
             }],
           },
         },
@@ -144,126 +329,219 @@ const routingConfig = {
     },
   },
   content: {
-    '/food': {
-      path: '/food',
+    '/patient_list': {
+      path: '/patient_list',
       component: {
         default: {
           componentClass: ContentPlaceholder,
           props: {
-            autoselectPath: '/food/hamburgers',
-            placeholderContent: <div>Wat</div>,
+            placeholderContent: blankPlaceholder,
           },
         },
       },
     },
-    '/food/cheese': {
-      path: '/food/cheese',
+    '/patient_list/:patient_id/chart': {
+      path: '/patient_list/:patient_id/chart',
       component: {
         default: {
           componentClass: ContentPlaceholder,
           props: {
-            autoselectPath: '/food/cheese/mozzarella',
-            placeholderContent: <div>Wat</div>,
+            placeholderContent: blankPlaceholder,
           },
         },
       },
     },
-    '/drink': {
-      path: '/drink',
+    '/patient_list/:patient_id/chart/review': {
+      path: '/patient_list/:patient_id/chart/review',
       component: {
         default: {
           componentClass: ContentPlaceholder,
           props: {
-            autoselectPath: '/drink/soda',
-            placeholderContent: <div>Wat</div>,
+            autoselectPath: '/patient_list/:patient_id/chart/review/chief_complaint',
+            placeholderContent: blankPlaceholder,
           },
         },
       },
     },
-    '/food/hamburgers': {
-      path: '/food/hamburgers',
+    '/patient_list/:patient_id/chart/order': {
+      path: '/patient_list/:patient_id/chart/order',
       component: {
         default: {
-          componentClass: PageContent,
+          componentClass: OrderComponent,
+        },
+      },
+    },
+    '/patient_list/:patient_id/chart/document': {
+      path: '/patient_list/:patient_id/chart/document',
+      component: {
+        default: {
+          componentClass: ContentPlaceholder,
           props: {
-            contentName: 'Hamburgers',
+            autoselectPath: '/patient_list/:patient_id/chart/document/my_notes',
+            placeholderContent: blankPlaceholder,
           },
         },
       },
     },
-    '/food/hot_dogs': {
-      path: '/food/hot_dogs',
+    '/patient_list/:patient_id/chart/review/chief_complaint': {
+      path: '/patient_list/:patient_id/chart/review/chief_complaint',
       component: {
         default: {
-          componentClass: PageContent,
+          componentClass: ChiefComplaintComponent,
+        },
+      },
+    },
+    '/patient_list/:patient_id/chart/review/problems': {
+      path: '/patient_list/:patient_id/chart/review/problems',
+      component: {
+        default: {
+          componentClass: ListDetailComponent,
           props: {
-            contentName: 'Hot Dogs',
+            title: 'Problems',
+            items: [{
+              id: '1',
+              display: 'Problem A',
+            }, {
+              id: '2',
+              display: 'Problem B',
+            }, {
+              id: '3',
+              display: 'Problem C',
+            }, {
+              id: '4',
+              display: 'Problem D',
+            }],
           },
         },
       },
     },
-    '/food/pizza': {
-      path: '/food/pizza',
+    '/patient_list/:patient_id/chart/review/allergies': {
+      path: '/patient_list/:patient_id/chart/review/allergies',
       component: {
         default: {
-          componentClass: PageContent,
+          componentClass: ListDetailComponent,
           props: {
-            contentName: 'Pizza',
+            title: 'Allergies',
+            items: [{
+              id: '1',
+              display: 'Allergy A',
+            }, {
+              id: '2',
+              display: 'Allergy B',
+            }, {
+              id: '3',
+              display: 'Allergy C',
+            }, {
+              id: '4',
+              display: 'Allergy D',
+            }],
           },
         },
       },
     },
-    '/food/cheese/mozzarella': {
-      path: '/food/cheese/mozzarella',
+    '/patient_list/:patient_id/chart/review/labs': {
+      path: '/patient_list/:patient_id/chart/review/labs',
       component: {
         default: {
-          componentClass: PageContent,
+          componentClass: ListDetailComponent,
           props: {
-            contentName: 'Mozzarella',
+            title: 'Labs',
+            items: [{
+              id: '1',
+              display: 'Lab A',
+            }, {
+              id: '2',
+              display: 'Lab B',
+            }, {
+              id: '3',
+              display: 'Lab C',
+            }, {
+              id: '4',
+              display: 'Lab D',
+            }],
           },
         },
       },
     },
-    '/food/cheese/cheddar': {
-      path: '/food/cheese/cheddar',
+    '/patient_list/:patient_id/chart/document/my_notes': {
+      path: '/patient_list/:patient_id/chart/document/my_notes',
       component: {
         default: {
-          componentClass: PageContent,
+          componentClass: ListDetailComponent,
           props: {
-            contentName: 'Cheddar',
+            title: 'My Notes',
+            items: [{
+              id: '1',
+              display: 'My Note A',
+            }, {
+              id: '2',
+              display: 'My Note B',
+            }, {
+              id: '3',
+              display: 'My Note C',
+            }, {
+              id: '4',
+              display: 'My Note D',
+            }],
           },
         },
       },
     },
-    '/drink/soda': {
-      path: '/drink/soda',
+    '/patient_list/:patient_id/chart/document/physician_notes': {
+      path: '/patient_list/:patient_id/chart/document/physician_notes',
       component: {
         default: {
-          componentClass: PageContent,
+          componentClass: ListDetailComponent,
           props: {
-            contentName: 'Soda',
+            title: 'Physician Notes',
+            items: [{
+              id: '1',
+              display: 'Physician Note A',
+            }, {
+              id: '2',
+              display: 'Physician Note B',
+            }, {
+              id: '3',
+              display: 'Physician Note C',
+            }, {
+              id: '4',
+              display: 'Physician Note D',
+            }],
           },
         },
       },
     },
-    '/drink/beer': {
-      path: '/drink/beer',
+    '/patient_list/:patient_id/chart/document/nurse_notes': {
+      path: '/patient_list/:patient_id/chart/document/nurse_notes',
       component: {
         default: {
-          componentClass: PageContent,
+          componentClass: ListDetailComponent,
           props: {
-            contentName: 'Beer',
+            title: 'Nurse Notes',
+            items: [{
+              id: '1',
+              display: 'Nurse Note A',
+            }, {
+              id: '2',
+              display: 'Nurse Note B',
+            }, {
+              id: '3',
+              display: 'Nurse Note C',
+            }, {
+              id: '4',
+              display: 'Nurse Note D',
+            }],
           },
         },
       },
     },
-    '/drink/wine': {
-      path: '/drink/wine',
+    '/patient_chart': {
+      path: '/patient_chart',
       component: {
         default: {
           componentClass: PageContent,
           props: {
-            contentName: 'Wine',
+            contentName: 'Patient Chart',
           },
         },
       },
@@ -279,11 +557,11 @@ const routingConfig = {
  * With compact rendering, the items will be presented within the layout's menu region within a ApplicationLayout-managed menu.
  */
 const navigationItems = [{
-  path: '/food',
-  text: 'Food',
+  path: '/patient_list',
+  text: 'Patient List',
 }, {
-  path: '/drink',
-  text: 'Drink',
+  path: '/patient_chart',
+  text: 'Patient Chart',
 }];
 
 /**
@@ -395,7 +673,7 @@ class ApplicationLayoutTest extends React.Component {
               <Link to="/food">Go to Food</Link>
             </div>
           )}
-          router={<MemoryRouter initialEntries={['/food']} initialIndex={0} />}
+          router={<MemoryRouter initialEntries={['/patient_list']} initialIndex={0} />}
         />
       </div>
     );

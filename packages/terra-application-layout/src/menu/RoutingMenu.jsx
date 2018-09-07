@@ -47,11 +47,11 @@ class RoutingMenu extends React.Component {
    * values are set as metaData on the item so that `handleMenuChange` will have easy access to those values.
    * @param {Array} menuItems is the Array of menuItem objects as specified by the RoutingMenu's proptype definition.
    */
-  static buildSideMenuItems(menuItems) {
+  static buildSideMenuItems(menuItems, size) {
     return menuItems.map(item => ({
       key: item.path,
       text: item.text,
-      hasSubMenu: !!item.hasSubMenu,
+      hasSubMenu: !!item.hasSubMenu || (size === 'tiny' || size === 'small'),
       metaData: {
         path: item.path,
         externalLink: item.externalLink,
@@ -92,6 +92,7 @@ class RoutingMenu extends React.Component {
   static getSelectedChildKey(path, menuItems) {
     for (let i = 0, itemCount = menuItems.length; i < itemCount; i += 1) {
       const navItem = menuItems[i];
+
       if (navItem.path && matchPath(path, { path: navItem.path })) {
         return navItem.path;
       }
@@ -102,8 +103,14 @@ class RoutingMenu extends React.Component {
   handleMenuChange(event, data) {
     const { routingStackDelegate, layoutConfig } = this.props;
 
+    const matchParams = this.props.match.params;
+    const pathWithCurrentParameters = Object.keys(matchParams).reduce((updatedString, paramId) => {
+      const paramTest = new RegExp(`:${paramId}`);
+      return updatedString.replace(paramTest, matchParams[paramId]);
+    }, data.metaData.path);
+
     let routeFunc;
-    if (matchPath(this.props.location.pathname, data.metaData.path) && !data.metaData.hasSubMenu) {
+    if (matchPath(this.props.location.pathname, pathWithCurrentParameters) && !data.metaData.hasSubMenu) {
       // We do not want to re-route to the current path. However, we have to route if the item indicates
       // that it has a submenu.
       routeFunc = () => {};
@@ -111,9 +118,9 @@ class RoutingMenu extends React.Component {
       routeFunc = () => window.open(data.metaData.externalLink.path, data.metaData.externalLink.target || '_blank');
     } else {
       routeFunc = () => {
-        routingStackDelegate.show({ path: data.metaData.path });
+        routingStackDelegate.show({ path: pathWithCurrentParameters });
         return Promise.resolve();
-        // this.props.managedRouting.push(data.metaData.path);
+        // this.props.managedRouting.push(pathWithCurrentParameters);
       };
     }
 
@@ -129,17 +136,17 @@ class RoutingMenu extends React.Component {
     /**
      * Otherwise, the layout is left alone and navigation occurs immediately.
      */
-    return Promise.resolve().then(() => routeFunc().catch((error) => { console.log(error); }));
+    return Promise.resolve().then(() => routeFunc()).catch((error) => { console.log(error); });
   }
 
   render() {
-    const { title, routingStackDelegate, menuItems } = this.props;
+    const { title, routingStackDelegate, menuItems, layoutConfig } = this.props;
     const { selectedChildKey } = this.state;
 
     /**
      * The items using the simplified RoutingMenu menuItem API must be converted into the NavigationSideMenu's API.
      */
-    const processedMenuItems = RoutingMenu.buildSideMenuItems(menuItems);
+    const processedMenuItems = RoutingMenu.buildSideMenuItems(menuItems, layoutConfig.size);
 
     /**
      * The RoutingMenu then constructs a menuItem that will act as the main page and render the menuItems as child items.
