@@ -6,6 +6,7 @@ import NavigationSideMenu from 'terra-navigation-side-menu';
 import RoutingStackDelegate from 'terra-navigation-layout/lib/RoutingStackDelegate';
 import ApplicationLayoutPropTypes from '../utils/propTypes';
 import { withManagedRouting } from '../ManagedRouting';
+import { pathWithParameters } from '../utils/helpers';
 
 const propTypes = {
   /**
@@ -101,13 +102,9 @@ class RoutingMenu extends React.Component {
   }
 
   handleMenuChange(event, data) {
-    const { routingStackDelegate, layoutConfig } = this.props;
+    const { match, routingStackDelegate, layoutConfig } = this.props;
 
-    const matchParams = this.props.match.params;
-    const pathWithCurrentParameters = Object.keys(matchParams).reduce((updatedString, paramId) => {
-      const paramTest = new RegExp(`:${paramId}`);
-      return updatedString.replace(paramTest, matchParams[paramId]);
-    }, data.metaData.path);
+    const pathWithCurrentParameters = pathWithParameters(data.metaData.path, match.params);
 
     let routeFunc;
     if (matchPath(this.props.location.pathname, pathWithCurrentParameters) && !data.metaData.hasSubMenu) {
@@ -118,9 +115,9 @@ class RoutingMenu extends React.Component {
       routeFunc = () => window.open(data.metaData.externalLink.path, data.metaData.externalLink.target || '_blank');
     } else {
       routeFunc = () => {
-        routingStackDelegate.show({ path: pathWithCurrentParameters });
-        return Promise.resolve();
-        // this.props.managedRouting.push(pathWithCurrentParameters);
+        // routingStackDelegate.show({ path: pathWithCurrentParameters });
+        // return Promise.resolve();
+        return this.props.managedRouting.push(pathWithCurrentParameters);
       };
     }
 

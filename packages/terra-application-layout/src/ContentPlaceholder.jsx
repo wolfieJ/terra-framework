@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter, Redirect } from 'react-router-dom';
-
+import { pathWithParameters } from './utils/helpers';
 
 class ContentPlaceholder extends React.Component {
   componentDidMount() {
@@ -11,19 +11,10 @@ class ContentPlaceholder extends React.Component {
   }
 
   render() {
-    const { layoutConfig, autoselectPath, placeholderContent } = this.props;
+    const { match, layoutConfig, autoselectPath, placeholderContent } = this.props;
 
-    if (autoselectPath) {
-      const matchParams = this.props.match.params;
-      const pathWithCurrentParameters = Object.keys(matchParams).reduce((updatedString, paramId) => {
-        const paramTest = new RegExp(`:${paramId}`);
-        return updatedString.replace(paramTest, matchParams[paramId]);
-      }, autoselectPath);
-
-
-      if (layoutConfig.size !== 'tiny' && layoutConfig.size !== 'small' && autoselectPath) {
-        return <Redirect to={pathWithCurrentParameters} />;
-      }
+    if (autoselectPath && layoutConfig.size !== 'tiny' && layoutConfig.size !== 'small') {
+      return <Redirect to={pathWithParameters(autoselectPath, match.params)} />;
     }
 
     return placeholderContent || <div>Default Placeholder</div>;

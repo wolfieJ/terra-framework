@@ -4,6 +4,7 @@ import AppDelegate from 'terra-app-delegate';
 import NavigationLayout from 'terra-navigation-layout';
 import { routeConfigPropType } from 'terra-navigation-layout/lib/configurationPropTypes';
 import { withRouter, matchPath } from 'react-router-dom';
+import { injectIntl, intlShape } from 'terra-base';
 import { withModalManager } from 'terra-modal-manager';
 import NavigationSideMenu from 'terra-navigation-side-menu';
 import {
@@ -19,6 +20,8 @@ import ApplicationHeader from './header/_ApplicationHeader';
 import ApplicationLayoutPropTypes from './utils/propTypes';
 import Helpers from './utils/helpers';
 import UtilityHelpers from './utils/utilityHelpers';
+
+import { presentNotificationDialog } from './StatelessNotificationDialog';
 
 const propTypes = {
   /**
@@ -68,7 +71,6 @@ const propTypes = {
   }).isRequired,
   history: PropTypes.shape({}),
   routeNotFoundComponent: PropTypes.node,
-  router: PropTypes.element,
 };
 
 const defaultProps = {
@@ -156,7 +158,7 @@ class ApplicationLayout extends React.Component {
 
   render() {
     const {
-      app, nameConfig, utilityConfig, navigationAlignment, navigationItems, indexPath, extensions, routingConfig, location, history, routeNotFoundComponent, router,
+      app, nameConfig, utilityConfig, navigationAlignment, navigationItems, indexPath, extensions, routingConfig, location, history, routeNotFoundComponent,
     } = this.props;
     const { menuIsOpen, activeNavigationItem, size } = this.state;
 
@@ -236,19 +238,6 @@ class ApplicationLayout extends React.Component {
       />
     );
 
-    let routerComponent;
-    if (router) {
-      routerComponent = React.cloneElement(router, {
-        getUserConfirmation: (message, callback) => {
-          console.log('Application layout router');
-          callback(window.confirm(message));
-        },
-        children: navigationLayout,
-      });
-    } else {
-      routerComponent = navigationLayout;
-    }
-
     return (
       <LayoutSlidePanel
         panelContent={menuComponent}
@@ -263,7 +252,7 @@ class ApplicationLayout extends React.Component {
         isOpen={menuIsOpen}
         isAnimated
       >
-        {routerComponent}
+        {navigationLayout}
       </LayoutSlidePanel>
     );
   }
@@ -284,13 +273,30 @@ class ApplicationLayoutWrapper extends React.Component {
   }
 
   render() {
-    const { router, ...applicationLayoutProps } = this.props;
+    const { router, intl, ...applicationLayoutProps } = this.props;
 
     if (router) {
       return React.cloneElement(router, {
         getUserConfirmation: (message, callback) => {
-          console.log('Custom confirmation message');
-          callback(window.confirm(message));
+          presentNotificationDialog({
+            intl: intl,
+            variant: 'warning',
+            title: 'Unsaved changes',
+            message,
+            primaryAction: {
+              text: 'Yarp',
+              onClick: () => {
+                callback(true);
+              },
+            },
+            secondaryAction: {
+              text: 'Narp',
+              onClick: () => {
+                callback(false);
+              },
+            },
+          });
+
         },
         children: (
           <ManagedRoutingProvider>
@@ -303,7 +309,7 @@ class ApplicationLayoutWrapper extends React.Component {
   }
 }
 
-export default withModalManager(ApplicationLayoutWrapper);
+export default injectIntl(ApplicationLayoutWrapper);
 
 const Utils = {
   helpers: Helpers,

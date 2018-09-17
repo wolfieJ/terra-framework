@@ -54,6 +54,7 @@
     "terra-modal-manager": "^3.9.0",
     "terra-navigation-layout": "^2.15.0",
     "terra-navigation-side-menu": "^1.11.0",
+    "terra-notification-dialog": "^1.8.0",
     "terra-popup": "^4.11.0"
   },
   "scripts": {

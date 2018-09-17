@@ -14,30 +14,8 @@ import SelectableList from 'terra-list/lib/SelectableList';
 import DemographicsBanner from 'terra-demographics-banner';
 
 import ApplicationLayout, { RoutingMenu, Utils } from '../../../ApplicationLayout';
-import { withManagedRouting } from '../../../ManagedRouting';
+import { ManagedRoutingPrompt } from '../../../ManagedRouting';
 import ContentPlaceholder from '../../../ContentPlaceholder';
-
-class BaseManagedRoutingPrompt extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    this.unblock = this.props.managedRouting.block(this.props.id, this.props.message);
-  }
-
-  componentWillUnmount() {
-    if (this.unblock) {
-      this.unblock();
-    }
-  }
-
-  render() {
-    return null;
-  }
-}
-
-const ManagedRoutingPrompt = withManagedRouting(BaseManagedRoutingPrompt);
 
 const ContentComponent = ({ layoutConfig, title, children }) => (
   <ContentContainer
@@ -69,7 +47,12 @@ class PageContent extends React.Component {
           <Button text={isBlockingFirst ? 'Unblock' : 'Block Routing'} onClick={() => { this.setState({ isBlockingFirst: !isBlockingFirst }); }} />
           {this.state.isBlockingFirst && <ManagedRoutingPrompt id={`first-block-${contentName}`} message={`Blocking for ${contentName}`} />}
           <Button text={isBlockingSecond ? 'Unblock' : 'Block Routing Again'} onClick={() => { this.setState({ isBlockingSecond: !isBlockingSecond }); }} />
-          {this.state.isBlockingSecond && <ManagedRoutingPrompt id={`second-content-${contentName}`} message={`Blocking for ${contentName} Again`} />}
+          {this.state.isBlockingSecond && (
+            <ManagedRoutingPrompt
+              id={`second-content-${contentName}`}
+              message={`Blocking for ${contentName} Again`}
+            />
+          )}
         </div>
       </ContentComponent>
     );
@@ -322,6 +305,27 @@ const routingConfig = {
             }, {
               text: 'Nurse Notes',
               path: '/patient_list/:patient_id/chart/document/nurse_notes',
+            }],
+          },
+        },
+      },
+    },
+    '/patient_chart': {
+      path: '/patient_chart',
+      component: {
+        default: {
+          componentClass: RoutingMenu,
+          props: {
+            title: 'Patient Chart',
+            menuItems: [{
+              text: 'Patient 1',
+              path: '/patient_chart/1/chart',
+            }, {
+              text: 'Patient 2',
+              path: '/patient_chart/2/chart',
+            }, {
+              text: 'Patient 3',
+              path: '/patient_chart/3/chart',
             }],
           },
         },
