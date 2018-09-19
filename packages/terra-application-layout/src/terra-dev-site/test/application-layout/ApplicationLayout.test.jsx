@@ -14,8 +14,9 @@ import SelectableList from 'terra-list/lib/SelectableList';
 import DemographicsBanner from 'terra-demographics-banner';
 
 import ApplicationLayout, { RoutingMenu, Utils } from '../../../ApplicationLayout';
-import { ManagedRoutingPrompt } from '../../../ManagedRouting';
+import { ManagedRoutingProvider, ManagedRoutingPrompt } from '../../../ManagedRouting';
 import ContentPlaceholder from '../../../ContentPlaceholder';
+import { presentNotificationDialog } from '../../../StatelessNotificationDialog';
 
 const ContentComponent = ({ layoutConfig, title, children }) => (
   <ContentContainer
@@ -664,21 +665,47 @@ class ApplicationLayoutTest extends React.Component {
 
     return (
       <div style={{ height: '100%' }}>
-        <ApplicationLayout
-          nameConfig={nameConfig}
-          utilityConfig={utilityConfig}
-          routingConfig={routingConfig}
-          navigationItems={navigationItems}
-          extensions={<TestExtensions />}
-          indexPath={indexPath}
-          routeNotFoundComponent={(
-            <div style={{ height: '100%' }}>
-              <h1>404 Page Not Found</h1>
-              <Link to="/food">Go to Food</Link>
-            </div>
-          )}
-          router={<MemoryRouter initialEntries={['/patient_list']} initialIndex={0} />}
-        />
+        <MemoryRouter
+          initialEntries={['/patient_list']}
+          initialIndex={0}
+          getUserConfirmation={(message, callback) => {
+            presentNotificationDialog({
+              intl: intl,
+              variant: 'warning',
+              title: 'Unsaved changes',
+              message,
+              primaryAction: {
+                text: 'Yarp',
+                onClick: () => {
+                  callback(true);
+                },
+              },
+              secondaryAction: {
+                text: 'Narp',
+                onClick: () => {
+                  callback(false);
+                },
+              },
+            });
+          }}
+        >
+          <ManagedRoutingProvider>
+            <ApplicationLayout
+              nameConfig={nameConfig}
+              utilityConfig={utilityConfig}
+              routingConfig={routingConfig}
+              navigationItems={navigationItems}
+              extensions={<TestExtensions />}
+              indexPath={indexPath}
+              routeNotFoundComponent={(
+                <div style={{ height: '100%' }}>
+                  <h1>404 Page Not Found</h1>
+                  <Link to="/food">Go to Food</Link>
+                </div>
+              )}
+            />
+          </ManagedRoutingProvider>
+        </MemoryRouter>
       </div>
     );
   }

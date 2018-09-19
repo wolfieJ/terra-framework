@@ -4,14 +4,12 @@ import AppDelegate from 'terra-app-delegate';
 import NavigationLayout from 'terra-navigation-layout';
 import { routeConfigPropType } from 'terra-navigation-layout/lib/configurationPropTypes';
 import { withRouter, matchPath } from 'react-router-dom';
-import { injectIntl, intlShape } from 'terra-base';
 import { withModalManager } from 'terra-modal-manager';
 import NavigationSideMenu from 'terra-navigation-side-menu';
 import {
   getBreakpointSize,
 } from 'terra-layout/lib/LayoutUtils';
 
-import { ManagedRoutingProvider } from './ManagedRouting';
 import LayoutSlidePanel from './_LayoutSlidePanel';
 import RoutingMenu from './menu/RoutingMenu';
 
@@ -21,7 +19,6 @@ import ApplicationLayoutPropTypes from './utils/propTypes';
 import Helpers from './utils/helpers';
 import UtilityHelpers from './utils/utilityHelpers';
 
-import { presentNotificationDialog } from './StatelessNotificationDialog';
 
 const propTypes = {
   /**
@@ -265,51 +262,7 @@ ApplicationLayout.defaultProps = defaultProps;
  * The ApplicationLayout is wrapped with a ModalManager on export to provide modal functionality
  * for utility presentation and content convenience.
  */
-const ExtendedApplicationLayout = withRouter(withModalManager(ApplicationLayout));
-
-class ApplicationLayoutWrapper extends React.Component {
-  componentDidMount() {
-    console.log('mounted');
-  }
-
-  render() {
-    const { router, intl, ...applicationLayoutProps } = this.props;
-
-    if (router) {
-      return React.cloneElement(router, {
-        getUserConfirmation: (message, callback) => {
-          presentNotificationDialog({
-            intl: intl,
-            variant: 'warning',
-            title: 'Unsaved changes',
-            message,
-            primaryAction: {
-              text: 'Yarp',
-              onClick: () => {
-                callback(true);
-              },
-            },
-            secondaryAction: {
-              text: 'Narp',
-              onClick: () => {
-                callback(false);
-              },
-            },
-          });
-
-        },
-        children: (
-          <ManagedRoutingProvider>
-            <ExtendedApplicationLayout {...applicationLayoutProps} />
-          </ManagedRoutingProvider>
-        ),
-      });
-    }
-    return <ExtendedApplicationLayout {...applicationLayoutProps} />;
-  }
-}
-
-export default injectIntl(ApplicationLayoutWrapper);
+export default withRouter(withModalManager(ApplicationLayout));
 
 const Utils = {
   helpers: Helpers,
