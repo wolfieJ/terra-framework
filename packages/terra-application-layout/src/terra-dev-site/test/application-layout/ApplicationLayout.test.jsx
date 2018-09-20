@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  MemoryRouter, Link, Prompt,
+  MemoryRouter, Link, withRouter,
 } from 'react-router-dom';
 import { injectIntl, intlShape } from 'react-intl';
 import Image from 'terra-image';
@@ -12,6 +12,7 @@ import ContentContainer from 'terra-content-container';
 import Button from 'terra-button';
 import SelectableList from 'terra-list/lib/SelectableList';
 import DemographicsBanner from 'terra-demographics-banner';
+import Input from 'terra-form-input';
 
 import ApplicationLayout, { RoutingMenu, Utils } from '../../../ApplicationLayout';
 import { ManagedRoutingProvider, ManagedRoutingPrompt } from '../../../ManagedRouting';
@@ -212,6 +213,39 @@ const TestExtensions = () => (
 );
 
 const blankPlaceholder = <div style={{ height: '100%', width: '100%', backgroundColor: 'grey', boxShadow: 'inset 0 0 5px black' }} />;
+
+class InputHeaderBase extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      path: props.location.pathname,
+    }
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        <Input
+          value={this.state.path}
+          onChange={(event) => {
+            this.setState({
+              path: event.target.value,
+            });
+          }}
+        />
+        <Button
+          onClick={() => {
+            this.props.history.push(this.state.path);
+          }}
+          text="Go"
+        />
+      </React.Fragment>
+    )
+  }
+}
+
+const InputHeader = withRouter(InputHeaderBase);
 
 /**
  * The routingConfig API matches that of the NavigationLayout. Routing specifications for the
@@ -690,20 +724,27 @@ class ApplicationLayoutTest extends React.Component {
           }}
         >
           <ManagedRoutingProvider>
-            <ApplicationLayout
-              nameConfig={nameConfig}
-              utilityConfig={utilityConfig}
-              routingConfig={routingConfig}
-              navigationItems={navigationItems}
-              extensions={<TestExtensions />}
-              indexPath={indexPath}
-              routeNotFoundComponent={(
-                <div style={{ height: '100%' }}>
-                  <h1>404 Page Not Found</h1>
-                  <Link to="/food">Go to Food</Link>
-                </div>
+            <ContentContainer
+              header={(
+                <InputHeader />
               )}
-            />
+              fill
+            >
+              <ApplicationLayout
+                nameConfig={nameConfig}
+                utilityConfig={utilityConfig}
+                routingConfig={routingConfig}
+                navigationItems={navigationItems}
+                extensions={<TestExtensions />}
+                indexPath={indexPath}
+                routeNotFoundComponent={(
+                  <div style={{ height: '100%' }}>
+                    <h1>404 Page Not Found</h1>
+                    <Link to="/food">Go to Food</Link>
+                  </div>
+                )}
+              />
+            </ContentContainer>
           </ManagedRoutingProvider>
         </MemoryRouter>
       </div>
