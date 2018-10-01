@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withRouter, matchPath } from 'react-router-dom';
 import { injectIntl, intlShape } from 'terra-base';
 
-import { presentNotificationDialog } from './StatelessNotificationDialog';
+import { presentNotificationDialog } from '../StatelessNotificationDialog';
 
 const ManagedRoutingContext = React.createContext({
   block: undefined,

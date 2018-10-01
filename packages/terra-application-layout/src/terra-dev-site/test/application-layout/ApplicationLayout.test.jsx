@@ -15,20 +15,25 @@ import DemographicsBanner from 'terra-demographics-banner';
 import Input from 'terra-form-input';
 
 import ApplicationLayout, { RoutingMenu, Utils } from '../../../ApplicationLayout';
-import { ManagedRoutingProvider, ManagedRoutingPrompt } from '../../../ManagedRouting';
+import { ManagedRoutingProvider, ManagedRoutingPrompt } from '../../../managed-routing/ManagedRouting';
 import ContentPlaceholder from '../../../ContentPlaceholder';
 import { presentNotificationDialog } from '../../../StatelessNotificationDialog';
 
-const ContentComponent = ({ layoutConfig, title, children }) => (
-  <ContentContainer
-    header={(
-      (layoutConfig.size === 'tiny' || layoutConfig.size === 'small') && <ActionHeader onBack={layoutConfig.toggleMenu} title={title} />
-    )}
-    fill
-  >
-    {children}
-  </ContentContainer>
-);
+const ContentComponent = injectIntl(({
+  intl, layoutConfig, title, children,
+}) => {
+  console.log(`intl: ${Object.keys(intl)}`);
+  return (
+    <ContentContainer
+      header={(
+        (layoutConfig.size === 'tiny' || layoutConfig.size === 'small') && <ActionHeader onBack={layoutConfig.toggleMenu} title={title} />
+      )}
+      fill
+    >
+      {children}
+    </ContentContainer>
+  );
+});
 
 class PageContent extends React.Component {
   constructor(props) {
@@ -84,7 +89,7 @@ class ChiefComplaintComponent extends React.Component {
       >
         <div style={{ padding: '0.714rem' }}>Chief Complaint SVG goes here</div>
       </ContentContainer>
-    )
+    );
   }
 }
 
@@ -111,7 +116,7 @@ class OrderComponent extends React.Component {
       >
         <div style={{ padding: '0.714rem' }}>Order SVG goes here</div>
       </ContentContainer>
-    )
+    );
   }
 }
 
@@ -141,11 +146,11 @@ class ListDetailComponent extends React.Component {
             });
           }}
         >
-          {this.state.items.map((item) => (
+          {this.state.items.map(item => (
             <SelectableList.Item content={<p>{item.display}</p>} key={item.id} />
           ))}
         </SelectableList>
-      )
+      );
     } else if (this.state.mode === 'detail' && this.state.detailItem) {
       if (this.state.detailItem.id === '1') {
         content = <div>SVG here</div>;
@@ -155,8 +160,8 @@ class ListDetailComponent extends React.Component {
     }
 
     return (
-      <div style={{ height: '100%', padding: '0.714rem'}}>{content}</div>
-    )
+      <div style={{ height: '100%', padding: '0.714rem' }}>{content}</div>
+    );
   }
 
   render() {
@@ -172,7 +177,7 @@ class ListDetailComponent extends React.Component {
               preferredFirstName="John"
             />
             <ActionHeader
-              onBack={this.state.mode === 'detail' ? () => { this.setState({ mode: 'list', detailItem: undefined })} : this.props.layoutConfig.toggleMenu }
+              onBack={this.state.mode === 'detail' ? () => { this.setState({ mode: 'list', detailItem: undefined }); } : this.props.layoutConfig.toggleMenu}
               title={(this.state.detailItem && this.state.detailItem.display) || this.props.title}
             />
           </React.Fragment>
@@ -181,13 +186,13 @@ class ListDetailComponent extends React.Component {
       >
         {this.renderContent()}
       </ContentContainer>
-    )
+    );
   }
 }
 
 class DemographicsRoutingMenu extends React.Component {
   render() {
-    const isCompact = this.props.layoutConfig.size === 'tiny' || this.props.layoutConfig.size === 'small'
+    const isCompact = this.props.layoutConfig.size === 'tiny' || this.props.layoutConfig.size === 'small';
 
     return (
       <ContentContainer
@@ -212,7 +217,12 @@ const TestExtensions = () => (
   <Button text="Extensions" />
 );
 
-const blankPlaceholder = <div style={{ height: '100%', width: '100%', backgroundColor: 'grey', boxShadow: 'inset 0 0 5px black' }} />;
+const blankPlaceholder = (
+  <div style={{
+    height: '100%', width: '100%', backgroundColor: 'grey', boxShadow: 'inset 0 0 5px black',
+  }}
+  />
+);
 
 class InputHeaderBase extends React.Component {
   constructor(props) {
@@ -220,7 +230,7 @@ class InputHeaderBase extends React.Component {
 
     this.state = {
       path: props.location.pathname,
-    }
+    };
   }
 
   render() {
@@ -241,7 +251,7 @@ class InputHeaderBase extends React.Component {
           text="Go"
         />
       </React.Fragment>
-    )
+    );
   }
 }
 
@@ -704,7 +714,7 @@ class ApplicationLayoutTest extends React.Component {
           initialIndex={0}
           getUserConfirmation={(message, callback) => {
             presentNotificationDialog({
-              intl: intl,
+              intl,
               variant: 'warning',
               title: 'Unsaved changes',
               message,
