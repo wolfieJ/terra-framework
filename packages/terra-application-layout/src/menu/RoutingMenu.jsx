@@ -5,7 +5,7 @@ import { withRouter, matchPath } from 'react-router-dom';
 import NavigationSideMenu from 'terra-navigation-side-menu';
 import RoutingStackDelegate from 'terra-navigation-layout/lib/RoutingStackDelegate';
 import ApplicationLayoutPropTypes from '../utils/propTypes';
-import { withManagedRouting } from '../ManagedRouting';
+import withSafeRouting from '../safe-routing/withSafeRouting';
 import { pathWithParameters } from '../utils/helpers';
 
 const propTypes = {
@@ -36,7 +36,7 @@ const propTypes = {
   location: PropTypes.shape({
     pathname: PropTypes.string,
   }).isRequired,
-  managedRouting: PropTypes.shape({}),
+  safeRouting: PropTypes.shape({}),
 };
 
 const routingMenuRootMenuKey = 'routingMenuRootMenuKey';
@@ -114,11 +114,7 @@ class RoutingMenu extends React.Component {
     } else if (data.metaData.externalLink) {
       routeFunc = () => window.open(data.metaData.externalLink.path, data.metaData.externalLink.target || '_blank');
     } else {
-      routeFunc = () => {
-        // routingStackDelegate.show({ path: pathWithCurrentParameters });
-        // return Promise.resolve();
-        return this.props.managedRouting.push(pathWithCurrentParameters);
-      };
+      routeFunc = () => this.props.safeRouting.push(pathWithCurrentParameters);
     }
 
     /**
@@ -137,7 +133,9 @@ class RoutingMenu extends React.Component {
   }
 
   render() {
-    const { title, routingStackDelegate, menuItems, layoutConfig } = this.props;
+    const {
+      title, routingStackDelegate, menuItems, layoutConfig,
+    } = this.props;
     const { selectedChildKey } = this.state;
 
     /**
@@ -172,4 +170,4 @@ class RoutingMenu extends React.Component {
 
 RoutingMenu.propTypes = propTypes;
 
-export default withRouter(withManagedRouting(RoutingMenu));
+export default withRouter(withSafeRouting(RoutingMenu));

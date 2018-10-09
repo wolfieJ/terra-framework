@@ -2,18 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter, matchPath } from 'react-router-dom';
 import { injectIntl, intlShape } from 'terra-base';
-
 import { presentNotificationDialog } from '../StatelessNotificationDialog';
 
-const ManagedRoutingContext = React.createContext({
-  block: undefined,
-  unblock: undefined,
-  push: undefined,
-  replace: undefined,
-  isBlocked: false,
-});
+import SafeRoutingContext from './SafeRoutingContext';
 
-class ManagedRoutingProvider extends React.Component {
+class SafeRoutingProvider extends React.Component {
   constructor(props) {
     super(props);
 
@@ -124,62 +117,23 @@ class ManagedRoutingProvider extends React.Component {
 
   render() {
     return (
-      <ManagedRoutingContext.Provider value={this.state.providerValue}>
+      <SafeRoutingContext.Provider value={this.state.providerValue}>
         {this.props.children}
-      </ManagedRoutingContext.Provider>
+      </SafeRoutingContext.Provider>
     );
   }
 }
 
-ManagedRoutingProvider.propTypes = {
+SafeRoutingProvider.propTypes = {
   intl: intlShape,
   children: PropTypes.node,
+  history: PropTypes.object,
 };
 
-const WrappedManagedRoutingProvider = withRouter(injectIntl(ManagedRoutingProvider));
+const safeRoutingShape = PropTypes.shape({
+  block: PropTypes.func,
+  push: PropTypes.func,
+});
 
-const withManagedRouting = Component => (
-  props => (
-    <ManagedRoutingContext.Consumer>
-      {managedRouting => (
-        <Component {...props} managedRouting={managedRouting} />
-      )}
-    </ManagedRoutingContext.Consumer>
-  )
-);
-
-class BaseManagedRoutingPrompt extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    this.unblock = this.props.managedRouting.block(this.props.id, this.props.message);
-  }
-
-  componentWillUnmount() {
-    if (this.unblock) {
-      this.unblock();
-    }
-  }
-
-  render() {
-    return null;
-  }
-}
-
-const ManagedRoutingPrompt = withManagedRouting(BaseManagedRoutingPrompt);
-
-export default {
-  ManagedRoutingProvider: WrappedManagedRoutingProvider,
-  ManagedRoutingContext,
-  withManagedRouting,
-  ManagedRoutingPrompt,
-};
-
-export {
-  WrappedManagedRoutingProvider as ManagedRoutingProvider,
-  ManagedRoutingContext,
-  withManagedRouting,
-  ManagedRoutingPrompt,
-};
+export default withRouter(injectIntl(SafeRoutingProvider));
+export { safeRoutingShape };

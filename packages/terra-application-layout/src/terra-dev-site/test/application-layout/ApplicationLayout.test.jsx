@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  MemoryRouter, Link, withRouter,
+  MemoryRouter, Link, withRouter, Prompt,
 } from 'react-router-dom';
 import { injectIntl, intlShape } from 'react-intl';
 import Image from 'terra-image';
@@ -15,25 +15,23 @@ import DemographicsBanner from 'terra-demographics-banner';
 import Input from 'terra-form-input';
 
 import ApplicationLayout, { RoutingMenu, Utils } from '../../../ApplicationLayout';
-import { ManagedRoutingProvider, ManagedRoutingPrompt } from '../../../managed-routing/ManagedRouting';
-import ContentPlaceholder from '../../../ContentPlaceholder';
-import { presentNotificationDialog } from '../../../StatelessNotificationDialog';
+import SafeRoutingProvider from '../../../safe-routing/SafeRoutingProvider';
+import SafeRoutingPrompt from '../../../safe-routing/SafeRoutingPrompt';
 
-const ContentComponent = injectIntl(({
-  intl, layoutConfig, title, children,
-}) => {
-  console.log(`intl: ${Object.keys(intl)}`);
-  return (
-    <ContentContainer
-      header={(
+import ContentPlaceholder from '../../../ContentPlaceholder';
+
+const ContentComponent = ({
+  layoutConfig, title, children,
+}) => (
+  <ContentContainer
+    header={(
         (layoutConfig.size === 'tiny' || layoutConfig.size === 'small') && <ActionHeader onBack={layoutConfig.toggleMenu} title={title} />
       )}
-      fill
-    >
-      {children}
-    </ContentContainer>
-  );
-});
+    fill
+  >
+    {children}
+  </ContentContainer>
+);
 
 class PageContent extends React.Component {
   constructor(props) {
@@ -52,10 +50,10 @@ class PageContent extends React.Component {
           {contentName}
           <br />
           <Button text={isBlockingFirst ? 'Unblock' : 'Block Routing'} onClick={() => { this.setState({ isBlockingFirst: !isBlockingFirst }); }} />
-          {this.state.isBlockingFirst && <ManagedRoutingPrompt id={`first-block-${contentName}`} message={`Blocking for ${contentName}`} />}
+          {this.state.isBlockingFirst && <SafeRoutingPrompt id={`first-block-${contentName}`} message={`Blocking for ${contentName}`} />}
           <Button text={isBlockingSecond ? 'Unblock' : 'Block Routing Again'} onClick={() => { this.setState({ isBlockingSecond: !isBlockingSecond }); }} />
           {this.state.isBlockingSecond && (
-            <ManagedRoutingPrompt
+            <SafeRoutingPrompt
               id={`second-content-${contentName}`}
               message={`Blocking for ${contentName} Again`}
             />
@@ -713,27 +711,10 @@ class ApplicationLayoutTest extends React.Component {
           initialEntries={['/patient_list']}
           initialIndex={0}
           getUserConfirmation={(message, callback) => {
-            presentNotificationDialog({
-              intl,
-              variant: 'warning',
-              title: 'Unsaved changes',
-              message,
-              primaryAction: {
-                text: 'Yarp',
-                onClick: () => {
-                  callback(true);
-                },
-              },
-              secondaryAction: {
-                text: 'Narp',
-                onClick: () => {
-                  callback(false);
-                },
-              },
-            });
+            callback(confirm(message));
           }}
         >
-          <ManagedRoutingProvider>
+          <SafeRoutingProvider>
             <ContentContainer
               header={(
                 <InputHeader />
@@ -755,7 +736,7 @@ class ApplicationLayoutTest extends React.Component {
                 )}
               />
             </ContentContainer>
-          </ManagedRoutingProvider>
+          </SafeRoutingProvider>
         </MemoryRouter>
       </div>
     );
