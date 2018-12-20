@@ -2,13 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import FocusTrap from 'focus-trap-react';
+import { FocusTrapManagerProvider, withFocusTrapManager } from 'terra-focus-trap-manager';
+
 import 'terra-base/lib/baseStyles';
 import ModalOverlay from './_ModalOverlay';
+
 import styles from './AbstractModal.module.scss';
 
 const cx = classNames.bind(styles);
 
 const zIndexes = ['6000', '7000', '8000', '9000'];
+
+const KEYCODES = {
+  ESCAPE: 27,
+};
 
 const propTypes = {
   /**
@@ -65,6 +72,8 @@ const propTypes = {
    * Z-Index layer to apply to the ModalContent and ModalOverlay.
    */
   zIndex: PropTypes.oneOf(zIndexes),
+  focusTrapManager: PropTypes.object,
+  closeOnEsc: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -81,6 +90,30 @@ const defaultProps = {
 
 /* eslint-disable react/prefer-stateless-function */
 class ModalContent extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.handleKeydown = this.handleKeydown.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.props.focusTrapManager.isFocused) {
+      document.addEventListener('keydown', this.handleKeydown);
+    }
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeydown);
+  }
+
+  handleKeydown(e) {
+    const { closeOnEsc, focusTrapManager } = this.props;
+
+    if (e.keyCode === KEYCODES.ESCAPE && closeOnEsc && focusTrapManager.isFocused) {
+      this.props.onRequestClose();
+    }
+  }
+
   render() {
     const {
       ariaLabel,
@@ -95,6 +128,8 @@ class ModalContent extends React.Component {
       isFullscreen,
       isScrollable,
       zIndex,
+      focusTrapManager,
+      closeOnEsc,
       ...customProps
     } = this.props;
 
@@ -124,7 +159,7 @@ class ModalContent extends React.Component {
 
     return (
       <FocusTrap
-        paused={!isFocused}
+        paused={!focusTrapManager.isFocused}
         focusTrapOptions={{
           fallbackFocus: this.fallbackFocus,
         }}
@@ -158,4 +193,10 @@ class ModalContent extends React.Component {
 ModalContent.propTypes = propTypes;
 ModalContent.defaultProps = defaultProps;
 
-export default ModalContent;
+const WrappedModalContent = withFocusTrapManager(ModalContent);
+
+export default props => (
+  <FocusTrapManagerProvider>
+    <WrappedModalContent {...props} />
+  </FocusTrapManagerProvider>
+);

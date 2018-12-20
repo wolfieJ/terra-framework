@@ -5,6 +5,8 @@ import Button from 'terra-button';
 import ContentContainer from 'terra-content-container';
 import FocusTrap from 'focus-trap-react';
 import Hookshot from 'terra-hookshot';
+import { FocusTrapManagerProvider, withFocusTrapManager } from 'terra-focus-trap-manager';
+
 import styles from './PopupContent.module.scss';
 
 const cx = classNames.bind(styles);
@@ -74,14 +76,15 @@ const propTypes = {
    * The function returning the frame html reference.
    */
   refCallback: PropTypes.func,
-  /**
-   * A callback function to let the containing component (e.g. modal) to regain focus.
-   */
-  releaseFocus: PropTypes.func,
-  /**
-   * A callback function to request focus from the containing component (e.g. modal).
-   */
-  requestFocus: PropTypes.func,
+  // /**
+  //  * A callback function to let the containing component (e.g. modal) to regain focus.
+  //  */
+  // releaseFocus: PropTypes.func,
+  // /**
+  //  * A callback function to request focus from the containing component (e.g. modal).
+  //  */
+  // requestFocus: PropTypes.func,
+  focusTrapManager: PropTypes.object,
 };
 
 const defaultProps = {
@@ -126,17 +129,17 @@ class PopupContent extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.requestFocus) {
-      this.props.requestFocus();
-    }
+    // if (this.props.focusTrapManager) {
+    //   this.props.focusTrapManager.requestFocus();
+    // }
     // Value used to verify horizontal resize.
     this.windowWidth = window.innerWidth;
   }
 
   componentWillUnmount() {
-    if (this.props.releaseFocus) {
-      this.props.releaseFocus();
-    }
+    // if (this.props.focusTrapManager) {
+    //   this.props.focusTrapManager.releaseFocus();
+    // }
   }
 
   static getContentStyle(height, maxHeight, width, maxWidth, isHeightAutomatic, isWidthAutomatic) {
@@ -186,8 +189,9 @@ class PopupContent extends React.Component {
       onResize,
       onContentResize,
       refCallback,
-      releaseFocus,
-      requestFocus,
+      requestFocus, // DEAD
+      releaseFocus, // DEAD
+      focusTrapManager,
       ...customProps
     } = this.props;
 
@@ -219,7 +223,10 @@ class PopupContent extends React.Component {
     const widthData = isWidthAutomatic ? { 'data-terra-popup-automatic-width': true } : {};
 
     return (
-      <FocusTrap focusTrapOptions={{ returnFocusOnDeactivate: true, clickOutsideDeactivates: true }}>
+      <FocusTrap
+        paused={!focusTrapManager.isFocused}
+        focusTrapOptions={{ returnFocusOnDeactivate: true, clickOutsideDeactivates: true }}
+      >
         <Hookshot.Content
           {...customProps}
           className={contentClassNames}
@@ -243,8 +250,17 @@ class PopupContent extends React.Component {
 
 PopupContent.propTypes = propTypes;
 PopupContent.defaultProps = defaultProps;
-PopupContent.Opts = {
+
+const WrappedPopupContent = withFocusTrapManager(PopupContent);
+
+export default props => (
+  <FocusTrapManagerProvider>
+    <WrappedPopupContent {...props} />
+  </FocusTrapManagerProvider>
+);
+
+const Opts = {
   cornerSize: CORNER_SIZE,
 };
 
-export default PopupContent;
+export { Opts };

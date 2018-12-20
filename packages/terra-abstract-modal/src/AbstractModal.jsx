@@ -44,7 +44,7 @@ const propTypes = {
   /**
    * If set to true, the modal will trap the focus and prevents any popup within the modal from gaining focus.
    */
-  isFocused: PropTypes.bool,
+  isFocused: PropTypes.bool, // DEAD
   /**
    * If set to true, the modal will be fullscreen on all breakpoint sizes.
    */
@@ -88,34 +88,8 @@ const KEYCODES = {
 };
 
 class AbstractModal extends React.Component {
-  constructor() {
-    super();
-    this.handleKeydown = this.handleKeydown.bind(this);
-  }
-
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeydown);
-  }
-
-  componentDidUpdate(prevProps) {
-    // When the Modal is no longer in focus, it should no longer listen to the keydown event to handle the Escape key.
-    // Otherwise, the Modal would also get closed when the intention for pressing the Escape key is to close a popup inside the modal.
-    if (!this.props.isFocused && prevProps.isFocused) {
-      document.removeEventListener('keydown', this.handleKeydown);
-    } else if (this.props.isFocused && !prevProps.isFocused) {
-      document.addEventListener('keydown', this.handleKeydown);
-    }
-  }
-
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeydown);
     this.toggleVisuallyHiddenMainDocument('false');
-  }
-
-  handleKeydown(e) {
-    if (e.keyCode === KEYCODES.ESCAPE && this.props.isOpen && this.props.closeOnEsc && this.props.isFocused) {
-      this.props.onRequestClose();
-    }
   }
 
   toggleVisuallyHiddenMainDocument(hiddenValue) {
@@ -135,13 +109,14 @@ class AbstractModal extends React.Component {
       closeOnEsc,
       closeOnOutsideClick,
       fallbackFocus,
-      isFocused,
+      isFocused, // DEAD
       isFullscreen,
       isOpen,
       role,
       rootSelector,
       onRequestClose,
       zIndex,
+      focusTrapManager,
       ...customProps
     } = this.props;
 
@@ -164,8 +139,8 @@ class AbstractModal extends React.Component {
           classNameOverlay={classNameOverlay}
           role={role}
           fallbackFocus={fallbackFocus}
-          isFocused={isFocused}
           isFullscreen={isFullscreen}
+          closeOnEsc={closeOnEsc}
           onRequestClose={onRequestClose}
           zIndex={zIndex}
           aria-modal="true"

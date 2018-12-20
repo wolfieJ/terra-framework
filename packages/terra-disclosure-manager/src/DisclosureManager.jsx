@@ -190,15 +190,15 @@ class DisclosureManager extends React.Component {
      */
     delegate.goBack = componentIndex > 0 ? popContent : undefined;
 
-    /**
-     * Allows a component to request focus from the disclosure in the event that the disclosure mechanism in use utilizes a focus trap.
-     */
-    delegate.requestFocus = disclosureIsFocused ? () => Promise.resolve().then(this.releaseDisclosureFocus) : undefined;
+    // /**
+    //  * Allows a component to request focus from the disclosure in the event that the disclosure mechanism in use utilizes a focus trap.
+    //  */
+    // delegate.requestFocus = disclosureIsFocused ? () => Promise.resolve().then(this.releaseDisclosureFocus) : undefined;
 
-    /**
-     * Allows a component to release focus from itself and return it to the disclosure.
-     */
-    delegate.releaseFocus = !disclosureIsFocused ? () => Promise.resolve().then(this.requestDisclosureFocus) : undefined;
+    // /**
+    //  * Allows a component to release focus from itself and return it to the disclosure.
+    //  */
+    // delegate.releaseFocus = !disclosureIsFocused ? () => Promise.resolve().then(this.requestDisclosureFocus) : undefined;
 
     /**
      * Allows a component to maximize its presentation size. This is only provided if the component is not already maximized.
