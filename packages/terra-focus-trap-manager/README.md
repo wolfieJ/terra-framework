@@ -1,6 +1,6 @@
 # Terra Focus Trap Manager
 
-TODO
+The FocusTrapManager component facilitates communication and state orchestration among nested FocusTrap components.
 
 [![NPM version](https://badgen.net/npm/v/terra-focus-trap-manager)](https://www.npmjs.org/package/terra-focus-trap-manager)
 [![Build Status](https://badgen.net/travis/cerner/terra-framework)](https://travis-ci.org/cerner/terra-framework)

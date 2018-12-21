@@ -15,6 +15,13 @@ const propTypes = {
    * The child components to render within the the context of the FocusTrapManager.
    */
   children: PropTypes.node,
+  /**
+   * [Private] APIs provided by a FocusTrapManager ancestor.
+   */
+  parentFocusTrapManager: PropTypes.shape({
+    pause: PropTypes.func,
+    resume: PropTypes.func,
+  }),
 };
 
 class FocusTrapManager extends React.Component {
@@ -46,6 +53,9 @@ class FocusTrapManager extends React.Component {
   componentDidMount() {
     const { parentFocusTrapManager } = this.props;
 
+    /**
+     * If a parent FocusTrapManager exists, the ancestor is paused when this instance mounts.
+     */
     if (parentFocusTrapManager) {
       parentFocusTrapManager.pause();
     }
@@ -55,6 +65,9 @@ class FocusTrapManager extends React.Component {
   componentWillUnmount() {
     const { parentFocusTrapManager } = this.props;
 
+    /**
+     * If a parent FocusTrapManager exists, the ancestor resumes when this instance unmounts.
+     */
     if (parentFocusTrapManager) {
       parentFocusTrapManager.resume();
     }
@@ -88,10 +101,16 @@ class FocusTrapManager extends React.Component {
 
 FocusTrapManager.propTypes = propTypes;
 
+/**
+ * An implementation of the FocusTrapManager interfaced with the PrivateFocusTrapManagerContext is provided
+ * as the default export to ensure nested manager communication is provided automatically.
+ */
 const FocusTrapManagerWithPrivateConsumer = props => (
   <PrivateFocusTrapManagerContext.Consumer>
     {parentFocusTrapManager => <FocusTrapManager {...props} parentFocusTrapManager={parentFocusTrapManager} />}
   </PrivateFocusTrapManagerContext.Consumer>
 );
+
+FocusTrapManagerWithPrivateConsumer.propTypes = propTypes;
 
 export default FocusTrapManagerWithPrivateConsumer;
