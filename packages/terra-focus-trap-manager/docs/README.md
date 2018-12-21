@@ -9,9 +9,9 @@ The FocusTrapManager component facilitates communication and state orchestration
 
 ## About
 
-FocusTrap components are used in a number of components (modals, popups, etc.) to ensure that TAB-based keyboard focus does not leave a given component. However, problems arise when components that trap focus render child components that also trap focus. This problem is exacerbated by the level of composability that Terra wishes to provide with its component library, which prevents us from mitigating the problem directly through a targeted implementation strategy.
+FocusTrap components are used in a number of components (modals, popups, etc.) to ensure that Tab-based keyboard focus does not leave a given component. However, problems arise when components that trap focus render child components that also trap focus. This problem is exacerbated by the level of composability that Terra wishes to provide with its component library, which prevents it from mitigating the problem directly through a restricted implementation strategy.
 
-The FocusTrapManager was created to allow FocusTrap-rendering components to provide the the desire functionality while automatically accounting for the potential nesting of additional focus traps.
+The FocusTrapManager solves this problem by automatically pausing focus traps based on the current component hierarchy. To take advantage of this functionality, components that render a FocusTrap need to ensure that they are wrapped by a FocusTrapManager and implement their FocusTrap based on the FocusTrapManager's state.
 
 ## Usage
 
