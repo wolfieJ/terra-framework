@@ -5,7 +5,7 @@ import Button from 'terra-button';
 import ContentContainer from 'terra-content-container';
 import FocusTrap from 'focus-trap-react';
 import Hookshot from 'terra-hookshot';
-import { FocusTrapManagerProvider, withFocusTrapManager } from 'terra-focus-trap-manager';
+import { FocusTrapManager, withFocusTrapManager } from 'terra-focus-trap-manager';
 
 import styles from './PopupContent.module.scss';
 
@@ -76,14 +76,14 @@ const propTypes = {
    * The function returning the frame html reference.
    */
   refCallback: PropTypes.func,
-  // /**
-  //  * A callback function to let the containing component (e.g. modal) to regain focus.
-  //  */
-  // releaseFocus: PropTypes.func,
-  // /**
-  //  * A callback function to request focus from the containing component (e.g. modal).
-  //  */
-  // requestFocus: PropTypes.func,
+  /**
+   * A callback function to let the containing component (e.g. modal) to regain focus.
+   */
+  releaseFocus: PropTypes.func, // DEAD
+  /**
+   * A callback function to request focus from the containing component (e.g. modal).
+   */
+  requestFocus: PropTypes.func, // DEAD
   focusTrapManager: PropTypes.object,
 };
 
@@ -129,17 +129,7 @@ class PopupContent extends React.Component {
   }
 
   componentDidMount() {
-    // if (this.props.focusTrapManager) {
-    //   this.props.focusTrapManager.requestFocus();
-    // }
-    // Value used to verify horizontal resize.
     this.windowWidth = window.innerWidth;
-  }
-
-  componentWillUnmount() {
-    // if (this.props.focusTrapManager) {
-    //   this.props.focusTrapManager.releaseFocus();
-    // }
   }
 
   static getContentStyle(height, maxHeight, width, maxWidth, isHeightAutomatic, isWidthAutomatic) {
@@ -224,7 +214,7 @@ class PopupContent extends React.Component {
 
     return (
       <FocusTrap
-        paused={!focusTrapManager.isFocused}
+        paused={focusTrapManager.isPaused}
         focusTrapOptions={{ returnFocusOnDeactivate: true, clickOutsideDeactivates: true }}
       >
         <Hookshot.Content
@@ -254,9 +244,9 @@ PopupContent.defaultProps = defaultProps;
 const WrappedPopupContent = withFocusTrapManager(PopupContent);
 
 export default props => (
-  <FocusTrapManagerProvider>
+  <FocusTrapManager>
     <WrappedPopupContent {...props} />
-  </FocusTrapManagerProvider>
+  </FocusTrapManager>
 );
 
 const Opts = {

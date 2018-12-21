@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import FocusTrap from 'focus-trap-react';
-import { FocusTrapManagerProvider, withFocusTrapManager } from 'terra-focus-trap-manager';
+import { FocusTrapManager, withFocusTrapManager } from 'terra-focus-trap-manager';
 
 import 'terra-base/lib/baseStyles';
 import ModalOverlay from './_ModalOverlay';
@@ -97,9 +97,7 @@ class ModalContent extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.focusTrapManager.isFocused) {
-      document.addEventListener('keydown', this.handleKeydown);
-    }
+    document.addEventListener('keydown', this.handleKeydown);
   }
 
   componentWillUnmount() {
@@ -109,7 +107,7 @@ class ModalContent extends React.Component {
   handleKeydown(e) {
     const { closeOnEsc, focusTrapManager } = this.props;
 
-    if (e.keyCode === KEYCODES.ESCAPE && closeOnEsc && focusTrapManager.isFocused) {
+    if (e.keyCode === KEYCODES.ESCAPE && closeOnEsc && !focusTrapManager.isPaused) {
       this.props.onRequestClose();
     }
   }
@@ -159,7 +157,7 @@ class ModalContent extends React.Component {
 
     return (
       <FocusTrap
-        paused={!focusTrapManager.isFocused}
+        paused={focusTrapManager.isPaused}
         focusTrapOptions={{
           fallbackFocus: this.fallbackFocus,
         }}
@@ -196,7 +194,7 @@ ModalContent.defaultProps = defaultProps;
 const WrappedModalContent = withFocusTrapManager(ModalContent);
 
 export default props => (
-  <FocusTrapManagerProvider>
+  <FocusTrapManager>
     <WrappedModalContent {...props} />
-  </FocusTrapManagerProvider>
+  </FocusTrapManager>
 );

@@ -1,15 +1,15 @@
 import FocusTrapManagerContext from './FocusTrapManagerContext';
-import FocusTrapManagerProvider from './FocusTrapManagerProvider';
+import FocusTrapManager from './FocusTrapManager';
 import withFocusTrapManager from './withFocusTrapManager';
 
 export default {
   FocusTrapManagerContext,
-  FocusTrapManagerProvider,
+  FocusTrapManager,
   withFocusTrapManager,
 };
 
 export {
   FocusTrapManagerContext,
-  FocusTrapManagerProvider,
+  FocusTrapManager,
   withFocusTrapManager,
 };

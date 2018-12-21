@@ -71,11 +71,11 @@ const propTypes = {
   /**
    * A callback function to let the containing component (e.g. modal) to regain focus.
    */
-  releaseFocus: PropTypes.func,
+  releaseFocus: PropTypes.func, // DEAD
   /**
    * A callback function to request focus from the containing component (e.g. modal).
    */
-  requestFocus: PropTypes.func,
+  requestFocus: PropTypes.func, // DEAD
 };
 
 const defaultProps = {
@@ -134,28 +134,6 @@ const contextTypes = {
 };
 
 class NotificationDialog extends React.Component {
-  componentDidMount() {
-    if (this.props.isOpen && this.props.requestFocus) {
-      this.props.requestFocus();
-    }
-  }
-
-  componentDidUpdate() {
-    if (this.props.isOpen) {
-      if (this.props.requestFocus) {
-        this.props.requestFocus();
-      }
-    } else if (this.props.releaseFocus) {
-      this.props.releaseFocus();
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.props.releaseFocus) {
-      this.props.releaseFocus();
-    }
-  }
-
   render() {
     if (!this.props.isOpen) {
       return null;
