@@ -1,21 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
-import FocusTrap from 'focus-trap-react';
-import { FocusTrapManager, withFocusTrapManager } from 'terra-focus-trap-manager';
+import { FocusTrapManager } from 'terra-focus-trap-manager';
+
+import ModalOverlay from './_ModalOverlay';
+import KeyboardEventHarness from './_KeyboardEventHarness';
 
 import 'terra-base/lib/baseStyles';
-import ModalOverlay from './_ModalOverlay';
-
 import styles from './AbstractModal.module.scss';
 
 const cx = classNames.bind(styles);
 
 const zIndexes = ['6000', '7000', '8000', '9000'];
-
-const KEYCODES = {
-  ESCAPE: 27,
-};
 
 const propTypes = {
   /**
@@ -34,6 +30,10 @@ const propTypes = {
    * CSS classnames that are appended to the overlay.
    */
   classNameOverlay: PropTypes.string,
+  /**
+   * If set to true, the modal will close when the esc key is pressed.
+   */
+  closeOnEsc: PropTypes.bool,
   /**
    * If set to true, the modal will close when a mouseclick is triggered outside the modal.
    */
@@ -72,8 +72,6 @@ const propTypes = {
    * Z-Index layer to apply to the ModalContent and ModalOverlay.
    */
   zIndex: PropTypes.oneOf(zIndexes),
-  focusTrapManager: PropTypes.object,
-  closeOnEsc: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -88,28 +86,9 @@ const defaultProps = {
   zIndex: '6000',
 };
 
-/* eslint-disable react/prefer-stateless-function */
 class ModalContent extends React.Component {
   constructor(props) {
     super(props);
-
-    this.handleKeydown = this.handleKeydown.bind(this);
-  }
-
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeydown);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeydown);
-  }
-
-  handleKeydown(e) {
-    const { closeOnEsc, focusTrapManager } = this.props;
-
-    if (e.keyCode === KEYCODES.ESCAPE && closeOnEsc && !focusTrapManager.isPaused) {
-      this.props.onRequestClose();
-    }
   }
 
   render() {
@@ -147,43 +126,55 @@ class ModalContent extends React.Component {
     delete customProps.closePortal;
     const platformIsiOS = !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);
 
-    this.modalContentRef = React.createRef();
-
     if (fallbackFocus) {
       this.fallbackFocus = fallbackFocus;
     } else {
       this.fallbackFocus = () => (this.modalContentRef.current);
     }
 
+    // If the modal needs to close when the Escape key is pressed, a KeyboardEventHarness is rendered to
+    // detect those events and ensure the FocusTrap is not paused before closing.
+    let content = children;
+    if (closeOnEsc) {
+      content = (
+        <KeyboardEventHarness onRequestClose={onRequestClose}>
+          {children}
+        </KeyboardEventHarness>
+      );
+    }
+
+    this.modalContentRef = React.createRef();
+
     return (
-      <FocusTrap
-        paused={focusTrapManager.isPaused}
-        focusTrapOptions={{
-          fallbackFocus: this.fallbackFocus,
-        }}
-      >
+      <React.Fragment>
         <ModalOverlay
           onClick={closeOnOutsideClick ? onRequestClose : null}
           className={classNameOverlay}
           zIndex={zIndex}
         />
-        { /*
-            When an aria-label is set and tabIndex is set to 0, VoiceOver will read
-            the aria-label value when the modal is opened
-           */
-          /* eslint-disable jsx-a11y/no-noninteractive-tabindex */}
-        <div
-          tabIndex={platformIsiOS ? '-1' : '0'}
-          aria-label={ariaLabel}
-          className={modalClassName}
-          role={role}
-          ref={this.modalContentRef}
-          {...customProps}
+        <FocusTrapManager
+          focusTrapOptions={{
+            fallbackFocus: this.fallbackFocus,
+          }}
         >
-          {children}
-        </div>
-        {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
-      </FocusTrap>
+          { /*
+                When an aria-label is set and tabIndex is set to 0, VoiceOver will read
+                the aria-label value when the modal is opened
+              */
+              /* eslint-disable jsx-a11y/no-noninteractive-tabindex */}
+          <div
+            tabIndex={platformIsiOS ? '-1' : '0'}
+            aria-label={ariaLabel}
+            className={modalClassName}
+            role={role}
+            ref={this.modalContentRef}
+            {...customProps}
+          >
+            {content}
+          </div>
+          {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
+        </FocusTrapManager>
+      </React.Fragment>
     );
   }
 }
@@ -191,10 +182,4 @@ class ModalContent extends React.Component {
 ModalContent.propTypes = propTypes;
 ModalContent.defaultProps = defaultProps;
 
-const WrappedModalContent = withFocusTrapManager(ModalContent);
-
-export default props => (
-  <FocusTrapManager>
-    <WrappedModalContent {...props} />
-  </FocusTrapManager>
-);
+export default ModalContent;

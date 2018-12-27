@@ -83,10 +83,6 @@ const defaultProps = {
   zIndex: '6000',
 };
 
-const KEYCODES = {
-  ESCAPE: 27,
-};
-
 class AbstractModal extends React.Component {
   componentWillUnmount() {
     this.toggleVisuallyHiddenMainDocument('false');
@@ -116,7 +112,6 @@ class AbstractModal extends React.Component {
       rootSelector,
       onRequestClose,
       zIndex,
-      focusTrapManager,
       ...customProps
     } = this.props;
 

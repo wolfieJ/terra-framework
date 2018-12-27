@@ -29,6 +29,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "prop-types": "^15.5.8",
+    "focus-trap-react": "^4.0.1",
     "terra-doc-template": "^1.22.0"
   },
   "scripts": {

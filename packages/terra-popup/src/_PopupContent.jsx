@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import Button from 'terra-button';
 import ContentContainer from 'terra-content-container';
-import FocusTrap from 'focus-trap-react';
 import Hookshot from 'terra-hookshot';
-import { FocusTrapManager, withFocusTrapManager } from 'terra-focus-trap-manager';
+import { FocusTrapManager } from 'terra-focus-trap-manager';
 
 import styles from './PopupContent.module.scss';
 
@@ -213,9 +212,8 @@ class PopupContent extends React.Component {
     const widthData = isWidthAutomatic ? { 'data-terra-popup-automatic-width': true } : {};
 
     return (
-      <FocusTrap
-        paused={focusTrapManager.isPaused}
-        focusTrapOptions={{ returnFocusOnDeactivate: true, clickOutsideDeactivates: true }}
+      <FocusTrapManager
+        focusTrapOptions={{ returnFocusOnDeactivate: true }}
       >
         <Hookshot.Content
           {...customProps}
@@ -233,7 +231,7 @@ class PopupContent extends React.Component {
             {content}
           </div>
         </Hookshot.Content>
-      </FocusTrap>
+      </FocusTrapManager>
     );
   }
 }
@@ -241,13 +239,7 @@ class PopupContent extends React.Component {
 PopupContent.propTypes = propTypes;
 PopupContent.defaultProps = defaultProps;
 
-const WrappedPopupContent = withFocusTrapManager(PopupContent);
-
-export default props => (
-  <FocusTrapManager>
-    <WrappedPopupContent {...props} />
-  </FocusTrapManager>
-);
+export default PopupContent;
 
 const Opts = {
   cornerSize: CORNER_SIZE,

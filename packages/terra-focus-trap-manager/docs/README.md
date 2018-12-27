@@ -52,9 +52,9 @@ const MyComponent = (props) => (
 )
 ```
 
-The FocusTrapManager will, when nested within another FocusTrapManager, ensure that the parent FocusTrapManager pauses its FocusTrap while the child is mounted. The pausing of the parent FocusTrapManager will happen immediately upon mounting of the child and will happen automatically. A FocusTrapManager should not be rendered unless a FocusTrap will be rendered within it.
+The FocusTrapManager will, when nested within another FocusTrapManager, ensure that the parent FocusTrapManager pauses its FocusTrap while the child is mounted. The pausing of the parent FocusTrapManager will happen immediately upon mounting of the child. A FocusTrapManager should not be rendered unless a FocusTrap will be rendered within it.
 
-> The FocusTrapManager and FocusTrap could reasonably be combined into a single component. However, there are some scenarios where the 'isPaused' state of the manager is necessary to have outside of the FocusTrap (e.g. if keyboard events need to be suppressed when the FocusTrap is closed). For those use cases, the FocusTrapManager has been developed as a separate component.
+> The FocusTrapManager and FocusTrap could reasonably be combined into a single component. However, there are some scenarios where the 'isPaused' state of the manager is necessary to have outside of the FocusTrap (e.g. if keyboard events need to be suppressed when the FocusTrap is paused). For those use cases, the FocusTrapManager has been developed as a separate component.
 
 ## Component Features
 * [Cross-Browser Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#cross-browser-support)
