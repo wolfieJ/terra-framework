@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
-import { FocusTrapManager } from 'terra-focus-trap-manager';
+import FocusTrap from 'focus-trap-react';
+import { withLayerManager } from 'terra-layer-manager';
 
 import ModalOverlay from './_ModalOverlay';
-import KeyboardEventHarness from './_KeyboardEventHarness';
 
 import 'terra-base/lib/baseStyles';
 import styles from './AbstractModal.module.scss';
@@ -86,9 +86,31 @@ const defaultProps = {
   zIndex: '6000',
 };
 
+const KEYCODES = {
+  ESCAPE: 27,
+};
+
 class ModalContent extends React.Component {
   constructor(props) {
     super(props);
+
+    this.handleKeydown = this.handleKeydown.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeydown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeydown);
+  }
+
+  handleKeydown(e) {
+    const { closeOnEsc, layerManager, onRequestClose } = this.props;
+
+    if (closeOnEsc && onRequestClose && e.keyCode === KEYCODES.ESCAPE && layerManager.isActive) {
+      onRequestClose();
+    }
   }
 
   render() {
@@ -105,7 +127,7 @@ class ModalContent extends React.Component {
       isFullscreen,
       isScrollable,
       zIndex,
-      focusTrapManager,
+      layerManager,
       closeOnEsc,
       ...customProps
     } = this.props;
@@ -132,17 +154,6 @@ class ModalContent extends React.Component {
       this.fallbackFocus = () => (this.modalContentRef.current);
     }
 
-    // If the modal needs to close when the Escape key is pressed, a KeyboardEventHarness is rendered to
-    // detect those events and ensure the FocusTrap is not paused before closing.
-    let content = children;
-    if (closeOnEsc) {
-      content = (
-        <KeyboardEventHarness onRequestClose={onRequestClose}>
-          {children}
-        </KeyboardEventHarness>
-      );
-    }
-
     this.modalContentRef = React.createRef();
 
     return (
@@ -152,7 +163,8 @@ class ModalContent extends React.Component {
           className={classNameOverlay}
           zIndex={zIndex}
         />
-        <FocusTrapManager
+        <FocusTrap
+          paused={!layerManager.isActive}
           focusTrapOptions={{
             fallbackFocus: this.fallbackFocus,
           }}
@@ -170,10 +182,10 @@ class ModalContent extends React.Component {
             ref={this.modalContentRef}
             {...customProps}
           >
-            {content}
+            {children}
           </div>
           {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
-        </FocusTrapManager>
+        </FocusTrap>
       </React.Fragment>
     );
   }
@@ -182,4 +194,4 @@ class ModalContent extends React.Component {
 ModalContent.propTypes = propTypes;
 ModalContent.defaultProps = defaultProps;
 
-export default ModalContent;
+export default withLayerManager(ModalContent);

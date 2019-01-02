@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Portal } from 'react-portal';
 import 'terra-base/lib/baseStyles';
 import ModalContent from './_ModalContent';
+import { LayerManager } from 'terra-layer-manager';
 
 const zIndexes = ['6000', '7000', '8000', '9000'];
 
@@ -123,9 +123,7 @@ class AbstractModal extends React.Component {
 
 
     return (
-      <Portal
-        isOpened={isOpen}
-      >
+      <LayerManager>
         <ModalContent
           {...customProps}
           closeOnOutsideClick={closeOnOutsideClick}
@@ -142,7 +140,7 @@ class AbstractModal extends React.Component {
         >
           {children}
         </ModalContent>
-      </Portal>
+      </LayerManager>
     );
   }
 }
