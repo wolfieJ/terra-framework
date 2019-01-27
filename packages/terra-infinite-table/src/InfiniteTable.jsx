@@ -12,6 +12,8 @@ import styles from './InfiniteTable.module.scss';
 
 const cx = classNames.bind(styles);
 
+// TODO: Update APi to match new table API.
+// TODO: Determine header cell API.
 const propTypes = {
   /**
    * The child table rows, of type InfiniteTable.TableRow, to be placed within the infinite table.
@@ -534,7 +536,10 @@ class InfiniteTable extends React.Component {
       selectedIndexes,
       ...customProps
     } = this.props;
+    // TODO: Initial load hide the visible header and rows until a measurement can be taken from the hidden header.
 
+    // TODO: May need to selectively add an absolutely positioned invisible row to account for striping.
+    // TODO: Account for striping offset caused by the spacer.
     const topSpacer = createSpacer(`${this.boundary.hiddenTopHeight > 0 ? this.boundary.hiddenTopHeight : 0}px`, 0);
     const bottomSpacer = createSpacer(`${this.boundary.hiddenBottomHeight > 0 ? this.boundary.hiddenBottomHeight : 0}px`, 1);
 
@@ -547,10 +552,11 @@ class InfiniteTable extends React.Component {
           <InfiniteContentRow
             content={progressiveLoadingIndicator}
             key={`infinite-spinner-row-${this.loadingIndex}`}
-            colSpan={3} // TODO: correct this
+            colSpan={3} // TODO: correct this with either counting header cells or taking prop.
           />
         );
       } else {
+        // TODO: Switch from array to paranthesis.
         fullLoadingSpinner = [
           <div
             key="infinite-spinner-full"
@@ -570,6 +576,7 @@ class InfiniteTable extends React.Component {
       if ((!this.scrollGroups.length && this.lastChildIndex <= 0) || !this.renderNewChildren) {
         upperChildIndex = this.childCount;
       } else {
+        // TODO: Consume new table API>
         newChildren = (
           <Table {...customProps} className={cx(['infinite-hidden'])}>
             <Table.Rows>
@@ -584,6 +591,8 @@ class InfiniteTable extends React.Component {
 
     const headerCells = headerCellsFromContent(headerCellContent, this.visibleWidths);
 
+    // TODO: Consume new table API>
+    // TODO: Determine if click and focus should be allowed. If so, require a new key for sorting.
     const visibleHeader = (
       <Table>
         <Table.Header refCallback={this.setVisibleHeaderNode}>
@@ -592,6 +601,7 @@ class InfiniteTable extends React.Component {
       </Table>
     );
 
+    // TODO: Add resize observers to sync with each header cell.
     const hiddenHeader = (
       <Table.Header className={cx(['hidden-header'])} aria-hidden="true" refCallback={this.setHiddenHeaderNode}>
         {headerCells.hidden}
@@ -603,6 +613,8 @@ class InfiniteTable extends React.Component {
     rowContent.push(bottomSpacer);
     if (loadingSpinner) { rowContent.push(loadingSpinner); }
 
+    // TODO: Consume new table API>
+    // TODO: Move refCallback to table itself.
     return (
       <ContentContainer
         header={visibleHeader}
