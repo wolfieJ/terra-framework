@@ -4,6 +4,81 @@ Changelog
 Unreleased
 ----------
 
+4.0.0 - (January 25, 2019)
+------------------
+### Breaking Change
+* Updated terra-core dependencies
+
+### Changed
+* Remove the use of componentWillReceiveProps
+
+3.3.0 - (January 5, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+3.2.0 - (January 2, 2019)
+------------------
+### Changed
+* Updated readme so headings have logical nesting.
+
+3.1.0 - (December 5, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+3.0.0 - (December 3, 2018)
+------------------
+### Breaking Change
+* Removed instances of the NavigationLayout and related components injecting an `app` prop into child components.
+
+### Removed
+* Removed dependency on terra-app-delegate package.
+
+2.22.0 - (November 15, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+2.21.0 - (October 16, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+2.20.0 - (October 8, 2018)
+------------------
+### Changed
+* Updated links in docs on supported features
+
+2.19.0 - (September 25, 2018)
+------------------
+### Changed
+* Minor dependency bump
+
+2.18.0 - (September 11, 2018)
+------------------
+### Changed
+* Minor dependency updates
+
+2.17.0 - (September 5, 2018)
+------------------
+### Changed
+* Bumped minimum react peerDependency version from ^16.2.0 to ^16.4.2
+* Bumped minimum react-dom peerDependency version from ^16.2.0 to ^16.4.2
+
+2.16.0 - (August 30, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v5 update
+
+2.15.0 - (August 13, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v4 update
+
+### Fixed
+* Lint errors regarding file path resolution
+
 2.14.0 - (July 26, 2018)
 ------------------
 ### Changed

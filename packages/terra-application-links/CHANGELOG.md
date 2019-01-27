@@ -1,8 +1,94 @@
-ChangeLog
+Changelog
 =========
 
 Unreleased
------------------
+----------
+
+5.0.0 - (January 25, 2019)
+------------------
+### Breaking Change
+* Updated variable names to match new naming standard
+* Added new variables for css theming
+* Removed variables for css theming
+* Updated terra-core dependencies
+
+### Changed
+* Remove use of componentWillReceiveProps
+* Add css variable to text-transform the text values in the tabs
+
+4.23.0 - (January 5, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+4.22.0 - (January 2, 2019)
+------------------
+### Fixed
+* Fixed font family inheritance on application tab buttons
+
+4.21.0 - (December 5, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+4.20.0 - (December 3, 2018)
+------------------
+### Changed
+* Wdio tests changed to use themeCombinationOfCustomProperties
+
+4.19.1 - (November 15, 2018)
+------------------
+### Changed
+* Patch dependency update
+
+4.19.0 - (November 15, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+4.18.0 - (October 30, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+4.17.0 - (October 16, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+4.16.0 - (October 8, 2018)
+------------------
+### Changed
+* Updated links in docs on supported features
+
+4.15.0 - (September 25, 2018)
+------------------
+### Changed
+* Minor dependency bump
+
+4.14.0 - (September 5, 2018)
+------------------
+### Changed
+* Bumped minimum react peerDependency version from ^16.2.0 to ^16.4.2
+* Bumped minimum react-dom peerDependency version from ^16.2.0 to ^16.4.2
+
+4.13.0 - (August 30, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v5 update
+
+4.12.0 - (August 14, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v4 update
+
+### Fixed
+* Lint errors regarding file path resolution
+
+4.11.0 - (August 8, 2018)
+------------------
+### Changed
+* Minor dependency updates
 
 4.10.0 - (August 1, 2018)
 ------------------

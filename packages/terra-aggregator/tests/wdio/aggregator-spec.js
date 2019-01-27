@@ -1,5 +1,3 @@
-/* global browser, Terra, before, beforeEach, expect */
-
 describe('Aggregator', () => {
   before(() => browser.setViewportSize(Terra.viewports('large')[0]));
 
@@ -33,7 +31,7 @@ describe('Aggregator', () => {
 
       browser.click('#test-aggregator #section1');
 
-      browser.waitForVisible('[class*="slide-group"] .close-disclosure', 500);
+      browser.waitForVisible('[class*="slide-group"] .close-disclosure');
 
       browser.click('#test-aggregator #section1');
     });
@@ -48,7 +46,7 @@ describe('Aggregator', () => {
 
       browser.click('#test-aggregator #section1');
 
-      browser.waitForVisible('[class*="slide-group"] .close-disclosure', 500);
+      browser.waitForVisible('[class*="slide-group"] .close-disclosure');
 
       browser.click('[class*="slide-group"] .close-disclosure');
     });

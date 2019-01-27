@@ -32,7 +32,7 @@ class PopupAttachmentBehavior extends React.Component {
     return (
       <div>
         <label htmlFor="popup-behavior">Attachment Behavior</label>
-        <select onChange={this.handleChange} value={this.state.behavior} style={{ margin: '5px' }}>
+        <select id="popup-behavior" onChange={this.handleChange} value={this.state.behavior} style={{ margin: '5px' }}>
           <option value="auto">Auto</option>
           <option value="flip">Flip</option>
           <option value="push">Push</option>
@@ -46,6 +46,7 @@ class PopupAttachmentBehavior extends React.Component {
             isOpen={this.state.open}
             targetRef={() => document.getElementById('popup-behavior-target')}
             onRequestClose={this.handleRequestClose}
+            isContentFocusDisabled
           >
             <ExamplePopupContent onChange={this.handleRequestClose} />
           </Popup>

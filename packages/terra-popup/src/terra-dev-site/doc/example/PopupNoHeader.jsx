@@ -38,7 +38,12 @@ class PopupNoHeader extends React.Component {
 
   render() {
     return (
-      <div style={{ height: '200px', width: '200px', background: 'aliceblue', overflow: 'hidden' }} ref={this.setParentNode}>
+      <div
+        style={{
+          height: '200px', width: '200px', background: 'aliceblue', overflow: 'hidden',
+        }}
+        ref={this.setParentNode}
+      >
         <Popup
           boundingRef={this.getParentNode}
           contentHeight="240"
@@ -47,6 +52,7 @@ class PopupNoHeader extends React.Component {
           isOpen={this.state.open}
           onRequestClose={this.handleRequestClose}
           targetRef={() => document.getElementById('popup-no-header')}
+          isContentFocusDisabled
         >
           <ExamplePopupContent onChange={this.handleOnChange} />
         </Popup>

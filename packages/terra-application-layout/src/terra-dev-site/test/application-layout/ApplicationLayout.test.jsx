@@ -10,7 +10,13 @@ import Button from 'terra-button';
 
 import ApplicationLayout, { RoutingMenu, Utils } from '../../../ApplicationLayout';
 
-const PageContent = ({ contentName }) => (<div>Page Content: {contentName}</div>);
+const PageContent = ({ contentName }) => (
+  <div>
+    Page Content:
+    {' '}
+    {contentName}
+  </div>
+);
 PageContent.propTypes = {
   contentName: PropTypes.string,
 };
@@ -182,9 +188,7 @@ const indexPath = '/page_1';
 
 const userAvatar = (
   <Avatar
-    variant="user"
     alt="User, Test"
-    ariaLabel="User, Test"
     key="user_avatar"
   />
 );
@@ -201,7 +205,7 @@ const userData = {
  */
 const nameConfig = Object.freeze({
   title: 'Test Application',
-  accessory: <Image variant="rounded" src="https://github.com/cerner/terra-core/raw/master/terra.png" height="26px" width="26px" />,
+  accessory: <Image variant="rounded" src="https://github.com/cerner/terra-framework/raw/master/terra.png" height="26px" width="26px" />,
 });
 
 class ApplicationLayoutTest extends React.Component {
@@ -238,6 +242,12 @@ class ApplicationLayoutTest extends React.Component {
       title: 'Custom Checkbox Item',
       isSelectable: true,
       isSelected: checkboxItemEnabled,
+      parentKey: Utils.utilityHelpers.defaultKeys.MENU,
+    }, {
+      key: 'read-only-item',
+      title: 'Custom Read-Only Item',
+      id: 'readonly',
+      isReadOnly: true,
       parentKey: Utils.utilityHelpers.defaultKeys.MENU,
     }, {
       key: 'additional-3',

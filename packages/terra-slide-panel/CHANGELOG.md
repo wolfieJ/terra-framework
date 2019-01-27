@@ -4,6 +4,81 @@ Changelog
 Unreleased
 ----------
 
+3.0.0 - (January 25, 2019)
+------------------
+### Breaking Change
+* Updated variable names to match new naming standard
+* Added new variables for css theming
+* Removed variables for css theming
+* Updated terra-core dependencies
+
+2.25.0 - (January 5, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+2.24.0 - (January 2, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+2.23.0 - (December 5, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+2.22.0 - (December 3, 2018)
+------------------
+### Changed
+* Wdio tests changed to use themeCombinationOfCustomProperties
+
+### Fixed
+* Slide panel's aria-hidden value when the panel is toggled
+
+2.21.0 - (November 15, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+2.20.0 - (October 24, 2018)
+------------------
+### Changed
+* Updated the controlled slidepanel example's focus management
+
+2.19.0 - (October 16, 2018)
+------------------
+### Changed
+* Reordered DOM structure to change tab order
+
+2.18.0 - (October 8, 2018)
+------------------
+### Changed
+* Upgrade focus-trap-react version to ^4.0.1
+
+2.17.0 - (September 25, 2018)
+------------------
+### Changed
+* Minor dependency bump
+
+2.16.0 - (September 5, 2018)
+------------------
+### Changed
+* Bumped minimum react peerDependency version from ^16.2.0 to ^16.4.2
+* Bumped minimum react-dom peerDependency version from ^16.2.0 to ^16.4.2
+
+2.15.0 - (August 30, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v5 update
+
+2.14.0 - (August 13, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v4 update
+
+### Fixed
+* Lint errors regarding file path resolution
+
 2.13.0 - (July 25, 2018)
 ------------------
 ### Changed

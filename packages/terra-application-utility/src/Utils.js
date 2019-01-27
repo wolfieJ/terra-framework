@@ -8,6 +8,7 @@ const KEY_CODES = {
   LEFT_ARROW: 37,
   RIGHT_ARROW: 39,
   BACK_SPACE: 8,
+  TAB: 9,
 };
 
 const LOCATIONS = {
@@ -33,6 +34,10 @@ const itemShape = PropTypes.shape({
    * The location to place the item. One of Utils.LOCATIONS.BODY, Utils.LOCATIONS.FOOTER.
    */
   contentLocation: PropTypes.oneOf([LOCATIONS.BODY, LOCATIONS.FOOTER]),
+  /**
+   * Boolean indicating if the item is read-only. Takes precedence over isSelected/Selectable.
+   */
+  isReadOnly: PropTypes.bool,
   /**
    * Boolean indicating if the item is selected.
    */

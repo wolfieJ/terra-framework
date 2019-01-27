@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from 'terra-button';
-import NumberField from 'terra-form/lib/NumberField';
+import InputField from 'terra-form-input/lib/InputField';
+import SelectField from 'terra-form-select/lib/SelectField';
 // eslint-disable-next-line import/no-extraneous-dependencies, import/no-unresolved, import/extensions
 import Hookshot from 'terra-hookshot/lib/Hookshot';
 
@@ -19,41 +20,44 @@ const ATTACHMENT_POSITIONS = [
 const generateOptions = values => (
   values.map((currentValue, index) => {
     const keyValue = index;
-    return <option key={keyValue} value={currentValue}>{currentValue}</option>;
+    return <SelectField.Option key={keyValue} value={currentValue} display={currentValue} />;
   })
 );
 
 const attachmentValues = (attachment) => {
   if (attachment === 'middle start') {
     return { vertical: 'middle', horizontal: 'start' };
-  } else if (attachment === 'middle end') {
+  } if (attachment === 'middle end') {
     return { vertical: 'middle', horizontal: 'end' };
-  } else if (attachment === 'middle center') {
+  } if (attachment === 'middle center') {
     return { vertical: 'middle', horizontal: 'center' };
-  } else if (attachment === 'top start') {
+  } if (attachment === 'top start') {
     return { vertical: 'top', horizontal: 'start' };
-  } else if (attachment === 'top end') {
+  } if (attachment === 'top end') {
     return { vertical: 'top', horizontal: 'end' };
-  } else if (attachment === 'top center') {
+  } if (attachment === 'top center') {
     return { vertical: 'top', horizontal: 'center' };
-  } else if (attachment === 'bottom start') {
+  } if (attachment === 'bottom start') {
     return { vertical: 'bottom', horizontal: 'start' };
-  } else if (attachment === 'bottom end') {
+  } if (attachment === 'bottom end') {
     return { vertical: 'bottom', horizontal: 'end' };
   }
   return { vertical: 'bottom', horizontal: 'center' };
 };
+
+const getId = name => `${name}BoundedExample`;
 
 class HookshotStandard extends React.Component {
   constructor(props) {
     super(props);
     this.handleButtonClick = this.handleButtonClick.bind(this);
     this.handleRequestClose = this.handleRequestClose.bind(this);
-    this.handleSelectChange = this.handleSelectChange.bind(this);
+    this.handleAttachementBehaviorChange = this.handleAttachementBehaviorChange.bind(this);
+    this.handleContentAttachmentChange = this.handleContentAttachmentChange.bind(this);
+    this.handleTargetAttachmentChange = this.handleTargetAttachmentChange.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.setParentNode = this.setParentNode.bind(this);
     this.getParentNode = this.getParentNode.bind(this);
-    this.getId = this.getId.bind(this);
     this.state = {
       isOpen: false,
       hookshotContentAttachment: ATTACHMENT_POSITIONS[1],
@@ -68,10 +72,6 @@ class HookshotStandard extends React.Component {
     this.parentNode.scrollLeft = 475;
   }
 
-  getId(name) {
-    return name + this.state.id;
-  }
-
   setParentNode(node) {
     this.parentNode = node;
   }
@@ -81,15 +81,23 @@ class HookshotStandard extends React.Component {
   }
 
   handleButtonClick() {
-    this.setState({ isOpen: !this.state.isOpen });
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   }
 
   handleRequestClose() {
     this.setState({ isOpen: false });
   }
 
-  handleSelectChange(event) {
-    this.setState({ [event.target.name]: event.target.value });
+  handleAttachementBehaviorChange(value) {
+    this.setState({ hookshotAttachmentBehavior: value });
+  }
+
+  handleContentAttachmentChange(value) {
+    this.setState({ hookshotContentAttachment: value });
+  }
+
+  handleTargetAttachmentChange(value) {
+    this.setState({ hookshotTargetAttachment: value });
   }
 
   handleInputChange(event) {
@@ -109,35 +117,41 @@ class HookshotStandard extends React.Component {
 
     return (
       <div>
-        <form>
-          <label htmlFor={this.getId('hookshotAttachmentBehavior')}>Attachment Behavior</label>
-          <select id={this.getId('hookshotAttachmentBehavior')} name="hookshotAttachmentBehavior" value={this.state.hookshotAttachmentBehavior} onChange={this.handleSelectChange}>
-            {generateOptions(Hookshot.attachmentBehaviors)}
-          </select>
-          <br />
-          <br />
-          <NumberField
-            label="Attachment Margin in Px"
-            id={this.getId('hookshotAttachmentMargin')}
-            name="hookshotAttachmentMargin"
-            defaultValue={0}
-            value={this.state.hookshotAttachmentMargin}
-            style={{ width: '200px' }}
-            onChange={this.handleInputChange}
-          />
-          <label htmlFor={this.getId('hookshotContentAttachment')}>Content Attachment</label>
-          <select id={this.getId('hookshotContentAttachment')} name="hookshotContentAttachment" value={this.state.hookshotContentAttachment} onChange={this.handleSelectChange}>
-            {generateOptions(ATTACHMENT_POSITIONS)}
-          </select>
-          <br />
-          <br />
-          <label htmlFor={this.getId('hookshotTargetAttachment')}>Target Attachment</label>
-          <select id={this.getId('hookshotTargetAttachment')} name="hookshotTargetAttachment" value={this.state.hookshotTargetAttachment} onChange={this.handleSelectChange}>
-            {generateOptions(ATTACHMENT_POSITIONS)}
-          </select>
-          <br />
-          <br />
-        </form>
+        <SelectField
+          label="Attachment Behavior"
+          selectId={getId('hookshotAttachmentBehavior')}
+          selectAttrs={{ name: 'hookshotAttachmentBehavior' }}
+          value={this.state.hookshotAttachmentBehavior}
+          onChange={this.handleAttachementBehaviorChange}
+        >
+          {generateOptions(Hookshot.attachmentBehaviors)}
+        </SelectField>
+        <InputField
+          label="Attachment Margin in Px"
+          inputId={getId('hookshotAttachmentMargin')}
+          inputAttrs={{ name: 'hookshotAttachmentMargin', type: 'number' }}
+          defaultValue={this.state.hookshotAttachmentMargin}
+          style={{ width: '200px' }}
+          onChange={this.handleInputChange}
+        />
+        <SelectField
+          label="Content Attachment"
+          selectId={getId('hookshotContentAttachment')}
+          selectAttrs={{ name: 'hookshotContentAttachment' }}
+          value={this.state.hookshotContentAttachment}
+          onChange={this.handleContentAttachmentChange}
+        >
+          {generateOptions(ATTACHMENT_POSITIONS)}
+        </SelectField>
+        <SelectField
+          label="Target Attachment"
+          selectId={getId('hookshotTargetAttachment')}
+          selectAttrs={{ name: 'hookshotTargetAttachment' }}
+          value={this.state.hookshotTargetAttachment}
+          onChange={this.handleTargetAttachmentChange}
+        >
+          {generateOptions(ATTACHMENT_POSITIONS)}
+        </SelectField>
         <Hookshot
           attachmentBehavior={this.state.hookshotAttachmentBehavior}
           attachmentMargin={this.state.hookshotAttachmentMargin}
@@ -150,7 +164,12 @@ class HookshotStandard extends React.Component {
         >
           {hookshotContent}
         </Hookshot>
-        <div style={{ border: '1px dashed black', height: '200px', maxWidth: '100%', width: '400px', background: 'aliceblue', overflow: 'auto', position: 'relative' }} ref={this.setParentNode}>
+        <div
+          style={{
+            height: '200px', width: '400px', background: 'aliceblue', overflow: 'auto', position: 'relative',
+          }}
+          ref={this.setParentNode}
+        >
           <div style={{ position: 'relative', height: '600px', width: '1200px' }}>
             <Button id="hookshot-bounded-button" text="Hookshot Example" onClick={this.handleButtonClick} style={{ position: 'absolute', left: '600px', top: '300px' }} />
           </div>

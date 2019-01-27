@@ -76,7 +76,7 @@ const propTypes = {
    */
   isArrowDisplayed: PropTypes.bool,
   /**
-   * Should the popup content have tab focus. Set this is your content doesn't contain any focusable elements.
+   * Set this to `true` if your content has focusable elements and you want them to receive focus instead of focusing on the default popup frame when the popup is opened.
    */
   isContentFocusDisabled: PropTypes.bool,
   /**
@@ -130,10 +130,11 @@ class Popup extends React.Component {
     this.contentWidth = PopupWidths[props.contentWidth];
   }
 
-  componentWillReceiveProps(newProps) {
-    this.isContentSized = newProps.contentHeight !== 'auto' && newProps.contentWidth !== 'auto';
-    this.contentHeight = PopupHeights[newProps.contentHeight];
-    this.contentWidth = PopupWidths[newProps.contentWidth];
+  shouldComponentUpdate(nextProps) {
+    this.isContentSized = nextProps.contentHeight !== 'auto' && nextProps.contentWidth !== 'auto';
+    this.contentHeight = PopupHeights[nextProps.contentHeight];
+    this.contentWidth = PopupWidths[nextProps.contentWidth];
+    return true;
   }
 
   setArrowPosition(contentPosition, targetPosition) {
@@ -287,7 +288,10 @@ class Popup extends React.Component {
     return (
       <div>
         <Portal isOpened={isOpen}>
-          <PopupOverlay className={this.props.classNameOverlay} />
+          <PopupOverlay
+            className={this.props.classNameOverlay}
+            onRequestClose={this.props.onRequestClose}
+          />
         </Portal>
         <Hookshot
           attachmentBehavior={attachmentBehavior}

@@ -22,6 +22,14 @@ const OutsideClickBehavior = () => (
   />
 );
 
+const OutsideClickBehaviorWithSvgs = () => (
+  <HookshotTemplate
+    id="OutsideClickBehaviorWithSvgs"
+    includeSvgs
+    hookshotContentProps={{ closeOnEsc: false, closeOnOutsideClick: true, closeOnResize: false }}
+  />
+);
+
 const ResizeBehavior = () => (
   <HookshotTemplate
     id="ResizeBehavior"
@@ -44,11 +52,13 @@ const HookshotExample = () => (
     <EscBehavior />
     <p>Close on Outside Click Behavior</p>
     <OutsideClickBehavior />
+    <p>Close on Outside Click Behavior With SVGs</p>
+    <OutsideClickBehaviorWithSvgs />
     <p>Close on Resize Behavior</p>
     <ResizeBehavior />
     <p>No Close Behavior - Once opened, content stays on the screen when scrolling occurs.</p>
     <NoCloseBehavior />
-    <button id="scroll-bounds">Scroll Button</button>
+    <button type="button" id="scroll-bounds">Scroll Button</button>
   </div>
 );
 

@@ -4,6 +4,114 @@ Changelog
 Unreleased
 ----------
 
+4.0.0 - (January 25, 2019)
+------------------
+### Breaking Change
+* Updated variable names to match new naming standard
+* Added new variables for css theming
+* Removed variables for css theming
+* Updated terra-core dependencies
+
+### Changed
+* Removed use of componentWillReceiveProps
+* Update terra-avatar to 2.0
+
+3.3.0 - (January 5, 2019)
+------------------
+### Added
+* Wdio test added for read-only menu item
+
+### Changed
+* Increase specificity of UserData photo CSS class
+
+3.2.0 - (January 2, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+3.1.0 - (December 5, 2018)
+------------------
+### Changed
+* Update examples to use terra-framework's checked in image
+* Minor dependency bump
+
+3.0.0 - (December 3, 2018)
+------------------
+### Breaking Change
+* Updated ApplicationLayout and related components to interface directly with a parent DisclosureManager.
+* Removed instances of the ApplicationLayout and related components injecting an `app` prop into child components.
+
+### Added
+* Added missing ar translations.
+
+### Changed
+* Wdio tests changed to use themeCombinationOfCustomProperties
+
+2.22.1 - (November 15, 2018)
+------------------
+### Changed
+* Patch dependency update
+
+2.22.0 - (November 15, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+2.21.0 - (October 30, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+2.20.0 - (October 24, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+2.19.0 - (October 16, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+2.18.0 - (October 8, 2018)
+------------------
+### Changed
+* Updated links in docs on supported features
+
+2.17.0 - (September 25, 2018)
+------------------
+### Changed
+* The application menu is closed when presenting utilities at compact sizes
+* Removed terra-base duplicate from devDependencies
+
+2.16.0 - (September 11, 2018)
+------------------
+### Changed
+* Minor dependency updates
+
+2.15.0 - (September 5, 2018)
+------------------
+### Changed
+* Bumped minimum react peerDependency version from ^16.2.0 to ^16.4.2
+* Bumped minimum react-dom peerDependency version from ^16.2.0 to ^16.4.2
+
+2.14.0 - (August 30, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v5 update
+
+2.13.0 - (August 14, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v4 update
+
+### Fixed
+* Lint errors regarding file path resolution
+
+2.12.0 - (August 8, 2018)
+------------------
+### Changed
+* Minor dependency updates
+
 2.11.0 - (August 1, 2018)
 ------------------
 ### Added

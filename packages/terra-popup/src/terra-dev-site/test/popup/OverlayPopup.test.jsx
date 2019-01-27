@@ -11,13 +11,10 @@ class DefaultPopup extends React.Component {
     this.state = { open: false };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.overlayStyle = document.documentElement.style.overflow;
     this.overlayId = document.documentElement.id;
     document.documentElement.id = 'popup-overlay-test';
-  }
-
-  componentDidMount() {
     document.documentElement.style.overflow = 'auto';
   }
 
@@ -54,7 +51,7 @@ class DefaultPopup extends React.Component {
         >
           <p>this is popup content</p>
         </Popup>
-        <button id="overlay-button" style={{ position: 'absolute', left: '125px' }} onClick={this.handleButtonClick} ref={this.setButtonNode}>
+        <button type="button" id="overlay-button" style={{ position: 'absolute', left: '125px' }} onClick={this.handleButtonClick} ref={this.setButtonNode}>
           Default Popup
         </button>
       </div>

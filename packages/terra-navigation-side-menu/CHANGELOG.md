@@ -1,8 +1,76 @@
-ChangeLog
+Changelog
 =========
 
 Unreleased
------------------
+----------
+
+2.0.0 - (January 25, 2019)
+------------------
+### Breaking Change
+* Updated variable names to match new naming standard
+* Added new variables for css theming
+* Removed variables for css theming
+* Updated terra-core dependencies
+
+### Changed
+* Remove use of componentWillReceiveProps
+
+1.20.0 - (January 5, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+1.19.0 - (January 2, 2019)
+------------------
+### Fixed
+* Updated Data-menu-item attribute value of Menuitem to Unique key value
+
+### Added
+* Add optional toolbar prop that displays below the side menu action header
+
+1.18.0 - (December 5, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+1.17.0 - (December 3, 2018)
+------------------
+### Changed
+* Wdio tests changed to use themeCombinationOfCustomProperties
+
+1.16.0 - (November 15, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+1.15.0 - (October 8, 2018)
+------------------
+### Changed
+* Updated links in docs on supported features
+
+1.14.0 - (September 25, 2018)
+------------------
+### Changed
+* Removed terra-base duplicate from dependencies (kept instance in peerDependencies)
+
+1.13.0 - (September 5, 2018)
+------------------
+### Changed
+* Bumped minimum react peerDependency version from ^16.2.0 to ^16.4.2
+* Bumped minimum react-dom peerDependency version from ^16.2.0 to ^16.4.2
+
+1.12.0 - (August 30, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v5 update
+
+1.11.0 - (August 13, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v4 update
+
+### Fixed
+* Lint errors regarding file path resolution
 
 1.10.0 - (July 25, 2018)
 ------------------

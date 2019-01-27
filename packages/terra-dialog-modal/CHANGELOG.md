@@ -1,8 +1,78 @@
-ChangeLog
+Changelog
 =========
 
 Unreleased
------------------
+----------
+
+2.0.0 - (January 25, 2019)
+------------------
+### Breaking Change
+* Added new variables for css theming
+* Updated terra-core dependencies
+
+1.14.0 - (January 5, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+1.13.0 - (January 2, 2019)
+------------------
+### Changed
+* Updated dev site examples not have duplicate ids.
+
+1.12.0 - (December 5, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+1.11.0 - (December 3, 2018)
+------------------
+### Changed
+* Minor dependency bump
+
+1.10.0 - (November 15, 2018)
+------------------
+### Changed
+* Minor dependency update
+* Restructured theme tests into a separate file
+* Updated examples to consume terra-disclosure-manager v3.x
+
+### Removed
+* Removed dependency on terra-app-delegate package.
+
+1.9.0 - (October 16, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+1.8.0 - (October 8, 2018)
+------------------
+### Changed
+* Updated links in docs on supported features
+
+1.7.0 - (September 25, 2018)
+------------------
+### Changed
+* Minor dependency bump
+
+1.6.0 - (September 5, 2018)
+------------------
+### Changed
+* Bumped minimum react peerDependency version from ^16.2.0 to ^16.4.2
+* Bumped minimum react-dom peerDependency version from ^16.2.0 to ^16.4.2
+
+1.5.0 - (August 30, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v5 update
+
+1.4.0 - (August 14, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v4 update
+
+### Fixed
+* Lint errors regarding file path resolution
 
 1.3.0 - (July 26, 2018)
 ------------------

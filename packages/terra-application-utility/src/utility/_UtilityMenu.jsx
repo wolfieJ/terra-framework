@@ -79,21 +79,21 @@ class UtilityMenu extends React.Component {
       currentKey: props.initialSelectedKey,
       focusIndex: -1,
       previousKeyStack: [],
+      prevPropsInitialSelectedKey: props.initialSelectedKey,
+      prevPropsMenuItems: props.menuItems,
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.initialSelectedKey !== this.props.initialSelectedKey) {
-      this.setState({
-        currentKey: nextProps.initialSelectedKey,
-      });
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.initialSelectedKey !== prevState.prevPropsInitialSelectedKey) {
+      return { currentKey: nextProps.initialSelectedKey };
     }
 
-    if (nextProps.menuItems !== this.props.menuItems) {
-      this.setState({
-        map: processMenuItems(nextProps.menuItems),
-      });
+    if (nextProps.menuItems !== prevState.prevPropsMenuItems) {
+      return { map: processMenuItems(nextProps.menuItems) };
     }
+
+    return null;
   }
 
   componentDidUpdate() {
@@ -124,12 +124,13 @@ class UtilityMenu extends React.Component {
         content={item.content}
         contentLocation={item.contentLocation}
         isActive={isActive}
+        isReadOnly={item.isReadOnly}
         isSelected={item.isSelected}
         isSelectable={item.isSelectable}
         hasChevron={chevron}
         leftInset={leftInset}
         rightInset={rightInset}
-        onChange={this.handleOnChange}
+        onChange={item.isReadOnly ? () => {} : this.handleOnChange}
         onKeyDown={handleOnKeyDown}
         variant={this.props.variant}
       />
@@ -180,7 +181,7 @@ class UtilityMenu extends React.Component {
 
   childrenHasChevron(item) {
     const childrenHasChevron = item.childKeys.some((key) => {
-      const childKeys = this.getItem(key).childKeys;
+      const { childKeys } = this.getItem(key);
       return childKeys && childKeys.length > 0 && this.getItem(key).contentLocation !== Utils.LOCATIONS.FOOTER;
     });
     return childrenHasChevron;
@@ -195,13 +196,10 @@ class UtilityMenu extends React.Component {
    * @param {*} key
    */
   handleOnChange(event, key) {
-    const childKeys = this.getItem(key).childKeys;
+    const { childKeys } = this.getItem(key);
     const item = this.getItem(key);
     if (childKeys && childKeys.length > 0) {
-      this.setState({
-        previousKey: this.push(this.state.currentKey),
-        currentKey: key,
-      });
+      this.setState(prevState => ({ previousKey: this.push(prevState.currentKey), currentKey: key }));
     } else {
       this.props.onRequestClose();
       this.props.onChange(event, { key, metaData: item.metaData });
@@ -216,26 +214,27 @@ class UtilityMenu extends React.Component {
     return ((event) => {
       if (event.nativeEvent.keyCode === Utils.KEY_CODES.LEFT_ARROW && this.state.currentKey !== this.props.initialSelectedKey) {
         this.pop();
-      } else if (event.nativeEvent.keyCode === Utils.KEY_CODES.UP_ARROW) {
+      } else if (event.nativeEvent.keyCode === Utils.KEY_CODES.UP_ARROW && this.state.focusIndex !== 0) {
         this.setState({ focusIndex: index - 1 });
-      } else if (event.nativeEvent.keyCode === Utils.KEY_CODES.DOWN_ARROW) {
+      } else if (event.nativeEvent.keyCode === Utils.KEY_CODES.DOWN_ARROW || event.nativeEvent.keyCode === Utils.KEY_CODES.tab) {
         this.setState({ focusIndex: index + 1 });
       }
     });
   }
 
   pop() {
-    const newStack = this.state.previousKeyStack.slice();
-    this.setState({
-      previousKeyStack: newStack,
-      currentKey: newStack.pop(),
+    this.setState((prevState) => {
+      const newStack = prevState.previousKeyStack.slice();
+      return { previousKeyStack: newStack, currentKey: newStack.pop() };
     });
   }
 
   push(key) {
-    const newStack = this.state.previousKeyStack.slice();
-    newStack.push(key);
-    this.setState({ previousKeyStack: newStack });
+    this.setState((prevState) => {
+      const newStack = prevState.previousKeyStack.slice();
+      newStack.push(key);
+      return { previousKeyStack: newStack };
+    });
   }
 
   render() {
@@ -250,7 +249,7 @@ class UtilityMenu extends React.Component {
       ...customProps
     } = this.props;
 
-    const currentKey = this.state.currentKey;
+    const { currentKey } = this.state;
     const currentItem = this.getItem(currentKey);
     const firstPage = currentKey === initialSelectedKey;
 
@@ -286,6 +285,10 @@ class UtilityMenu extends React.Component {
       { 'menu-utility-menu-noninitial-page-header-text': !firstPage && variant === Utils.VARIANTS.MENU },
     ]);
 
+    const closeButtonClassNames = cx([
+      { 'header-utility-menu-button-close': variant === Utils.VARIANTS.HEADER },
+    ]);
+
     const iconLeftClassNames = cx([
       'utility-menu-icon-left',
       { 'header-utility-menu-icon-left': variant === Utils.VARIANTS.HEADER },
@@ -319,6 +322,7 @@ class UtilityMenu extends React.Component {
         isIconOnly
         text={closeText}
         variant={Button.Opts.Variants.UTILITY}
+        className={closeButtonClassNames}
       />
     );
 
@@ -354,21 +358,23 @@ class UtilityMenu extends React.Component {
     }
 
     const menuText = intl.formatMessage({ id: 'Terra.application.utility.menu' });
+    /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
     return (
-      <div ref={this.setMenuNode} style={{ height: isHeightBounded ? '100%' : 'auto', outline: 'none' }} tabIndex="0" >
+      <div ref={this.setMenuNode} style={{ height: isHeightBounded ? '100%' : 'auto', outline: 'none' }} tabIndex="0">
         <ContentContainer
           {...customProps}
           header={header}
           footer={footer}
           fill={isHeightBounded}
           className={menuClassNames}
-          role={'navigation'}
+          role="navigation"
           aria-label={menuText}
         >
           {this.buildListContent(currentItem)}
         </ContentContainer>
       </div>
     );
+    /* eslint-enable jsx-a11y/no-noninteractive-tabindex */
   }
 }
 

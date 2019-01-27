@@ -1,6 +1,6 @@
 # Terra NotificationDialog
 
-`terra-notification-dialog` is a notification dialog component built over the `terra-abstract-modal`. It has the highest z-index of 9001. It is a common component to be used for confirmation/acceptance criteria style dialogs. 
+`terra-notification-dialog` is a notification dialog component built over the `terra-abstract-modal`. It has the highest z-index of 9001. It is a common component to be used for confirmation/acceptance criteria style dialogs.
 
 ## Getting Started
 
@@ -44,7 +44,6 @@ class CompleteNotificationDialog extends React.Component {
         <NotificationDialog
           variant={NotificationDialogVariants.ALERT}
           isOpen={this.state.isOpen}
-          onRequestClose={this.handleCloseModal}
           title="Make sure that the title relates directly to the choices."
           message="The Main Instruction is text used to provide more detail or define terminology. Don’t repeat the title verbatim."
           primaryAction={{
@@ -70,9 +69,9 @@ export default CompleteNotificationDialog;
 ## Component Features
 
 
- * [Cross-Browser Support](https://github.com/cerner/terra-core/wiki/Component-Features#cross-browser-support)
- * [Responsive Support](https://github.com/cerner/terra-core/wiki/Component-Features#responsive-support)
- * [Mobile Support](https://github.com/cerner/terra-core/wiki/Component-Features#mobile-support)
- * [LTR/RTL Support](https://github.com/cerner/terra-core/wiki/Component-Features#ltr--rtl-support)
- * [Internationalization Support](https://github.com/cerner/terra-core/wiki/Component-Features#internationalization-i18n-support)
- * [Localization Support](https://github.com/cerner/terra-core/wiki/Component-Features#localization-support)
+ * [Cross-Browser Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#cross-browser-support)
+ * [Responsive Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#responsive-support)
+ * [Mobile Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#mobile-support)
+ * [LTR/RTL Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#ltr--rtl-support)
+ * [Internationalization Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#internationalization-i18n-support)
+ * [Localization Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#internationalization-i18n-support)

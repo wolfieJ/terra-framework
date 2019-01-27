@@ -1,8 +1,8 @@
 # Terra Brand Footer
 
 
-[![NPM version](http://img.shields.io/npm/v/terra-brand-footer.svg)](https://www.npmjs.org/package/terra-brand-footer)
-[![Build Status](https://travis-ci.org/cerner/terra-framework.svg?branch=master)](https://travis-ci.org/cerner/terra-framework)
+[![NPM version](https://badgen.net/npm/v/terra-brand-footer)](https://www.npmjs.org/package/terra-brand-footer)
+[![Build Status](https://badgen.net/travis/cerner/terra-framework)](https://travis-ci.org/cerner/terra-framework)
 
 A standard footer for application layout which provides content areas to display options such as branding, copyright information, logo and navigation to related pages.
 
@@ -16,7 +16,7 @@ A standard footer for application layout which provides content areas to display
 
 ## LICENSE
 
-Copyright 2018 Cerner Innovation, Inc.
+Copyright 2018 - 2019 Cerner Innovation, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

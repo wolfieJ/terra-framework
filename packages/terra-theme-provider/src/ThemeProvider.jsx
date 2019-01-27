@@ -35,15 +35,15 @@ class ThemeProvider extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props === nextProps) return;
-    if (nextProps.isGlobalTheme === true) {
-      if (this.props.themeName) {
-        document.documentElement.classList.remove(this.props.themeName);
+  componentDidUpdate(prevProps) {
+    if (this.props === prevProps) return;
+    if (this.props.isGlobalTheme === true) {
+      if (prevProps.themeName) {
+        document.documentElement.classList.remove(prevProps.themeName);
       }
 
-      if (nextProps.themeName) {
-        document.documentElement.classList.add(nextProps.themeName);
+      if (this.props.themeName) {
+        document.documentElement.classList.add(this.props.themeName);
       }
     }
   }
@@ -55,7 +55,9 @@ class ThemeProvider extends React.Component {
   }
 
   render() {
-    const { themeName, isGlobalTheme, children, ...customProps } = this.props;
+    const {
+      themeName, isGlobalTheme, children, ...customProps
+    } = this.props;
     return (<div {...customProps} className={cx(themeName, customProps.className)}>{children}</div>);
   }
 }

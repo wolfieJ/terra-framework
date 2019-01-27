@@ -4,6 +4,7 @@ exports[`should render a default component 1`] = `
 <div>
   <button
     id="hookshot-standard-button"
+    type="button"
   />
 </div>
 `;
@@ -36,7 +37,17 @@ exports[`should shallow a default component 1`] = `
     targetRef={[Function]}
   >
     <OnClickOutside(HookshotContent)
+      eventTypes={
+        Array [
+          "mousedown",
+          "touchstart",
+        ]
+      }
+      excludeScrollbar={false}
       onRequestClose={[Function]}
+      outsideClickIgnoreClass="ignore-react-onclickoutside"
+      preventDefault={false}
+      stopPropagation={false}
     >
       <div
         style={
@@ -54,6 +65,7 @@ exports[`should shallow a default component 1`] = `
   <button
     id="hookshot-standard-button"
     onClick={[Function]}
+    type="button"
   />
 </div>
 `;

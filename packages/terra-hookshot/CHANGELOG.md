@@ -4,6 +4,66 @@ Changelog
 Unreleased
 ----------
 
+5.0.0 - (January 25, 2019)
+------------------
+### Breaking Change
+* Updated terra-core dependencies
+
+### Changed
+* Removed usage of componentWillReceiveProps
+
+4.17.0 - (January 5, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+4.16.0 - (January 2, 2019)
+------------------
+### Changed
+* Updated dev site examples to not have duplicate ids.
+* Updated dev site examples to use terra-form-input and terra-form-select to improve accessability.
+
+4.15.0 - (December 5, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+4.14.0 - (December 3, 2018)
+------------------
+### Fixed
+* Lint error
+
+4.13.1 - (November 15, 2018)
+------------------
+### Change
+* Added existence check for SVGElement, fixes issue with older version of jsdom
+
+4.13.0 - (November 15, 2018)
+------------------
+### Change
+* Update react-onclickoutside to ^6.7.1
+
+4.12.0 - (September 25, 2018)
+------------------
+### Fixed
+* Broken coordiantes example for setState.
+
+4.11.0 - (September 5, 2018)
+------------------
+### Changed
+* Bumped minimum react peerDependency version from ^16.2.0 to ^16.4.2
+* Bumped minimum react-dom peerDependency version from ^16.2.0 to ^16.4.2
+
+4.10.0 - (August 30, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v5 update
+
+4.9.0 - (August 13, 2018)
+------------------
+### Changed
+* Minor dependency updates
+
 4.8.0 - (July 25, 2018)
 ------------------
 ### Changed

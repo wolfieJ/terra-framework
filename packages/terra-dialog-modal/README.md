@@ -1,8 +1,8 @@
 # Terra Dialog Modal
 
 
-[![NPM version](http://img.shields.io/npm/v/terra-dialog-modal.svg)](https://www.npmjs.org/package/terra-dialog-modal)
-[![Build Status](https://travis-ci.org/cerner/terra-framework.svg?branch=master)](https://travis-ci.org/cerner/terra-framework)
+[![NPM version](https://badgen.net/npm/v/terra-dialog-modal)](https://www.npmjs.org/package/terra-dialog-modal)
+[![Build Status](https://badgen.net/travis/cerner/terra-framework)](https://travis-ci.org/cerner/terra-framework)
 
 The Dialog Modal allows dynamic height modals. It's limited use case, as dynamic heights break with more complicated DOM structures. If content is too complicated, the terra-modal-manager should be used. The components is placed at an 8000 z-index. The dialog supports release and request focus props similar to terra-popup and terra-date-picker, so it can be presented from another modal with focus.
 
@@ -16,7 +16,7 @@ The Dialog Modal allows dynamic height modals. It's limited use case, as dynamic
 
 ## LICENSE
 
-Copyright 2018 Cerner Innovation, Inc.
+Copyright 2018 - 2019 Cerner Innovation, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

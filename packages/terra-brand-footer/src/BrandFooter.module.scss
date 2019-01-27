@@ -23,10 +23,17 @@
     align-content: stretch;
     flex-direction: row;
 
-    .menu {
+    .navigation-section {
       flex: 1 1 0%;
       min-width: var(--terra-brand-footer-vertical-nav-link-group-min-width, 240px);
       padding-right: var(--terra-brand-footer-vertical-nav-link-group-padding-right, 1.4285714286rem);
+    }
+
+    .menu {
+      flex: 1 1 0%;
+      margin-bottom: 0;
+      margin-top: 0;
+      width: 100%;
     }
 
     .list-item {
@@ -37,6 +44,8 @@
 
     .list-header {
       display: block;
+      margin-bottom: 0;
+      margin-top: 0;
       padding-bottom: var(--terra-brand-footer-vertical-nav-header-padding-bottom, 0.7142857143rem);
       padding-top: var(--terra-brand-footer-vertical-nav-header-padding-top, 1.4285714286rem);
     }
@@ -45,8 +54,12 @@
   .nav-horizontal {
     flex-direction: column;
 
-    .menu {
+    .navigation-section {
       width: 100%;
+    }
+
+    .menu {
+      display: inline;
     }
 
     .list-item {
@@ -55,8 +68,10 @@
 
     .list-header {
       display: inline-block;
+      margin-bottom: 0;
+      margin-top: 0;
     }
-  
+
     // If there isn't a section header nothing is needed before the link
     .list-item:first-child::before {
       content: '';
@@ -65,28 +80,31 @@
 
     /* stylelint-disable selector-max-compound-selectors */
     // A '/' isn't needed to separate an item from the header it follows
-    .list-header + .list-item::before {
+    .list-header + .menu::before {
       content: '';
       padding-left: 0;
-      padding-right: var(--terra-brand-footer-horizontal-nav-first-link-padding-before-right, 0.7142857142857143rem);
+      padding-right: var(--terra-brand-footer-horizontal-nav-first-link-before-padding-right, 0.7142857142857143rem);
     }
     /* stylelint-enable selector-max-compound-selectors */
-  
-    .list-item::before {
-      content: '/';
-      padding-bottom: var(--terra-brand-footer-horizontal-nav-link-padding-before-bottom, 0.7142857142857143rem);
-      padding-left: var(--terra-brand-footer-horizontal-nav-link-padding-before-top, 0.7142857142857143rem);
-      padding-right: var(--terra-brand-footer-horizontal-nav-link-padding-before-left, 0.7142857142857143rem);
-      padding-top: var(--terra-brand-footer-horizontal-nav-link-padding-before-right, 0.7142857142857143rem);
+
+    .separator {
+      color: var(--terra-brand-footer-horizontal-nav-link-separator-color, #8baaca);
+      padding-bottom: var(--terra-brand-footer-horizontal-nav-link-separator-padding-bottom, 0.7142857142857143rem);
+      padding-left: var(--terra-brand-footer-horizontal-nav-link-separator-padding-left, 0.7142857142857143rem);
+      padding-right: var(--terra-brand-footer-horizontal-nav-link-separator-padding-right, 0.7142857142857143rem);
+      padding-top: var(--terra-brand-footer-horizontal-nav-link-separator-padding-top, 0.7142857142857143rem);
     }
+  }
+
+  .navigation-section {
+    margin-bottom: var(--terra-brand-footer-link-group-margin-bottom, 0);
+    margin-left: var(--terra-brand-footer-link-group-margin-left, 0);
+    margin-right: var(--terra-brand-footer-link-group-margin-right, 0);
+    margin-top: var(--terra-brand-footer-link-group-margin-top, 0);
   }
 
   .menu {
     list-style: none;
-    margin-bottom: var(--terra-brand-footer-link-group-margin-bottom, 0);
-    margin-left: var(--terra-brand-footer-link-group-margin-top, 0);
-    margin-right: var(--terra-brand-footer-link-group-margin-left, 0);
-    margin-top: var(--terra-brand-footer-link-group-margin-right, 0);
     padding-left: 0;
     padding-right: 0;
   }
@@ -126,9 +144,9 @@
     background-color: var(--terra-brand-footer-footer-content-background-color, #153d70);
     color: var(--terra-brand-footer-footer-content-color, #fff);
     padding-bottom: var(--terra-brand-footer-footer-content-padding-bottom, 1.4285714285714286rem);
-    padding-left: var(--terra-brand-footer-footer-content-padding-top, 1.4285714285714286rem);
-    padding-right: var(--terra-brand-footer-footer-content-padding-left, 1.4285714285714286rem);
-    padding-top: var(--terra-brand-footer-footer-content-padding-right, 1.4285714285714286rem);
+    padding-left: var(--terra-brand-footer-footer-content-padding-left, 1.4285714285714286rem);
+    padding-right: var(--terra-brand-footer-footer-content-padding-right, 1.4285714285714286rem);
+    padding-top: var(--terra-brand-footer-footer-content-padding-top, 1.4285714285714286rem);
   }
 
   .content-top {

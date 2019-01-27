@@ -3,8 +3,6 @@ import Button from 'terra-button';
 import DialogModal from '../../../DialogModal';
 
 const CustomHeaderFooterStyles = {
-  border: '2px dashed #4e832b',
-  color: '#4e832b',
   height: '38px',
   lineHeight: '2',
   padding: '2px 2px 2px 5px',
@@ -46,7 +44,12 @@ class DialogModalWithCustomHeaderAndCustomFooter extends React.Component {
           ariaLabel="Dialog Modal"
           isOpen={this.state.isOpen}
           onRequestClose={this.handleCloseModal}
-          header={<div style={CustomHeaderFooterStyles}>Custom Header <Button id="close-dialog-modal" text="Close" style={{ marginLeft: '10px', float: 'right' }} onClick={this.handleCloseModal} /></div>}
+          header={(
+            <div style={CustomHeaderFooterStyles}>
+Custom Header
+              <Button id="close-dialog-modal" text="Close" style={{ marginLeft: '10px', float: 'right' }} onClick={this.handleCloseModal} />
+            </div>
+)}
           footer={<div style={CustomHeaderFooterStyles}>Custom Footer</div>}
         >
           <p>{text}</p>

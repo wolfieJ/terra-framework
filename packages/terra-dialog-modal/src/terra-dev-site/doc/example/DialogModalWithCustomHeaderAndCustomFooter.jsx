@@ -46,12 +46,17 @@ class DialogModalWithCustomHeaderAndCustomFooter extends React.Component {
           ariaLabel="Dialog Modal"
           isOpen={this.state.isOpen}
           onRequestClose={this.handleCloseModal}
-          header={<div style={CustomHeaderFooterStyles}>Custom Header <Button id="close-dialog-modal" text="Close" style={{ marginLeft: '10px', float: 'right' }} onClick={this.handleCloseModal} /></div>}
+          header={(
+            <div style={CustomHeaderFooterStyles}>
+Custom Header
+              <Button id="close-dialog-modal" text="Close" style={{ marginLeft: '10px', float: 'right' }} onClick={this.handleCloseModal} />
+            </div>
+)}
           footer={<div style={CustomHeaderFooterStyles}>Custom Footer</div>}
         >
           <p>{text}</p>
         </DialogModal>
-        <Button id="trigger-dialog-modal" text="Trigger Dialog Modal" onClick={this.handleOpenModal} />
+        <Button text="Trigger Dialog Modal" onClick={this.handleOpenModal} />
       </div>
     );
   }

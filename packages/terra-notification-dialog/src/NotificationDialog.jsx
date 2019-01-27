@@ -65,10 +65,6 @@ const propTypes = {
    */
   isOpen: PropTypes.bool.isRequired,
   /**
-   * Callback function indicating a close condition was met, should be combined with isOpen for state management.
-   */
-  onRequestClose: PropTypes.func.isRequired,
-  /**
    * A callback function to let the containing component (e.g. modal) to regain focus.
    */
   releaseFocus: PropTypes.func,
@@ -97,21 +93,26 @@ const actionSection = (primaryAction, secondaryAction) => {
     dismissButton = <Button text={secondaryAction.text} onClick={secondaryAction.onClick} />;
   }
 
-  return <div className={cx('actions')}>{actionButton}{dismissButton}</div>;
+  return (
+    <div className={cx('actions')}>
+      {actionButton}
+      {dismissButton}
+    </div>
+  );
 };
 
 const getIcon = (intl, variant, customIcon = null) => {
   switch (variant) {
     case variants.ALERT:
-      return (<svg className={cx('alert')} role="presentation" alt={intl.formatMessage({ id: 'Terra.notification.dialog.alert' })} />);
+      return (<span className={cx(['icon', 'alert'])} />);
     case variants.ERROR:
-      return (<svg className={cx('error')} role="presentation" alt={intl.formatMessage({ id: 'Terra.notification.dialog.error' })} />);
+      return (<span className={cx(['icon', 'error'])} />);
     case variants.WARNING:
-      return (<svg className={cx('warning')} role="presentation" alt={intl.formatMessage({ id: 'Terra.notification.dialog.warning' })} />);
+      return (<span className={cx(['icon', 'warning'])} />);
     case variants.INFO:
-      return (<svg className={cx('info')} role="presentation" alt={intl.formatMessage({ id: 'Terra.notification.dialog.info' })} />);
+      return (<span className={cx(['icon', 'info'])} />);
     case variants.SUCCESS:
-      return (<svg className={cx('success')} role="presentation" alt={intl.formatMessage({ id: 'Terra.notification.dialog.success' })} />);
+      return (<span className={cx(['icon', 'success'])} />);
     case variants.CUSTOM:
       return customIcon;
     default:
@@ -129,7 +130,6 @@ const contextTypes = {
 };
 
 class NotificationDialog extends React.Component {
-
   componentDidMount() {
     if (this.props.isOpen && this.props.requestFocus) {
       this.props.requestFocus();
@@ -166,7 +166,6 @@ class NotificationDialog extends React.Component {
       variant,
       customIcon,
       isOpen,
-      onRequestClose,
       releaseFocus,
       requestFocus,
       ...customProps
@@ -185,7 +184,7 @@ class NotificationDialog extends React.Component {
         role="alertdialog"
         classNameModal={notificationDialogClassNames}
         isOpen={this.props.isOpen}
-        onRequestClose={this.props.onRequestClose}
+        onRequestClose={() => {}}
         closeOnEsc={false}
         closeOnOutsideClick={false}
         zIndex="9000"
@@ -194,15 +193,15 @@ class NotificationDialog extends React.Component {
           <div className={cx('notification-dialog-container')}>
             <div id="notification-dialog-header" className={cx('header-body')}>{header || defaultHeader}</div>
             <div className={cx('notification-dialog-body')}>
-              {variant &&
-                <div className={cx('icon-div')}>{getIcon(intl, variant, customIcon)}</div>
+              {variant
+                && <div className={cx('icon-container')}>{getIcon(intl, variant, customIcon)}</div>
               }
               <div>
-                {title &&
-                  <div id="notification-dialog-title" className={cx('title')}>{title}</div>
+                {title
+                  && <div id="notification-dialog-title" className={cx('title')}>{title}</div>
                 }
-                {message &&
-                  <div className={cx('message')}>{message}</div>
+                {message
+                  && <div className={cx('message')}>{message}</div>
                 }
               </div>
             </div>

@@ -1,14 +1,14 @@
 import React from 'react';
 import Button from 'terra-button';
-import AppDelegate from 'terra-app-delegate';
+import { withDisclosureManager, disclosureManagerShape } from 'terra-disclosure-manager';
 import NotificationDialog, { NotificationDialogVariants } from '../../../NotificationDialog';
 
 const clickOK = () => {
-  alert('You clicked OK');  // eslint-disable-line no-alert
+  alert('You clicked OK'); // eslint-disable-line no-alert
 };
 
 const propTypes = {
-  app: AppDelegate.propType,
+  disclosureManager: disclosureManagerShape,
 };
 
 class NotificationDialogWithFocus extends React.Component {
@@ -37,7 +37,6 @@ class NotificationDialogWithFocus extends React.Component {
         <NotificationDialog
           variant={NotificationDialogVariants.ALERT}
           isOpen={this.state.isOpen}
-          onRequestClose={this.handleCloseModal}
           title="Make sure that the title relates directly to the choices."
           message="The Main Instruction is text used to provide more detail or define terminology. Don’t repeat the title verbatim."
           primaryAction={{
@@ -48,8 +47,8 @@ class NotificationDialogWithFocus extends React.Component {
             text: 'Close',
             onClick: this.handleCloseModal,
           }}
-          requestFocus={this.props.app.requestFocus}
-          releaseFocus={this.props.app.releaseFocus}
+          requestFocus={this.props.disclosureManager.requestFocus}
+          releaseFocus={this.props.disclosureManager.releaseFocus}
         />
         <Button text="Trigger NotificationDialog" onClick={this.handleOpenModal} />
       </div>
@@ -58,4 +57,4 @@ class NotificationDialogWithFocus extends React.Component {
 }
 
 NotificationDialogWithFocus.propTypes = propTypes;
-export default NotificationDialogWithFocus;
+export default withDisclosureManager(NotificationDialogWithFocus);

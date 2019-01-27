@@ -4,6 +4,68 @@ Changelog
 Unreleased
 ----------
 
+2.0.0 - (January 25, 2019)
+------------------
+### Breaking Change
+* Updated terra-core dependencies
+
+### Changed
+* Remove use of componentWillReceiveProps
+
+1.18.0 - (January 5, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+1.17.0 - (January 2, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+1.16.0 - (December 5, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+1.15.0 - (December 3, 2018)
+------------------
+### Changed
+* Minor dependency bump
+
+1.14.0 - (November 15, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+1.13.0 - (October 8, 2018)
+------------------
+### Changed
+* Updated links in docs on supported features
+
+1.12.0 - (September 25, 2018)
+------------------
+### Changed
+* Minor dependency bump
+
+1.11.0 - (September 5, 2018)
+------------------
+### Changed
+* Bumped minimum react peerDependency version from ^16.2.0 to ^16.4.2
+* Bumped minimum react-dom peerDependency version from ^16.2.0 to ^16.4.2
+
+1.10.0 - (August 30, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v5 update
+
+1.9.0 - (August 13, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v4 update
+
+### Fixed
+* Lint errors regarding file path resolution
+
 1.8.0 - (July 25, 2018)
 ------------------
 ### Changed

@@ -44,13 +44,12 @@ class TabMenu extends React.Component {
     this.shouldResetFocus = false;
   }
 
-  componentWillReceiveProps(newProps) {
-    if (this.props.location !== newProps.location) {
+  componentDidUpdate(prevProps) {
+    if (prevProps.location !== this.props.location) {
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState({ isOpen: false });
     }
-  }
 
-  componentDidUpdate() {
     if (this.shouldResetFocus && this.targetRef) {
       this.targetRef.focus();
       this.shouldResetFocus = this.targetRef !== document.activeElement;
@@ -102,6 +101,7 @@ class TabMenu extends React.Component {
     for (let i = 0; i < count; i += 1) {
       const child = childArray[i];
       if (matchPath(this.props.location.pathname, { path: child.props.path })) {
+        // eslint-disable-next-line prefer-destructuring
         text = child.props.text;
         isSelected = true;
         break;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import Button from 'terra-button';
@@ -51,7 +52,11 @@ const propTypes = {
    */
   contentWidthMax: PropTypes.number,
   /**
-   * Should the popup content have tab focus. Set this is your content doesn't contain any focusable elements.
+   * @private The intl object to be injected for translations. Provided by the injectIntl function.
+   */
+  intl: intlShape.isRequired,
+  /**
+   * Set this to `true` if your content has focusable elements and you want them to receive focus instead of focusing on the default popup frame when the popup is opened.
    */
   isFocusedDisabled: PropTypes.bool,
   /**
@@ -95,33 +100,9 @@ const defaultProps = {
 };
 
 class PopupContent extends React.Component {
-  static getDimensionStyle(value, maxValue, isAutomatic) {
-    if (value > 0) {
-      if (maxValue > 0 && value >= maxValue) {
-        return `${maxValue.toString()}px`;
-      } else if (!isAutomatic) {
-        return `${value.toString()}px`;
-      }
-    }
-    return null;
-  }
-
-  static getContentStyle(height, maxHeight, width, maxWidth, isHeightAutomatic, isWidthAutomatic) {
-    const heightStyle = PopupContent.getDimensionStyle(height, maxHeight, isHeightAutomatic);
-    const widthStyle = PopupContent.getDimensionStyle(width, maxWidth, isWidthAutomatic);
-    const contentStyle = {};
-    if (heightStyle) {
-      contentStyle.height = heightStyle;
-    }
-    if (widthStyle) {
-      contentStyle.width = widthStyle;
-    }
-    return contentStyle;
-  }
-
-  static addPopupHeader(children, onRequestClose) {
+  static addPopupHeader(children, onRequestClose, close) {
     const icon = <span className={cx('close-icon')} />;
-    const button = <Button variant="utility" className={cx('close')} isIconOnly icon={icon} onClick={onRequestClose} />;
+    const button = <Button variant="utility" isIconOnly icon={icon} onClick={onRequestClose} text={close} />;
     const header = <div className={cx('header')}>{button}</div>;
     return <ContentContainer header={header} fill>{children}</ContentContainer>;
   }
@@ -147,7 +128,6 @@ class PopupContent extends React.Component {
   constructor(props) {
     super(props);
     this.handleOnResize = this.handleOnResize.bind(this);
-    this.handleOutsideClick = this.handleOutsideClick.bind(this);
   }
 
   componentDidMount() {
@@ -164,19 +144,34 @@ class PopupContent extends React.Component {
     }
   }
 
+  static getContentStyle(height, maxHeight, width, maxWidth, isHeightAutomatic, isWidthAutomatic) {
+    const heightStyle = PopupContent.getDimensionStyle(height, maxHeight, isHeightAutomatic);
+    const widthStyle = PopupContent.getDimensionStyle(width, maxWidth, isWidthAutomatic);
+    const contentStyle = {};
+    if (heightStyle) {
+      contentStyle.height = heightStyle;
+    }
+    if (widthStyle) {
+      contentStyle.width = widthStyle;
+    }
+    return contentStyle;
+  }
+
+  static getDimensionStyle(value, maxValue, isAutomatic) {
+    if (value > 0) {
+      if (maxValue > 0 && value >= maxValue) {
+        return `${maxValue.toString()}px`;
+      } if (!isAutomatic) {
+        return `${value.toString()}px`;
+      }
+    }
+    return null;
+  }
+
   handleOnResize(event) {
     if (this.props.onResize) {
       this.props.onResize(event, this.windowWidth);
     }
-  }
-
-  /**
-   * Callback triggered when a target outside of the content is clicked.
-   * @param {event} event - The click event.
-   */
-  handleOutsideClick(event) {
-    event.preventDefault();
-    this.props.onRequestClose(event);
   }
 
   render() {
@@ -188,6 +183,7 @@ class PopupContent extends React.Component {
       contentHeightMax,
       contentWidth,
       contentWidthMax,
+      intl,
       isFocusedDisabled,
       isHeaderDisabled,
       isHeightAutomatic,
@@ -208,7 +204,8 @@ class PopupContent extends React.Component {
 
     let content = PopupContent.cloneChildren(children, isHeightAutomatic, isWidthAutomatic, isHeightBounded, isWidthBounded, isHeaderDisabled);
     if (isFullScreen && !isHeaderDisabled) {
-      content = PopupContent.addPopupHeader(content, onRequestClose);
+      const close = intl.formatMessage({ id: 'Terra.popup.header.close' });
+      content = PopupContent.addPopupHeader(content, onRequestClose, close);
     }
 
     const contentClassNames = cx([
@@ -229,7 +226,7 @@ class PopupContent extends React.Component {
     const widthData = isWidthAutomatic ? { 'data-terra-popup-automatic-width': true } : {};
 
     return (
-      <FocusTrap focusTrapOptions={{ returnFocusOnDeactivate: true }}>
+      <FocusTrap focusTrapOptions={{ returnFocusOnDeactivate: true, clickOutsideDeactivates: true }}>
         <Hookshot.Content
           {...customProps}
           className={contentClassNames}
@@ -237,7 +234,6 @@ class PopupContent extends React.Component {
           data-terra-popup-content
           onContentResize={(isHeightAutomatic || isWidthAutomatic) ? onContentResize : undefined}
           onEsc={onRequestClose}
-          onOutsideClick={this.handleOutsideClick}
           onResize={this.handleOnResize}
           refCallback={refCallback}
           role="dialog"
@@ -258,4 +254,4 @@ PopupContent.Opts = {
   cornerSize: CORNER_SIZE,
 };
 
-export default PopupContent;
+export default injectIntl(PopupContent);

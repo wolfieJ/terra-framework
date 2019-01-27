@@ -1,8 +1,75 @@
-Terra Modal Manager - Changelog
+Changelog
 =========
 
 Unreleased
 ----------
+
+5.0.0 - (January 25, 2019)
+------------------
+### Breaking Change
+* Updated terra-core dependencies
+
+4.3.0 - (January 5, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+4.2.0 - (January 2, 2019)
+------------------
+### Changed
+* Updated dev site examples to not use forms or have duplicate ids
+
+4.1.0 - (December 5, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+4.0.0 - (December 3, 2018)
+------------------
+### Breaking Change
+* Consumed DisclosureManager v3.0 - Updated to Context-provided consumer API vs. prop injection
+* Removed `withModalManager()` export to prevent confusion with the new context changes
+
+### Removed
+* Removed dependency on terra-app-delegate package
+
+3.14.0 - (November 15, 2018)
+------------------
+### Changed
+* Minor dependency update
+* Update jest snapshots
+
+3.13.0 - (October 8, 2018)
+------------------
+### Changed
+* Updated links in docs on supported features
+
+3.12.0 - (September 25, 2018)
+------------------
+### Changed
+* Removed terra-base duplicate from devDependencies
+
+3.11.0 - (September 5, 2018)
+------------------
+### Changed
+* Bumped minimum react peerDependency version from ^16.2.0 to ^16.4.2
+* Bumped minimum react-dom peerDependency version from ^16.2.0 to ^16.4.2
+
+3.10.0 - (August 30, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v5 update
+
+3.9.0 - (August 13, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v4 update
+
+### Fixed
+* Lint errors regarding file path resolution
+
+### Removed
+* Unused proptype in example
 
 3.8.0 - (July 26, 2018)
 ------------------

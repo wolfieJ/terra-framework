@@ -1,8 +1,8 @@
 # Terra Application Name
 
 
-[![NPM version](http://img.shields.io/npm/v/terra-application-name.svg)](https://www.npmjs.org/package/terra-application-name)
-[![Build Status](https://travis-ci.org/cerner/terra-framework.svg?branch=master)](https://travis-ci.org/cerner/terra-framework)
+[![NPM version](https://badgen.net/npm/v/terra-application-name)](https://www.npmjs.org/package/terra-application-name)
+[![Build Status](https://badgen.net/travis/cerner/terra-framework)](https://travis-ci.org/cerner/terra-framework)
 
 Houses the title of the application, along with a logo. There are two versions - a header version and menu version. These should be used with the corresponding header and menu layouts.
 
@@ -16,7 +16,7 @@ Houses the title of the application, along with a logo. There are two versions -
 
 ## LICENSE
 
-Copyright 2017 Cerner Innovation, Inc.
+Copyright 2017 - 2019 Cerner Innovation, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

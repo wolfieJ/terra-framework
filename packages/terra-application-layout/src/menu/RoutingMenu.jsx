@@ -58,6 +58,35 @@ class RoutingMenu extends React.Component {
     }));
   }
 
+  constructor(props) {
+    super(props);
+
+    this.handleMenuChange = this.handleMenuChange.bind(this);
+
+    /**
+     * The menuItems are checked against the current location at initialization to ensure the
+     * the desired selection styles are present.
+     */
+    this.state = {
+      selectedChildKey: RoutingMenu.getSelectedChildKey(props.location.pathname, props.menuItems),
+      prevPropsLocationPathName: props.location.pathname,
+      prevPropsMenuItems: props.menuItems,
+    };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.location.pathname !== prevState.prevPropsLocationPathName || nextProps.menuItems !== prevState.prevPropsMenuItems) {
+      /**
+       * The selectedChildKey is re-evaluated when new props are received to keep the internal state consistent.
+       */
+      return {
+        selectedChildKey: RoutingMenu.getSelectedChildKey(nextProps.location.pathname, nextProps.menuItems),
+      };
+    }
+
+    return null;
+  }
+
   /**
    * This function compares the given path against the paths of the given menuItems. If a match
    * (partial or otherwise) is detected, that path is returned. If no match is detected, `undefined` is returned.
@@ -72,29 +101,6 @@ class RoutingMenu extends React.Component {
       }
     }
     return undefined;
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.handleMenuChange = this.handleMenuChange.bind(this);
-
-    /**
-     * The menuItems are checked against the current location at initialization to ensure the
-     * the desired selection styles are present.
-     */
-    this.state = {
-      selectedChildKey: RoutingMenu.getSelectedChildKey(props.location.pathname, props.menuItems),
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    /**
-     * The selectedChildKey is re-evaluated when new props are received to keep the internal state consistent.
-     */
-    this.setState({
-      selectedChildKey: RoutingMenu.getSelectedChildKey(nextProps.location.pathname, nextProps.menuItems),
-    });
   }
 
   handleMenuChange(event, data) {

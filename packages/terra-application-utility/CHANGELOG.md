@@ -1,8 +1,91 @@
-ChangeLog
+Changelog
 =========
 
 Unreleased
------------------
+----------
+
+2.0.0 - (January 25, 2019)
+------------------
+### Breaking Change
+* Updated variable names to match new naming standard
+* Added new variables for css theming
+* Removed variables for css theming
+* Updated terra-core dependencies
+
+### Changed
+* Remove usage of componentWillReceiveProps
+
+1.26.0 - (January 5, 2019)
+------------------
+### Added
+* Read-only property added to menu item shape
+* Jest test added for read-only property
+
+1.25.0 - (January 2, 2019)
+------------------
+### Changed
+* Updated dev site examples to not have duplicate ids.
+
+1.24.0 - (December 5, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+1.23.0 - (December 3, 2018)
+------------------
+### Changed
+* Wdio tests changed to use themeCombinationOfCustomProperties
+
+### Removed
+* Removed dependency on terra-app-delegate package.
+
+1.22.0 - (November 15, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+1.21.0 - (October 24, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+1.20.0 - (October 16, 2018)
+------------------
+### Fixed
+* Focus on first menu item
+
+1.19.0 - (October 8, 2018)
+------------------
+### Changed
+* Remove tabindex from divider
+* Updated links in docs on supported features
+
+1.18.0 - (September 25, 2018)
+------------------
+### Changed
+* Minor dependency bump
+
+1.17.0 - (September 5, 2018)
+------------------
+### Changed
+* Bumped minimum react peerDependency version from ^16.2.0 to ^16.4.2
+* Bumped minimum react-dom peerDependency version from ^16.2.0 to ^16.4.2
+
+1.16.0 - (August 30, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v5 update
+
+1.15.0 - (August 14, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v4 update
+
+### Fixed
+* Lint errors regarding file path resolution
+
+### Removed
+* Removed unused state from exmaples
 
 1.14.0 - (July 26, 2018)
 ------------------

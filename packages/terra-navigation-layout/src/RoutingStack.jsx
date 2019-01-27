@@ -6,16 +6,11 @@ import {
   withRouter,
   matchPath,
 } from 'react-router-dom';
-import AppDelegate from 'terra-app-delegate';
 
 import RoutingStackDelegate from './RoutingStackDelegate';
 import { processedRoutesPropType } from './configurationPropTypes';
 
 const propTypes = {
-  /**
-   * The AppDelegate instance that will be provided to the components rendered by the RoutingStack.
-   */
-  app: AppDelegate.propType,
   /**
    * The routing configuration from which Routes will be generated.
    */
@@ -56,11 +51,14 @@ class RoutingStack extends React.Component {
     };
   }
 
-  componentWillReceiveProps() {
-    this.setState({
-      // The stackLocation must be reset upon rerendering to be in sync with any navigation that may have occurred.
-      stackLocation: undefined,
-    });
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({
+        // The stackLocation must be reset upon rerendering to be in sync with any navigation that may have occurred.
+        stackLocation: undefined,
+      });
+    }
   }
 
   updateStackLocation(path) {
@@ -70,7 +68,9 @@ class RoutingStack extends React.Component {
   }
 
   createRoutes(routes) {
-    const { navEnabled, app, location, history, ancestorProps } = this.props;
+    const {
+      navEnabled, location, history, ancestorProps,
+    } = this.props;
     const { stackLocation } = this.state;
 
     if (!routes || !routes.length) {
@@ -127,7 +127,6 @@ class RoutingStack extends React.Component {
                   {...ancestorProps}
                   {...routeData.componentProps}
                   routingStackDelegate={RoutingStackDelegate.create(delegateData)}
-                  app={app}
                 />
               )}
             />

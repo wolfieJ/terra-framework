@@ -18,7 +18,7 @@ const propTypes = {
   render: PropTypes.func,
   /**
    * A function that will be provided to Aggregator items that have received focus. The function must adhere to the standardized
-   * AppDelegate disclosure API.
+   * DisclosureManager disclosure API.
    */
   disclose: PropTypes.func,
 };
@@ -43,11 +43,11 @@ class Aggregator extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { items } = this.props;
+  componentDidUpdate(prevProps) {
+    const { items } = prevProps;
     const { focusedItemId } = this.state;
 
-    if (nextProps.items !== this.props.items) {
+    if (this.props.items !== prevProps.items) {
       // If the currently focused item is not present in the new items set,
       // the focus is forcefully released to clean up any presented disclosures.
       let focusItemIsPresent;
@@ -56,7 +56,6 @@ class Aggregator extends React.Component {
           focusItemIsPresent = true;
         }
       });
-
       if (!focusItemIsPresent) {
         this.releaseFocus(undefined, true);
       }
@@ -86,7 +85,7 @@ class Aggregator extends React.Component {
           const focusRequestPayload = {};
 
           /**
-           * If the Aggregator is provided with disclosure functionality, the focus request is resolved with a custom
+           * If the Aggregator is rendered within the context of a DisclosureManager, the focus request is resolved with a custom
            * disclose implementation.
            */
           if (disclose) {

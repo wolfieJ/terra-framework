@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import Overlay from 'terra-overlay';
 import OverlayContainer from 'terra-overlay/lib/OverlayContainer';
+import tabbable from 'tabbable';
 
 import 'terra-base/lib/baseStyles';
 
@@ -67,6 +68,7 @@ class LayoutSlidePanel extends React.Component {
   }
 
   componentDidMount() {
+    document.createElement('main'); // shim for <main> tag not being recognized in IE
     if (this.panelNode) {
       this.panelNode.addEventListener('transitionend', this.handleTransitionEnd);
     }
@@ -90,6 +92,14 @@ class LayoutSlidePanel extends React.Component {
     if (!this.props.isOpen && this.panelNode) {
       this.panelNode.setAttribute('aria-hidden', 'true');
       this.isHidden = true;
+
+      // Sends focus back to the application layout header toggle button if it exists
+      if (document.querySelector('button[data-application-header-toggle]')) {
+        document.querySelector('button[data-application-header-toggle]').focus();
+      // Else, we'll send focus back to first interactable element in the main panel
+      } else if (tabbable(document.querySelector('[data-terra-layout-main]'))[0]) {
+        tabbable(document.querySelector('[data-terra-layout-main]'))[0].focus();
+      }
     }
   }
 
@@ -100,6 +110,9 @@ class LayoutSlidePanel extends React.Component {
       // If the panel is opening remove the hidden attribute so the animation performs correctly.
       this.panelNode.setAttribute('aria-hidden', 'false');
       this.isHidden = false;
+      if (tabbable(this.panelNode)[0]) {
+        tabbable(this.panelNode)[0].focus();
+      }
     }
   }
 
@@ -150,8 +163,10 @@ class LayoutSlidePanel extends React.Component {
           {panelContent}
         </div>
         <OverlayContainer className={cx('content')}>
-          <Overlay isRelativeToContainer onRequestClose={onToggle} isOpen={isOverlayOpen} backgroundStyle={overlayBackground} />
-          {children}
+          <Overlay isRelativeToContainer onRequestClose={onToggle} isOpen={isOverlayOpen} backgroundStyle={overlayBackground} zIndex="6000" />
+          <main data-terra-layout-main tabIndex="-1" className={cx('main-container')}>
+            {children}
+          </main>
         </OverlayContainer>
       </div>
     );

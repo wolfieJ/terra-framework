@@ -1,26 +1,14 @@
-/* global before, browser, Terra */
 const selector = '#root';
+const viewports = Terra.viewports('tiny', 'medium', 'large');
 
-Terra.viewports('tiny', 'medium', 'large').forEach((viewport) => {
-  before(() => {
-    browser.setViewportSize(viewport);
-  });
-
+describe('Dialog Modal', () => {
   describe('Default Dialog Modal', () => {
     beforeEach(() => {
       browser.url('/#/raw/tests/terra-dialog-modal/dialog-modal/default-dialog-modal');
       browser.click('#trigger-dialog-modal');
     });
-    Terra.should.beAccessible({ selector });
-    Terra.should.matchScreenshot({ selector });
-  });
-
-  describe('Default Dialog Modal with Themable Properties', () => {
-    beforeEach(() => {
-      browser.url('/#/raw/tests/terra-dialog-modal/dialog-modal/default-dialog-modal');
-      browser.click('#trigger-dialog-modal');
-    });
-
+    Terra.should.beAccessible({ viewports, selector });
+    Terra.should.matchScreenshot({ viewports, selector });
     Terra.should.themeCombinationOfCustomProperties({
       testName: 'themed',
       selector: '#root',
@@ -41,8 +29,8 @@ Terra.viewports('tiny', 'medium', 'large').forEach((viewport) => {
       browser.url('/#/raw/tests/terra-dialog-modal/dialog-modal/dialog-modal-with-long-text');
       browser.click('#trigger-dialog-modal');
     });
-    Terra.should.beAccessible({ selector });
-    Terra.should.matchScreenshot({ selector });
+    Terra.should.beAccessible({ viewports, selector });
+    Terra.should.matchScreenshot({ viewports, selector });
   });
 
   describe('Dialog Modal With Custom Header and Custom Footer', () => {
@@ -50,7 +38,7 @@ Terra.viewports('tiny', 'medium', 'large').forEach((viewport) => {
       browser.url('/#/raw/tests/terra-dialog-modal/dialog-modal/dialog-modal-with-custom-header-and-custom-footer');
       browser.click('#trigger-dialog-modal');
     });
-    Terra.should.beAccessible({ selector });
-    Terra.should.matchScreenshot({ selector });
+    Terra.should.beAccessible({ viewports, selector });
+    Terra.should.matchScreenshot({ viewports, selector });
   });
 });

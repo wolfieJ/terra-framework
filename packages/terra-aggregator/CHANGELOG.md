@@ -4,6 +4,84 @@ Changelog
 Unreleased
 ----------
 
+4.0.0 - (January 25, 2019)
+------------------
+### Breaking Change
+* Updated terra-core dependencies
+
+### Changed
+* Remove use of componentWillReceiveProps
+
+3.21.0 - (January 5, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+3.20.0 - (January 2, 2019)
+------------------
+### Changed
+* Removed local timeout values from wdio tests
+
+3.19.0 - (December 5, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+3.18.0 - (December 3, 2018)
+------------------
+### Changed
+* Updated examples to consume terra-disclosure-manager v3.x
+
+### Removed
+* Removed terra-app-delegate dependency
+
+3.17.0 - (November 15, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+3.16.0 - (October 24, 2018)
+------------------
+### Changed
+* Minor dependency update
+
+3.15.0 - (October 16, 2018)
+------------------
+### Changed
+* Minor dependency updates
+
+3.14.0 - (October 8, 2018)
+------------------
+### Changed
+* Updated links in docs on supported features
+
+3.13.0 - (September 25, 2018)
+------------------
+### Changed
+* Removed terra-base duplicate from devDependencies
+
+3.12.0 - (September 5, 2018)
+------------------
+### Changed
+* Bumped minimum react peerDependency version from ^16.2.0 to ^16.4.2
+* Bumped minimum react-dom peerDependency version from ^16.2.0 to ^16.4.2
+
+3.11.0 - (August 30, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v5 update
+
+3.10.0 - (August 14, 2018)
+------------------
+### Changed
+* Formatting changes per eslint v4 update
+
+### Fixed
+* Lint errors regarding file path resolution
+
+### Removed
+* Removed unused props and state in examples
+
 3.9.0 - (July 26, 2018)
 ------------------
 ### Changed

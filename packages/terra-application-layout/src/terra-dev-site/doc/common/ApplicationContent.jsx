@@ -1,11 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AppDelegate from 'terra-app-delegate';
+import { withDisclosureManager, disclosureManagerShape } from 'terra-disclosure-manager';
 import { Route } from 'react-router-dom';
 import Button from 'terra-button';
-import DisclosureComponent from 'terra-disclosure-manager/lib/terra-dev-site/doc/example/DisclosureComponent';
 
 import ContentContainer from 'terra-content-container';
+
+const DisclosureComponent = withDisclosureManager(({ disclosureManager }) => (
+  <ContentContainer
+    fill
+  >
+    <p>Hello World</p>
+    <Button text="Close Modal" onClick={disclosureManager.closeDisclosure} />
+  </ContentContainer>
+));
+
 
 const dummyContent = (
   <div>
@@ -68,7 +77,9 @@ class ApplicationContent extends React.Component {
   }
 
   render() {
-    const { layoutConfig, app, basePath, contentName, noMenu, showDummyContent } = this.props;
+    const {
+      layoutConfig, disclosureManager, basePath, contentName, noMenu, showDummyContent,
+    } = this.props;
 
     let bodyContent;
     if (showDummyContent) {
@@ -98,18 +109,24 @@ class ApplicationContent extends React.Component {
             <p>The content and menu components will remain mounted as long as their associated path continues to match the current router location. Therefore, we can change what the content components render based on the presence of additional path segments.</p>
             <p>For example, the displayed menu component will update the router location when its items are clicked. This content component will be notified of the location change and render the update below.</p>
 
-            <p>Menu item selected: {(
-              <Route
-                path={`${basePath}/*`}
-                render={({ location }) => (
-                  <b>{location.pathname}</b>
-              )}
-              />
-          )}</p>
+            <p>
+Menu item selected:
+              {(
+                <Route
+                  path={`${basePath}/*`}
+                  render={({ location }) => (
+                    <b>{location.pathname}</b>
+                  )}
+                />
+          )}
+            </p>
             <h2>Menu/Content Communication</h2>
             <hr />
             <p>Additionally, communication can occur through custom events or shared context.</p>
-            <p>Event detected: <b>{this.state.eventState}</b></p>
+            <p>
+Event detected:
+              <b>{this.state.eventState}</b>
+            </p>
           </div>
         );
       }
@@ -119,14 +136,22 @@ class ApplicationContent extends React.Component {
           {dynamicContent}
           <h2>Layout Control</h2>
           <hr />
-          <p>Content and menu components will receive a prop named <b>layoutConfig</b> which contains APIs for manipulating the layout state. When the layout is tiny or small, the layoutConfig will include a function called `toggleMenu` which will present or dismiss the menu.</p>
+          <p>
+Content and menu components will receive a prop named
+            <b>layoutConfig</b>
+            {' '}
+which contains APIs for manipulating the layout state. When the layout is tiny or small, the layoutConfig will include a function called `toggleMenu` which will present or dismiss the menu.
+          </p>
           <Button text="Toggle Menu" isDisabled={!layoutConfig.toggleMenu} onClick={() => { layoutConfig.toggleMenu(); }} />
           <h2>Progressive Disclosure</h2>
           <hr />
-          <p>The ApplicationLayout ensures all content and menu components receive an AppDelegate prop (as <b>app</b>), with ModalManager support included by default. The ApplicationLayout can be wrapped in additional DisclosureManagers to provide additional disclosure capabilities.</p>
+          <p>
+The ApplicationLayout includes ModalManager support by default. The ApplicationLayout can be wrapped in additional DisclosureManagers to provide additional disclosure capabilities.
+          </p>
           <Button
-            text="Launch Modal" onClick={() => {
-              app.disclose({
+            text="Launch Modal"
+            onClick={() => {
+              disclosureManager.disclose({
                 preferredType: 'modal',
                 size: 'medium',
                 content: {
@@ -157,11 +182,11 @@ ApplicationContent.propTypes = {
   layoutConfig: PropTypes.shape({
     toggleMenu: PropTypes.func,
   }),
-  app: AppDelegate.propType,
+  disclosureManager: disclosureManagerShape,
   basePath: PropTypes.string,
   contentName: PropTypes.string,
   noMenu: PropTypes.bool,
   showDummyContent: PropTypes.bool,
 };
 
-export default ApplicationContent;
+export default withDisclosureManager(ApplicationContent);

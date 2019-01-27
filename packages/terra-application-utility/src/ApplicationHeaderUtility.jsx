@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import 'terra-base/lib/baseStyles';
 import Utils from './Utils';
-import UtiltyButton from './utility/_UtilityButton';
+import UtilityButton from './utility/_UtilityButton';
 
 const propTypes = {
   /**
@@ -14,7 +14,7 @@ const propTypes = {
    * Returns `(event, { key: String, metaData: Object})`
    */
   onChange: PropTypes.func.isRequired,
-    /**
+  /**
    * The function that discloses the menu.
    */
   onDisclose: PropTypes.func.isRequired,
@@ -41,7 +41,7 @@ const ApplicationHeaderUtility = ({
   accessory,
   ...customProps
 }) => (
-  <UtiltyButton
+  <UtilityButton
     {...customProps}
     menuItems={menuItems}
     onChange={onChange}

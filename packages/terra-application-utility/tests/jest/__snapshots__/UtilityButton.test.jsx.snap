@@ -26,7 +26,7 @@ exports[`UtilityButton should render with a title 1`] = `
 
 exports[`UtilityButton should render with an accessory 1`] = `
 <InjectIntl(ApplicationHeaderUtility)
-  accessory={<Image />}
+  accessory={<image />}
   initialSelectedKey="menu"
   menuItems={Array []}
   onChange={[MockFunction]}
@@ -61,6 +61,7 @@ exports[`UtilityButton should render with menu items 1`] = `
           "item-5",
           "item-6",
           "item-7",
+          "item-8",
         ],
         "contentLocation": "body",
         "isSelectable": false,
@@ -207,6 +208,16 @@ exports[`UtilityButton should render with menu items 1`] = `
         "isSelected": true,
         "key": "item-7",
         "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+      },
+      Object {
+        "childKeys": Array [],
+        "contentLocation": "body",
+        "id": "test-item-8",
+        "isReadOnly": true,
+        "isSelectable": false,
+        "isSelected": false,
+        "key": "item-8",
+        "title": "Read Only Item",
       },
     ]
   }

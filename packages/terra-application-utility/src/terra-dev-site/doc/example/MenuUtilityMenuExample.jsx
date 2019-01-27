@@ -23,7 +23,7 @@ class MenuUtilityMenuExample extends React.Component {
   }
 
   handleOnRequestClose() {
-    this.setState({ requestCloseCount: this.state.requestCloseCount += 1 });
+    this.setState(prevState => ({ requestCloseCount: prevState.requestCloseCount + 1 }));
   }
 
   render() {
@@ -32,7 +32,6 @@ class MenuUtilityMenuExample extends React.Component {
       <div>
         <div style={{ height: '300px', width: '300px' }}>
           <UtilityMenu
-            id="default"
             initialSelectedKey="menu"
             isHeightBounded
             menuItems={MockConfig(customComponent)}
