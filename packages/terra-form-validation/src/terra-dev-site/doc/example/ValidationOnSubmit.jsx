@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 
 import React from 'react';
-import { Form, Field } from 'react-final-form';
+import { Form, Field, FormSpy } from 'react-final-form';
 import InputField from 'terra-form-input/lib/InputField';
 import Checkbox from 'terra-form-checkbox';
 import CheckboxField from 'terra-form-checkbox/lib/CheckboxField';
@@ -18,8 +18,9 @@ export default class MainEntry extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {dirty: false};
     this.submitForm = this.submitForm.bind(this);
+    this.updateDirty = this.updateDirty.bind(this);
   }
 
   submitForm(values) {
@@ -28,11 +29,22 @@ export default class MainEntry extends React.Component {
     });
   }
 
-  renderForm({ handleSubmit, errors, submitFailed }) {
+  updateDirty(dirty) {
+    this.setState({
+      dirty: dirty
+    });
+  }
+
+  renderForm({ componentContext, handleSubmit, errors, submitFailed, dirty, ...props }) {
+    let formElement = this;
     return (
+      <div>
+      <FormSpy {...props} componentContext={componentContext} subscription={{dirty: true}} onChange={function(state) {this.componentContext.updateDirty(state.dirty)}}/>
       <form
         onSubmit={handleSubmit}
       >
+       <p>Dirty State</p>
+       <p>{dirty.toString()}</p>
         <Field
           name="description"
           validate={required}
@@ -198,25 +210,29 @@ export default class MainEntry extends React.Component {
         </div>
         <Button text="Submit" type={Button.Opts.Types.SUBMIT} />
       </form>
+      </div>
     );
   }
 
   render() {
     return (
       <Spacer marginBottom="small">
-        <Form
-          onSubmit={this.submitForm}
-          render={this.renderForm}
-          initialValues={{ description: '' }}
-        />
-        {this.state.submittedValues
-          && (
-          <div>
-            <p>Form Submitted Successfully With</p>
-            <pre>{JSON.stringify(this.state.submittedValues, 0, 2)}</pre>
-          </div>
-          )
-        }
+          <Form
+            onSubmit={this.submitForm}
+            render={this.renderForm}
+            componentContext={this}
+            initialValues={{ description: '' }}
+          />
+          {this.state.submittedValues
+            && (
+            <div>
+              <p>Form Submitted Successfully With</p>
+              <pre>{JSON.stringify(this.state.submittedValues, 0, 2)}</pre>
+            </div>
+            )
+          }
+          <p>Form Dirty State</p>
+          <p>{this.state.dirty.toString()}</p>
       </Spacer>
     );
   }

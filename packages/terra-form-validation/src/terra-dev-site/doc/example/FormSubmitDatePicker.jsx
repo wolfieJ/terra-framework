@@ -11,6 +11,11 @@ const validateDate = (value) => {
   if (!value) {
     return 'Required';
   }
+
+  if (value.search(/[0-9]{4}-[0-9]{2}-[0-9]{2}/i) >= 0) {
+    return undefined;
+  }
+
   if (value.search(/[0-1][0-9]\/([0-2][0-9]|3[0-1])\/[0-9]{4}/i) <= -1) {
     return 'Date is Invalid';
   }
@@ -44,14 +49,18 @@ export default class MainEntry extends React.Component {
           {({ input, meta }) => (
             <TerraField
               label="Enter your birthday"
-              error={meta.error}
-              isInvalid={meta.submitFailed && meta.error !== undefined}
+              error={meta.error || meta.submitError}
+              isInvalid={meta.submitFailed || (meta.error && meta.touched)}
               required
             >
               <DatePicker
                 name="user_date"
                 id="default"
-                onChangeRaw={(event, date) => { input.onChange(date); }}
+                onChangeRaw={(event, date) => { console.log('raw change:' + date); input.onChange(date); }}
+                onChange={(event, date) => { console.log('basic change:' + date); input.onChange(date); }}
+                inputAttributes={{
+                  ...input
+                }}
               />
             </TerraField>
           )}
