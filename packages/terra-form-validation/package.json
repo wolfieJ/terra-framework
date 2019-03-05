@@ -41,6 +41,7 @@
     "terra-form-radio": "^2.0.0",
     "terra-form-select": "^4.0.0",
     "terra-form-textarea": "^2.0.0",
+    "terra-alert": "^3.6.0",
     "terra-i18n": "^2.0.0",
     "terra-spacer": "^2.0.0"
   },

@@ -4,8 +4,12 @@ import React from 'react';
 import { Form, Field } from 'react-final-form';
 import DatePicker from 'terra-date-picker';
 import TerraField from 'terra-form-field';
+import Select from 'terra-form-select';
 import Button from 'terra-button';
 import Spacer from 'terra-spacer';
+import Alert from 'terra-alert';
+
+const required = value => (value ? undefined : 'Required');
 
 const validateDate = (value) => {
   if (!value) {
@@ -23,25 +27,90 @@ const validateDate = (value) => {
   return undefined;
 };
 
-export default class MainEntry extends React.Component {
+class MainForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
-    this.submitForm = this.submitForm.bind(this);
+    console.log('Main Form Props');
+    console.log(props);
+    this.state = {
+      healthPlans: [
+        {
+          objectIdentifier: '1135952527',
+          name: 'Test 1'
+        },
+        {
+          objectIdentifier: '1232342527',
+          name: ' Test 2'
+        },
+        {
+          objectIdentifier: '1932343223',
+          name: ' Test 4'
+        },
+      ]
+    };
+
+    this.handleHealthPlanSearch = this.handleHealthPlanSearch.bind(this);
   }
 
-  submitForm(values) {
+  handleHealthPlanSearch(searchTxt) {
+    console.log('Changing');
+    const params = {
+      name: searchTxt,
+    };
+
     this.setState({
-      submittedValues: values,
+      healthPlans: [
+        {
+          objectIdentifier: '1231231423',
+          name: 'Test 10'
+        },
+        {
+          objectIdentifier: '1923432131',
+          name: ' Test 12'
+        },
+        {
+          objectIdentifier: '1234312342',
+          name: ' Test 19'
+        },
+      ]
     });
   }
 
-  renderForm({ handleSubmit }) {
+  render() {
     return (
       <form
-        onSubmit={handleSubmit}
+        onSubmit={this.props.handleSubmit}
       >
+      {this.props.isClosing && this.props.dirty &&<Alert type="warning" title="Title">Title</Alert>}
+      <Field
+       name="healthPlans"
+       type="select"
+       validate={required}
+       render={({ input, meta }) => (
+         <TerraField
+           label="Select health plan"
+           isInvalid={meta.submitFailed && meta.error !== undefined}
+           error={meta.error}
+           required
+         >
+           <Select
+             id="healthPlans"
+             name={input.name}
+             variant="search"
+             value={input.value}
+             onChange={(value) => { input.onChange(value); }}
+             onSearch={this.handleHealthPlanSearch}
+             placeholder="Select health plan"
+           >
+            {this.state.healthPlans && this.state.healthPlans.map(healthPlan => (
+              <Select.Option value={healthPlan.objectIdentifier} display={healthPlan.name} key={`${healthPlan.objectIdentifier}`} />
+            ))}
+           </Select>
+           <p>{JSON.stringify(meta, 0 ,2)}</p>
+         </TerraField>
+       )}
+     />
         <Field
           name="user_date"
           validate={validateDate}
@@ -69,13 +138,32 @@ export default class MainEntry extends React.Component {
       </form>
     );
   }
+}
+
+export default class MainEntry extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      submittedValues: {}
+    };
+
+    this.submitForm = this.submitForm.bind(this);
+  }
+
+  submitForm(values) {
+    this.setState({
+      submittedValues: values,
+    });
+  }
 
   render() {
     return (
       <Spacer marginBottom="small">
         <Form
           onSubmit={this.submitForm}
-          render={this.renderForm}
+          component={MainForm}
+          isClosing
         />
         {this.state.submittedValues
           && (
