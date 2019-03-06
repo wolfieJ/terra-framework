@@ -99,7 +99,10 @@ class MainForm extends React.Component {
              name={input.name}
              variant="search"
              value={input.value}
-             onChange={(value) => { input.onChange(value); }}
+             onChange={(value) => {
+               console.log('Changed');
+               input.onChange(value);
+             }}
              onSearch={this.handleHealthPlanSearch}
              placeholder="Select health plan"
            >
