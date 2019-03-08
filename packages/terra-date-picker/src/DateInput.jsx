@@ -11,6 +11,10 @@ const Icon = <IconCalendar />;
 
 const propTypes = {
   /**
+   * The format of the date.
+   */
+  dateFormat: PropTypes.string,
+  /**
    * Custom input attributes to apply to the date input.
    */
   // eslint-disable-next-line react/forbid-prop-types
@@ -54,6 +58,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+  dateFormat: undefined,
   inputAttributes: undefined,
   name: undefined,
   onChange: undefined,
@@ -119,6 +124,7 @@ class DatePickerInput extends React.Component {
 
   render() {
     const {
+      dateFormat,
       inputAttributes,
       name,
       onChange,
@@ -145,7 +151,7 @@ class DatePickerInput extends React.Component {
     // Since we want to show the picker only when the calendar button is clicked, we need to delete the onFocus handle that is passed in by react-datepicker.
     delete additionalInputProps.onFocus;
 
-    const dateValue = DateUtil.convertToISO8601(value, DateUtil.getFormatByLocale(this.context.intl.locale));
+    const dateValue = DateUtil.convertToISO8601(value, dateFormat);
     const buttonText = this.context.intl.formatMessage({ id: 'Terra.datePicker.openCalendar' });
 
     return (

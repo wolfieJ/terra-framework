@@ -27,10 +27,9 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "moment": "^2.21.0",
-    "popper.js": "^1.14.3",
+    "date-fns": "^2.0.0-alpha.23",
     "prop-types": "^15.5.8",
-    "react-datepicker": "^0.64.0",
+    "react-datepicker": "git@github.com:benbcai/react-datepicker.git#strict-date-parsing",
     "react-portal": "^4.1.2",
     "terra-button": "^3.3.0",
     "terra-disclosure-manager": "^4.3.0",

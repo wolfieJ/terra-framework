@@ -1,12 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactDatePicker from 'react-datepicker';
+import ReactDatePicker, { registerLocale } from 'react-datepicker';
+import isValid from 'date-fns/isValid'
 import 'terra-base/lib/baseStyles';
 import ResponsiveElement from 'terra-responsive-element';
 import PopperContainer from './_PopperContainer';
 import DateInput from './DateInput';
 import DateUtil from './DateUtil';
 import styles from './DatePicker.module.scss';
+
+// import ar from 'date-fns/locale/ar';
+import de from 'date-fns/locale/de';
+import enGB from 'date-fns/locale/en-GB';
+import enUS from 'date-fns/locale/en-US';
+import es from 'date-fns/locale/es';
+import fi from 'date-fns/locale/fi';
+import fr from 'date-fns/locale/fr';
+// import nlBE from 'date-fns/locale/nl-BE';
+import nl from 'date-fns/locale/nl';
+import ptBR from 'date-fns/locale/pt-BR';
+import pt from 'date-fns/locale/pt';
+import sv from 'date-fns/locale/sv';
 
 const propTypes = {
   /**
@@ -112,6 +126,21 @@ class DatePicker extends React.Component {
       prevPropsSelectedDate: props.selectedDate,
     };
 
+    // registerLocale('ar', ar);
+    registerLocale('de', de);
+    registerLocale('en-GB', enGB);
+    registerLocale('en-US', enUS);
+    registerLocale('es', es);
+    registerLocale('fi', fi);
+    registerLocale('fr', fr);
+    // registerLocale('nl-BE', nlBE);
+    registerLocale('nl', nl);
+    registerLocale('pt-BR', ptBR);
+    registerLocale('pt', pt);
+    registerLocale('sv', sv);
+
+    this.localeData = {'de': de, 'en-GB': enGB, 'en-US': enUS, 'en': enUS, 'es': es, 'fi': fi, 'fr': fr, 'nl': nl, 'pt-BR': ptBR, 'pt': pt, 'sv': sv };
+
     this.isDefaultDateAcceptable = false;
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeRaw = this.handleChangeRaw.bind(this);
@@ -142,7 +171,7 @@ class DatePicker extends React.Component {
     // as well as manually entering a valid date or clearing the date,
     // Until a fix is made, we need to return if the event type is 'change' indicating that onSelect was
     // invoked from a manual change. See https://github.com/Hacker0x01/react-datepicker/issues/990
-    if (event.type === 'change' || !selectedDate || !selectedDate.isValid()) {
+    if (event.type === 'change' || !selectedDate || !isValid(selectedDate)) {
       return;
     }
 
@@ -175,7 +204,7 @@ class DatePicker extends React.Component {
     });
 
     if (this.props.onChange) {
-      this.props.onChange(event, date && date.isValid() ? date.format() : '');
+      this.props.onChange(event, date && isValid(date) ? date.toISOString() : '');
     }
   }
 
@@ -251,24 +280,27 @@ class DatePicker extends React.Component {
     delete customProps.onInputFocus;
 
     const { intl } = this.context;
+    const localeData = this.localeData[intl.locale] ? this.localeData[intl.locale] : this.localeData['en'];
     const todayString = intl.formatMessage({ id: 'Terra.datePicker.today' });
-    const dateFormat = DateUtil.getFormatByLocale(intl.locale);
+    const dateFormat = DateUtil.getFormatByLocale(localeData);
     const placeholderText = intl.formatMessage({ id: 'Terra.datePicker.dateFormat' });
-    const exludeMomentDates = DateUtil.filterInvalidDates(excludeDates);
-    const includeMomentDates = DateUtil.filterInvalidDates(includeDates);
-    const maxMomentDate = DateUtil.createSafeDate(maxDate);
-    const minMomentDate = DateUtil.createSafeDate(minDate);
+    const exludedDateObjects = DateUtil.filterInvalidDates(excludeDates);
+    const includedDateObjects = DateUtil.filterInvalidDates(includeDates);
+    const maxDateObject = DateUtil.createSafeDate(maxDate);
+    const minDateObject= DateUtil.createSafeDate(minDate);
 
     const portalPicker = (
       <ReactDatePicker
         {...customProps}
         selected={this.state.selectedDate}
+        // selected={new Date()}
         onChange={this.handleChange}
         onChangeRaw={this.handleChangeRaw}
         onClickOutside={this.handleOnClickOutside}
         onSelect={this.handleOnSelect}
         customInput={(
           <DateInput
+            dateFormat={dateFormat}
             onInputFocus={this.handleOnInputFocus}
             onCalendarButtonClick={this.handleOnCalendarButtonClick}
             inputAttributes={inputAttributes}
@@ -277,11 +309,11 @@ class DatePicker extends React.Component {
             shouldShowPicker={!this.isDefaultDateAcceptable && this.state.selectedDate === null}
           />
 )}
-        excludeDates={exludeMomentDates}
+        excludeDates={exludedDateObjects}
         filterDate={filterDate}
-        includeDates={includeMomentDates}
-        maxDate={maxMomentDate}
-        minDate={minMomentDate}
+        includeDates={includedDateObjects}
+        maxDate={maxDateObject}
+        minDate={minDateObject}
         todayButton={todayString}
         withPortal
         dateFormatCalendar=" "
@@ -306,6 +338,7 @@ class DatePicker extends React.Component {
         onSelect={this.handleOnSelect}
         customInput={(
           <DateInput
+            dateFormat={dateFormat}
             onInputFocus={this.handleOnInputFocus}
             onCalendarButtonClick={this.handleOnCalendarButtonClick}
             inputAttributes={inputAttributes}
@@ -314,11 +347,11 @@ class DatePicker extends React.Component {
             shouldShowPicker={!this.isDefaultDateAcceptable && this.state.selectedDate === null}
           />
 )}
-        excludeDates={exludeMomentDates}
+        excludeDates={exludedDateObjects}
         filterDate={filterDate}
-        includeDates={includeMomentDates}
-        maxDate={maxMomentDate}
-        minDate={minMomentDate}
+        includeDates={includedDateObjects}
+        maxDate={maxDateObject}
+        minDate={minDateObject}
         todayButton={todayString}
         dateFormatCalendar=" "
         dateFormat={dateFormat}

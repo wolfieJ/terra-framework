@@ -1,10 +1,10 @@
 import React from 'react';
-import DatePicker from '../../../../lib/DatePicker';
+import DatePicker from '../../../../src/DatePicker';
 
 class DatePickerOnChange extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { date: '' };
+    this.state = { date: "" };
     this.handleDateChange = this.handleDateChange.bind(this);
   }
 
@@ -22,6 +22,7 @@ Selected Date:
         <DatePicker
           name="date-input-onchange"
           onChange={this.handleDateChange}
+          selectedDate={this.state.date}
         />
       </div>
     );
