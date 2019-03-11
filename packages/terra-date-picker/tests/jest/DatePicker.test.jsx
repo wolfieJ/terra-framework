@@ -1,7 +1,7 @@
 import React from 'react';
 /* eslint-disable import/no-extraneous-dependencies */
 import { IntlProvider } from 'react-intl';
-import moment from 'moment';
+import parseISO from 'date-fns/parseISO';
 import DatePicker from '../../lib/DatePicker';
 import DateUtil from '../../lib/DateUtil';
 import messages from '../../translations/en-US.json';
@@ -10,12 +10,12 @@ import messages from '../../translations/en-US.json';
 // Otherwise, a date with a different offset would be created based on the the timezone where the tests are executed.
 DateUtil.createSafeDate = jest.fn();
 DateUtil.filterInvalidDates = jest.fn();
-DateUtil.createSafeDate.mockImplementation(() => moment.utc('2017-01-01'));
-DateUtil.filterInvalidDates.mockImplementation(() => [moment.utc('2017-01-01')]);
+DateUtil.createSafeDate.mockImplementation(() => parseISO('2017-01-01'));
+DateUtil.filterInvalidDates.mockImplementation(() => [parseISO('2017-01-01')]);
 
 const locale = 'en-US';
 const isWeekday = (date) => {
-  const day = date.day();
+  const day = date.getDay();
   return day !== 0 && day !== 6;
 };
 

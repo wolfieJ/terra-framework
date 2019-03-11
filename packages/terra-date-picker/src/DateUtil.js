@@ -1,12 +1,12 @@
 /* eslint-disable no-underscore-dangle */
-import fns from 'date-fns'
-import isValid from 'date-fns/isValid'
-import isEqual from 'date-fns/isEqual'
-import isAfter from 'date-fns/isAfter'
-import isBefore from 'date-fns/isBefore'
-import isSameDay from 'date-fns/isSameDay'
-import format from 'date-fns/format'
-import parse from 'date-fns/parse'
+import isValid from 'date-fns/isValid';
+import isEqual from 'date-fns/isEqual';
+import isAfter from 'date-fns/isAfter';
+import isBefore from 'date-fns/isBefore';
+import isSameDay from 'date-fns/isSameDay';
+import format from 'date-fns/format';
+import parse from 'date-fns/parse';
+import parseISO from 'date-fns/parseISO';
 
 class DateUtil {
   // Converts an ISO 8601 date into a Date object. If the date passed in is invalid and unable to convert, undefined is returned.
@@ -15,7 +15,7 @@ class DateUtil {
       return undefined;
     }
 
-    const newDate = new Date(date);
+    const newDate = parseISO(date);
     return isValid(newDate) ? newDate : undefined;
   }
 
@@ -26,7 +26,7 @@ class DateUtil {
     if (dates) {
       let index = 0;
       for (index = 0; index < dates.length; index += 1) {
-        const date = new Date(dates[index]);
+        const date = parseISO(dates[index]);
         if (isValid(date)) {
           validDates.push(date);
         }
@@ -73,19 +73,17 @@ class DateUtil {
   // Converts date string to the ISO8601 format with only the date part. If the date string is invalid and unable to convert, the originally provided string is returned.
   static convertToISO8601(date, dateFormat) {
     if (date && dateFormat) {
-      const parsedDate = parse(date, dateFormat, new Date())
+      const parsedDate = parse(date, dateFormat, new Date());
 
       if (!isValid(parsedDate)) {
         return date;
       }
 
-      return format(parsedDate, 'yyyy-MM-dd');
-
-      // return dateObj.toISOString();
-
-      // const dateString = format(dateObj, dateFormat);
-      
-      // return isValid(dateObj) ? format(dateObj, 'YYYY-MM-DD') : date;
+      // Check strict parsing since the parse method would return a valid date even if date does not match the format.
+      // (i.e. "03/15/201" is still considered a valid date)
+      if (date === format(parsedDate, dateFormat)) {
+        return format(parsedDate, 'yyyy-MM-dd');
+      }
     }
 
     return date;
@@ -99,7 +97,7 @@ class DateUtil {
 
     // Returns the short date format defined in the locale file.
     // See https://github.com/date-fns/date-fns/blob/master/src/locale/en-US/_lib/formatLong/index.js#L25-L28
-    return localeData.formatLong.date({width: 'short'});
+    return localeData.formatLong.date({ width: 'short' });
   }
 }
 

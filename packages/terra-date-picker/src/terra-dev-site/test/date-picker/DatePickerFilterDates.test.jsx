@@ -1,8 +1,7 @@
 import React from 'react';
-import DatePicker from '../../../../src/DatePicker';
+import DatePicker from '../../../../lib/DatePicker';
 
 const isWeekday = (date) => {
-  debugger;
   const day = date.getDay();
   return day !== 0 && day !== 6;
 };
@@ -10,7 +9,7 @@ const isWeekday = (date) => {
 const DatePickerFilterDates = () => (
   <DatePicker
     name="date-input"
-    // filterDate={isWeekday}
+    filterDate={isWeekday}
   />
 );
 

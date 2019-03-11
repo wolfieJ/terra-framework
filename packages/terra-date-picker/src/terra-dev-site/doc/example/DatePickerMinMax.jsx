@@ -1,5 +1,6 @@
 import React from 'react';
-import moment from 'moment';
+import format from 'date-fns/format';
+import addDays from 'date-fns/addDays';
 import PropTypes from 'prop-types';
 import Field from 'terra-form-field';
 // eslint-disable-next-line import/no-extraneous-dependencies, import/no-unresolved, import/extensions
@@ -52,8 +53,8 @@ DatePickerExample.defualtProps = defaultProps;
 
 const DatePickerExampleMinMax = () => (
   <DatePickerExample
-    minDate={moment().format()}
-    maxDate={moment().add(6, 'days').format()}
+    minDate={format(new Date(), 'yyyy-MM-dd')}
+    maxDate={format(addDays(new Date(), 6), 'yyyy-MM-dd')}
   />
 );
 
