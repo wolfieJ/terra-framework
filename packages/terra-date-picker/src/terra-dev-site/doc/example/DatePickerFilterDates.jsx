@@ -50,7 +50,7 @@ DatePickerExample.propTypes = propTypes;
 DatePickerExample.defualtProps = defaultProps;
 
 const isWeekday = (date) => {
-  const day = date.day();
+  const day = date.getDay();
   return day !== 0 && day !== 6;
 };
 

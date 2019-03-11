@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import format from 'date-fns/format';
 import PropTypes from 'prop-types';
 import Field from 'terra-form-field';
 // eslint-disable-next-line import/no-extraneous-dependencies, import/no-unresolved, import/extensions
@@ -34,7 +34,7 @@ class DatePickerExample extends React.Component {
 Selected ISO Date:
           <span style={{ display: 'inline-block' }}>{this.state.date}</span>
         </p>
-        <Field label="Enter Date" htmlFor="defaultedDate">
+        <Field label="Enter Date 123" htmlFor="defaultedDate">
           <DatePicker
             name="date-input"
             id="defaultedDate"
@@ -51,7 +51,7 @@ DatePickerExample.propTypes = propTypes;
 DatePickerExample.defualtProps = defaultProps;
 
 const DatePickerExampleDefaultDate = () => (
-  <DatePickerExample selectedDate={moment().format()} />
+  <DatePickerExample selectedDate={format(new Date(), 'yyyy-MM-dd')} />
 );
 
 export default DatePickerExampleDefaultDate;

@@ -15,6 +15,7 @@ it('should render a default date input with all props', () => {
   const dateInput = render((
     <IntlProvider locale={locale} messages={messages}>
       <DateInput
+        dateFormat="MM/dd/yyyy"
         inputAttributes={{ id: 'terra-date-input' }}
         name="date-input"
         placeholder="MM/DD/YYYY"

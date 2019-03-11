@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import format from 'date-fns/format';
 import DatePicker from '../../../../lib/DatePicker';
 
 class DatePickerDefault extends React.Component {
@@ -7,12 +7,12 @@ class DatePickerDefault extends React.Component {
     super(props);
     this.handleSelectedDateUpdate = this.handleSelectedDateUpdate.bind(this);
     this.state = {
-      date: moment().format(),
+      date: format(new Date(), 'yyyy-MM-dd'),
     };
   }
 
   handleSelectedDateUpdate() {
-    this.setState({ date: moment().format() });
+    this.setState({ date: format(new Date(), 'yyyy-MM-dd') });
   }
 
   render() {

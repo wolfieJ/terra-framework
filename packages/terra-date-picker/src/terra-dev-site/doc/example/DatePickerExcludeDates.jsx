@@ -1,9 +1,10 @@
 import React from 'react';
-import moment from 'moment';
+import format from 'date-fns/format';
+import addDays from 'date-fns/addDays';
 import PropTypes from 'prop-types';
 import Field from 'terra-form-field';
 // eslint-disable-next-line import/no-extraneous-dependencies, import/no-unresolved, import/extensions
-import DatePicker from 'terra-date-picker/lib/DatePicker';
+import DatePicker from 'terra-date-picker/src/DatePicker';
 
 const propTypes = {
   /**
@@ -52,7 +53,7 @@ DatePickerExample.defualtProps = defaultProps;
 
 const DatePickerExampleExcludeDates = () => (
   <DatePickerExample
-    excludeDates={[moment().subtract(1, 'days').format(), moment().add(1, 'days').format()]}
+    excludeDates={[format(addDays(new Date(), 1), 'yyyy-MM-dd'), format(addDays(new Date(), -1), 'yyyy-MM-dd')]}
   />
 );
 
