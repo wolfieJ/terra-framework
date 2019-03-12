@@ -1,5 +1,4 @@
 import React from 'react';
-import format from 'date-fns/format';
 import addDays from 'date-fns/addDays';
 import PropTypes from 'prop-types';
 import Field from 'terra-form-field';
@@ -53,7 +52,7 @@ DatePickerExample.defualtProps = defaultProps;
 
 const DatePickerExampleExcludeDates = () => (
   <DatePickerExample
-    excludeDates={[format(addDays(new Date(), 1), 'yyyy-MM-dd'), format(addDays(new Date(), -1), 'yyyy-MM-dd')]}
+    excludeDates={[((addDays(new Date(), 1)).toISOString()), ((addDays(new Date(), -1)).toISOString())]}
   />
 );
 

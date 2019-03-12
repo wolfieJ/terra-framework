@@ -304,9 +304,9 @@ class DatePicker extends React.Component {
     delete customProps.onInputFocus;
 
     const { intl } = this.context;
-    const localeData = this.localeData[intl.locale] ? this.localeData[intl.locale] : this.localeData.en;
+    // const localeData = this.localeData[intl.locale] ? this.localeData[intl.locale] : this.localeData.en;
     const todayString = intl.formatMessage({ id: 'Terra.datePicker.today' });
-    const dateFormat = intl.formatMessage({ id: 'Terra.datePicker.dateFormat' }); //DateUtil.getFormatByLocale(localeData);
+    const dateFormat = intl.formatMessage({ id: 'Terra.datePicker.dateFormat' }); // DateUtil.getFormatByLocale(localeData);
     const placeholderText = intl.formatMessage({ id: 'Terra.datePicker.placeholder' });
     const exludedDateObjects = DateUtil.filterInvalidDates(excludeDates);
     const includedDateObjects = DateUtil.filterInvalidDates(includeDates);

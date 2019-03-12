@@ -1,5 +1,4 @@
 import React from 'react';
-import format from 'date-fns/format';
 import PropTypes from 'prop-types';
 import Field from 'terra-form-field';
 // eslint-disable-next-line import/no-extraneous-dependencies, import/no-unresolved, import/extensions
@@ -51,7 +50,7 @@ DatePickerExample.propTypes = propTypes;
 DatePickerExample.defualtProps = defaultProps;
 
 const DatePickerExampleDefaultDate = () => (
-  <DatePickerExample selectedDate={format(new Date(), 'yyyy-MM-dd')} />
+  <DatePickerExample selectedDate={(new Date()).toISOString()} />
 );
 
 export default DatePickerExampleDefaultDate;
