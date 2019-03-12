@@ -81,8 +81,8 @@ class DateUtil {
 
       // Check strict parsing since the parse method would return a valid date even if date does not match the format.
       // (i.e. "03/15/201" is still considered a valid date)
-      if (date === format(parsedDate, dateFormat)) {
-        return format(parsedDate, 'yyyy-MM-dd');
+      if (date === format(parsedDate, dateFormat, { awareOfUnicodeTokens: true })) {
+        return format(parsedDate, 'yyyy-MM-dd', { awareOfUnicodeTokens: true });
       }
     }
 

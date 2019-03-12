@@ -2,14 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactDatePicker, { registerLocale } from 'react-datepicker';
 import isValid from 'date-fns/isValid';
-// import ar from 'date-fns/locale/ar';
+import arSA from 'date-fns/locale/ar-SA';
 import de from 'date-fns/locale/de';
 import enGB from 'date-fns/locale/en-GB';
 import enUS from 'date-fns/locale/en-US';
 import es from 'date-fns/locale/es';
 import fi from 'date-fns/locale/fi';
 import fr from 'date-fns/locale/fr';
-// import nlBE from 'date-fns/locale/nl-BE';
 import nl from 'date-fns/locale/nl';
 import ptBR from 'date-fns/locale/pt-BR';
 import pt from 'date-fns/locale/pt';
@@ -126,31 +125,44 @@ class DatePicker extends React.Component {
       prevPropsSelectedDate: props.selectedDate,
     };
 
-    // registerLocale('ar', ar);
+    // Some of the specific locales are currently not supported by date-fns. Defaulting to use its language.
+
+    registerLocale('ar', arSA);
     registerLocale('de', de);
+    registerLocale('en', enUS);
     registerLocale('en-GB', enGB);
     registerLocale('en-US', enUS);
     registerLocale('es', es);
-    registerLocale('fi', fi);
+    registerLocale('es-ES', es);
+    registerLocale('es-US', es);
+    registerLocale('fi-FI', fi);
     registerLocale('fr', fr);
-    // registerLocale('nl-BE', nlBE);
+    registerLocale('fr-FR', fr);
     registerLocale('nl', nl);
-    registerLocale('pt-BR', ptBR);
+    registerLocale('nl-BE', nl);
     registerLocale('pt', pt);
+    registerLocale('pt-BR', ptBR);
     registerLocale('sv', sv);
+    registerLocale('sv-SE', sv);
 
     this.localeData = {
+      ar: arSA,
       de,
+      en: enUS,
       'en-GB': enGB,
       'en-US': enUS,
-      en: enUS,
       es,
-      fi,
+      'es-ES': es,
+      'es-US': es,
+      'fi-FI': fi,
       fr,
+      'fr-FR': fr,
       nl,
-      'pt-BR': ptBR,
+      'nl-BE': nl,
       pt,
+      'pt-BR': ptBR,
       sv,
+      'sv-SE': sv,
     };
 
     this.isDefaultDateAcceptable = false;
@@ -294,8 +306,8 @@ class DatePicker extends React.Component {
     const { intl } = this.context;
     const localeData = this.localeData[intl.locale] ? this.localeData[intl.locale] : this.localeData.en;
     const todayString = intl.formatMessage({ id: 'Terra.datePicker.today' });
-    const dateFormat = DateUtil.getFormatByLocale(localeData);
-    const placeholderText = intl.formatMessage({ id: 'Terra.datePicker.dateFormat' });
+    const dateFormat = intl.formatMessage({ id: 'Terra.datePicker.dateFormat' }); //DateUtil.getFormatByLocale(localeData);
+    const placeholderText = intl.formatMessage({ id: 'Terra.datePicker.placeholder' });
     const exludedDateObjects = DateUtil.filterInvalidDates(excludeDates);
     const includedDateObjects = DateUtil.filterInvalidDates(includeDates);
     const maxDateObject = DateUtil.createSafeDate(maxDate);
@@ -336,6 +348,7 @@ class DatePicker extends React.Component {
         showMonthDropdown
         showYearDropdown
         name={name}
+        strictParsing
       />
     );
 
@@ -382,6 +395,7 @@ class DatePicker extends React.Component {
         showMonthDropdown
         showYearDropdown
         name={name}
+        strictParsing
       />
     );
 

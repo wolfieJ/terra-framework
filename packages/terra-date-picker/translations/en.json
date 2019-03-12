@@ -1,5 +1,6 @@
 {
-  "Terra.datePicker.dateFormat": "MM/DD/YYYY",
+  "Terra.datePicker.dateFormat": "MM/dd/yyyy",
+  "Terra.datePicker.placeholder": "MM/DD/YYYY",
   "Terra.datePicker.today": "Today",
   "Terra.datePicker.openCalendar": "Open Calendar"
 }
