@@ -58,12 +58,16 @@ const propTypes = {
    */
   name: PropTypes.string.isRequired,
   /**
-   * A callback function to execute when a valid date is selected or entered.
+   * A callback function triggered when the input loses focus. function(event)
+   */
+  onBlur: PropTypes.func,
+  /**
+   * A callback function to execute only when a valid date is selected or entered.
    * The first parameter is the event. The second parameter is the changed date value.
    */
   onChange: PropTypes.func,
   /**
-   * A callback function to execute when a change is made in the date input.
+   * A callback function to execute when any change is made in the date input.
    * The first parameter is the event. The second parameter is the changed date value.
    */
   onChangeRaw: PropTypes.func,
@@ -72,9 +76,21 @@ const propTypes = {
    */
   onClickOutside: PropTypes.func,
   /**
-   * A callback function to execute when a date is selected from within the picker.
+   * A callback function triggered when the input receives focus. function(event)
+   */
+  onFocus: PropTypes.func,
+  /**
+   * A callback function to execute when a month is selected from the picker. function(date)
+   */
+  onMonthChange: PropTypes.func,
+  /**
+   * A callback function to execute when a date is selected from the picker. function(date)
    */
   onSelect: PropTypes.func,
+  /**
+   * A callback function to execute when a year is selected from the picker. function(date)
+   */
+  onYearChange: PropTypes.func,
   /**
    * A callback function to let the containing component (e.g. modal) to regain focus.
    */
@@ -98,10 +114,14 @@ const defaultProps = {
   inputAttributes: undefined,
   maxDate: undefined,
   minDate: undefined,
+  onBlur: undefined,
   onChange: undefined,
   onChangeRaw: undefined,
   onClickOutside: undefined,
+  onFocus: undefined,
+  onMonthChange: undefined,
   onSelect: undefined,
+  onYearChange: undefined,
   releaseFocus: undefined,
   requestFocus: undefined,
   selectedDate: undefined,
@@ -241,6 +261,8 @@ class DatePicker extends React.Component {
   handleOnInputFocus(event) {
     if (this.onInputFocus) {
       this.onInputFocus(event);
+    } else if (this.props.onFocus) {
+      this.props.onFocus(event);
     }
 
     if (!this.isDefaultDateAcceptable) {
@@ -290,6 +312,11 @@ class DatePicker extends React.Component {
       onChange,
       onChangeRaw,
       onClickOutside,
+      onFocus,
+      // We can safely remove onInputFocus on the next MVB. onInputFocus was used as a backdoor for onFocus because we have to
+      // delete the onFocus prop in DateInput to prevent the picker from displaying when the input received focus.
+      // react-datepicker now has a preventOpenOnFocus that we'll pass down to prevent this and we can use the onFocus again.
+      onInputFocus,
       onSelect,
       requestFocus,
       releaseFocus,
@@ -298,7 +325,6 @@ class DatePicker extends React.Component {
     } = this.props;
 
     this.onCalendarButtonClick = customProps.onCalendarButtonClick;
-    this.onInputFocus = customProps.onInputFocus;
 
     delete customProps.onCalendarButtonClick;
     delete customProps.onInputFocus;
@@ -316,15 +342,16 @@ class DatePicker extends React.Component {
     const portalPicker = (
       <ReactDatePicker
         {...customProps}
+        preventOpenOnFocus
         selected={this.state.selectedDate}
         onChange={this.handleChange}
         onChangeRaw={this.handleChangeRaw}
         onClickOutside={this.handleOnClickOutside}
         onSelect={this.handleOnSelect}
+        onFocus={this.handleOnInputFocus}
         customInput={(
           <DateInput
             dateFormat={dateFormat}
-            onInputFocus={this.handleOnInputFocus}
             onCalendarButtonClick={this.handleOnCalendarButtonClick}
             inputAttributes={inputAttributes}
             releaseFocus={releaseFocus}
@@ -355,15 +382,16 @@ class DatePicker extends React.Component {
     const popupPicker = (
       <ReactDatePicker
         {...customProps}
+        preventOpenOnFocus
         selected={this.state.selectedDate}
         onChange={this.handleChange}
         onChangeRaw={this.handleChangeRaw}
         onClickOutside={this.handleOnClickOutside}
         onSelect={this.handleOnSelect}
+        onFocus={this.handleOnInputFocus}
         customInput={(
           <DateInput
             dateFormat={dateFormat}
-            onInputFocus={this.handleOnInputFocus}
             onCalendarButtonClick={this.handleOnCalendarButtonClick}
             inputAttributes={inputAttributes}
             releaseFocus={releaseFocus}
