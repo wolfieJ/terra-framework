@@ -29,7 +29,7 @@
     "classnames": "^2.2.5",
     "date-fns": "^2.0.0-alpha.23",
     "prop-types": "^15.5.8",
-    "react-datepicker": "git@github.com:benbcai/react-datepicker.git#strict-date-parsing",
+    "react-datepicker": "^2.2.0",
     "react-portal": "^4.1.2",
     "terra-button": "^3.3.0",
     "terra-disclosure-manager": "^4.4.0",

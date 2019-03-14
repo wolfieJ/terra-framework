@@ -313,10 +313,6 @@ class DatePicker extends React.Component {
       onChangeRaw,
       onClickOutside,
       onFocus,
-      // We can safely remove onInputFocus on the next MVB. onInputFocus was used as a backdoor for onFocus because we have to
-      // delete the onFocus prop in DateInput to prevent the picker from displaying when the input received focus.
-      // react-datepicker now has a preventOpenOnFocus that we'll pass down to prevent this and we can use the onFocus again.
-      onInputFocus,
       onSelect,
       requestFocus,
       releaseFocus,
@@ -325,6 +321,11 @@ class DatePicker extends React.Component {
     } = this.props;
 
     this.onCalendarButtonClick = customProps.onCalendarButtonClick;
+
+    // We can safely remove onInputFocus on the next MVB. onInputFocus was used as a backdoor for onFocus because we have to
+    // delete the onFocus prop in DateInput to prevent the picker from displaying when the input received focus.
+    // react-datepicker now has a preventOpenOnFocus that we'll pass down to prevent this and we can use the onFocus again.
+    this.onInputFocus = customProps.onInputFocus;
 
     delete customProps.onCalendarButtonClick;
     delete customProps.onInputFocus;
