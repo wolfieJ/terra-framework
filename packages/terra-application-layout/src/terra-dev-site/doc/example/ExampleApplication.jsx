@@ -5,6 +5,13 @@ import { injectIntl, intlShape } from 'react-intl';
 import Image from 'terra-image';
 import Avatar from 'terra-avatar';
 import ContentContainer from 'terra-content-container';
+import IconPage1 from 'terra-icon/lib/icon/IconTrash';
+import IconPage2 from 'terra-icon/lib/icon/IconFolder';
+import IconPage3 from 'terra-icon/lib/icon/IconSearch';
+import IconPage4 from 'terra-icon/lib/icon/IconPrinter';
+import IconPage5 from 'terra-icon/lib/icon/IconAllergy';
+import IconPage6 from 'terra-icon/lib/icon/IconPadlock';
+import IconPage7 from 'terra-icon/lib/icon/IconFeatured';
 
 /* eslint-disable import/no-extraneous-dependencies, import/no-unresolved, import/extensions */
 import ApplicationLayout, { Utils } from 'terra-application-layout/lib/ApplicationLayout';
@@ -151,24 +158,31 @@ const routingConfig = {
 const navigationItems = [{
   path: '/page_1',
   text: 'Page 1',
+  icon: <IconPage1 />,
 }, {
   path: '/page_2',
   text: 'Page 2',
+  icon: <IconPage2 />,
 }, {
   path: '/page_3',
   text: 'Page 3',
+  icon: <IconPage3 />,
 }, {
   path: '/page_4',
   text: 'Page 4',
+  icon: <IconPage4 />,
 }, {
   path: '/page_5',
   text: 'Page 5',
+  icon: <IconPage5 />,
 }, {
   path: '/page_6',
   text: 'Page 6',
+  icon: <IconPage6 />,
 }, {
   path: '/page_7',
   text: 'Page 7',
+  icon: <IconPage7 />,
 }];
 
 /**

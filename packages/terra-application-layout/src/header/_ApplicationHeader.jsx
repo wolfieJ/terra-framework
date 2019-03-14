@@ -58,10 +58,13 @@ const propTypes = {
    * DisclosureManagerDelegate instance automatically provided by a DisclosureManagerProvider.
    */
   disclosureManager: disclosureManagerShape,
+
+  hasIcons: PropTypes.bool,
 };
 
 const defaultProps = {
   applicationLinks: {},
+  hasIcons: true,
 };
 
 class ApplicationHeader extends React.Component {
@@ -232,11 +235,13 @@ class ApplicationHeader extends React.Component {
       navigationLayoutRoutes,
       navigationLayoutSize,
       intl,
+      hasIcons,
       ...customProps
     } = this.props;
 
     const headerClassNames = cx([
       'application-navbar',
+      { 'application-navbar-with-icons': hasIcons },
       customProps.className,
     ]);
 

@@ -40,6 +40,8 @@ const propTypes = {
    * The click callback of the tab.
    */
   onTabClick: PropTypes.func,
+
+  icon: PropTypes.node,
 };
 
 class ApplicationTab extends React.Component {
@@ -115,6 +117,7 @@ class ApplicationTab extends React.Component {
       onTabClick,
       path,
       text,
+      icon,
       ...customProps
     } = this.props;
 
@@ -146,9 +149,10 @@ class ApplicationTab extends React.Component {
         onKeyUp={this.handleKeyUp}
         onBlur={this.handleOnBlur}
       >
-        <span className={cx(['tab-inner'])}>
+        <div className={cx(['tab-inner'])}>
+          <span style={{ fontSize: '1.7143rem' }} className={cx([''])}>{icon}</span>
           <span className={cx(['tab-label'])}>{text}</span>
-        </span>
+        </div>
       </ComponentClass>
     );
   }

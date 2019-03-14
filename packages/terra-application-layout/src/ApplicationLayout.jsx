@@ -208,6 +208,8 @@ class ApplicationLayout extends React.Component {
     } = this.props;
     const { applicationLayoutRoutingConfig } = this.state;
 
+    const headerHasAnyIcons = (navigationItems || []).some(({ icon }) => icon);
+
     return (
       <ModalManager>
         <NavigationLayout
@@ -224,8 +226,10 @@ class ApplicationLayout extends React.Component {
                   path: route.path,
                   text: route.text,
                   externalLink: route.externalLink,
+                  icon: route.icon,
                 })) : undefined,
               }}
+              hasIcons={headerHasAnyIcons}
             />
           )}
           indexPath={indexPath}

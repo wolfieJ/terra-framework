@@ -31,6 +31,8 @@ const propTypes = {
      * The display text for the link.
      */
     text: PropTypes.string.isRequired,
+
+    icon: PropTypes.node,
   })),
   /**
    * The location as provided by the `withRouter()` HOC.
@@ -159,6 +161,7 @@ class ApplicationTabs extends React.Component {
         externalLink: link.externalLink,
         location,
         history,
+        icon: link.icon,
       };
       if (this.hiddenStartIndex < 0) {
         visibleChildren.push(<Tab {...tabProps} />);

@@ -50,13 +50,13 @@
     "terra-popup": "^5.5.0"
   },
   "scripts": {
-    "compile": "npm run compile:clean && npm run compile:build",
+    "compile": "yarn run compile:clean && yarn run compile:build",
     "compile:clean": "rm -rf lib",
     "compile:build": "babel src --out-dir lib --copy-files",
-    "lint": "npm run lint:js && npm run lint:scss",
+    "lint": "yarn run lint:js && yarn run lint:scss",
     "lint:js": "eslint --ext .js,.jsx . --ignore-path ../../.eslintignore",
     "lint:scss": "stylelint src/**/*.scss",
-    "test": "npm run test:jest && npm run test:wdio",
+    "test": "yarn run test:jest && yarn run test:wdio",
     "test:jest": "jest --config ../../jestconfig.js",
     "test:wdio": "../../node_modules/.bin/wdio ../../node_modules/terra-dev-site/config/wdio/wdio.conf.js"
   }
