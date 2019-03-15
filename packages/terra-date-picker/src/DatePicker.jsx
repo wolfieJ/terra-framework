@@ -169,6 +169,7 @@ class DatePicker extends React.Component {
       ar: arSA,
       de,
       en: enUS,
+      'en-AU': enGB, // Should we use en-GB for en-AU???
       'en-GB': enGB,
       'en-US': enUS,
       es,
