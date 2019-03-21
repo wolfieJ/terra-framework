@@ -1,10 +1,12 @@
 import React from 'react';
-import moment from 'moment';
+import format from 'date-fns/format';
+import addDays from 'date-fns/addDays';
 import PropTypes from 'prop-types';
 import Field from 'terra-form-field';
 // eslint-disable-next-line import/no-extraneous-dependencies, import/no-unresolved, import/extensions
 import DateTimePicker from 'terra-date-time-picker/lib/DateTimePicker';
 
+const preferredISOFormat = "yyyy-MM-dd'T'HH:mm:ssxxx";
 
 const propTypes = {
   /**
@@ -53,7 +55,9 @@ DateTimePickerExample.defualtProps = defaultProps;
 
 const DateTimePickerExampleIncludeDates = () => (
   <DateTimePickerExample
-    includeDates={[moment().format(), moment().subtract(1, 'days').format(), moment().add(1, 'days').format()]}
+    includeDates={[format(new Date(), preferredISOFormat, { awareOfUnicodeTokens: true }),
+      format(addDays(new Date(), -1), preferredISOFormat, { awareOfUnicodeTokens: true }),
+      format(addDays(new Date(), 1), preferredISOFormat, { awareOfUnicodeTokens: true })]}
   />
 );
 

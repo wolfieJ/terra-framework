@@ -1,10 +1,12 @@
 import React from 'react';
-import moment from 'moment';
 import PropTypes from 'prop-types';
+import format from 'date-fns/format';
+import addDays from 'date-fns/addDays';
 import Field from 'terra-form-field';
 // eslint-disable-next-line import/no-extraneous-dependencies, import/no-unresolved, import/extensions
 import DateTimePicker from 'terra-date-time-picker/lib/DateTimePicker';
 
+const preferredISOFormat = "yyyy-MM-dd'T'HH:mm:ssxxx";
 
 const propTypes = {
   /**
@@ -53,8 +55,8 @@ DateTimePickerExample.defualtProps = defaultProps;
 
 const DateTimePickerExampleMinMax = () => (
   <DateTimePickerExample
-    minDateTime={moment().format()}
-    maxDateTime={moment().add(6, 'days').format()}
+    minDateTime={format(new Date(), preferredISOFormat, { awareOfUnicodeTokens: true })}
+    maxDateTime={format(addDays(new Date(), 6), preferredISOFormat, { awareOfUnicodeTokens: true })}
   />
 );
 
