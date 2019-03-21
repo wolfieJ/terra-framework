@@ -4,6 +4,16 @@ Changelog
 Unreleased
 ----------
 
+4.6.0 - (March 20, 2019)
+------------------
+### Changed
+* Minor dependency update
+
+4.5.0 - (March 12, 2019)
+------------------
+### Changed
+* Updated doc page to remove duplicate ID's
+
 4.4.0 - (March 5, 2019)
 ------------------
 ### Changed

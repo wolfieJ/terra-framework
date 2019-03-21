@@ -3,6 +3,15 @@ Changelog
 
 Unreleased
 ----------
+
+5.6.0 - (March 20, 2019)
+------------------
+### Changed
+* Update Jest tests to use terra-enzyme-intl
+* Changed demo mock background colors to be themable
+
+5.5.0 - (March 12, 2019)
+------------------
 ### Changed
 * Replaced local keyCode values with keycode-js npm package
 
