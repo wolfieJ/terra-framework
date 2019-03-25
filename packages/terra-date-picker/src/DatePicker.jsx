@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactDatePicker, { registerLocale } from 'react-datepicker';
+import ReactDatePicker from 'react-datepicker';
 import isValid from 'date-fns/isValid';
 import arSA from 'date-fns/locale/ar-SA';
 import de from 'date-fns/locale/de';
@@ -13,7 +13,6 @@ import nl from 'date-fns/locale/nl';
 import ptBR from 'date-fns/locale/pt-BR';
 import pt from 'date-fns/locale/pt';
 import sv from 'date-fns/locale/sv';
-import 'terra-base/lib/baseStyles';
 import ResponsiveElement from 'terra-responsive-element';
 import PopperContainer from './_PopperContainer';
 import DateInput from './DateInput';
