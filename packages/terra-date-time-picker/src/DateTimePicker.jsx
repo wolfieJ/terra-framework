@@ -64,6 +64,10 @@ const propTypes = {
    */
   onChangeRaw: PropTypes.func,
   /**
+   * A callback function triggered when the date input, hour input, or minute input receives focus. function(event)
+   */
+  onFocus: PropTypes.func,
+  /**
    * A callback function to let the containing component (e.g. modal) to regain focus.
    */
   releaseFocus: PropTypes.func,
@@ -93,6 +97,7 @@ const defaultProps = {
   minDateTime: undefined,
   onChange: undefined,
   onChangeRaw: undefined,
+  onFocus: undefined,
   releaseFocus: undefined,
   requestFocus: undefined,
   timeInputAttributes: undefined,
@@ -285,6 +290,10 @@ class DateTimePicker extends React.Component {
   }
 
   handleOnInputFocus(event) {
+    if (this.props.onFocus) {
+      this.props.onFocus(event);
+    }
+
     if (!this.isDefaultDateAcceptable) {
       this.dateValue = '';
       this.timeValue = '';
@@ -397,6 +406,7 @@ class DateTimePicker extends React.Component {
       includeDates,
       onChange,
       onChangeRaw,
+      onFocus,
       maxDateTime,
       minDateTime,
       name,
@@ -428,7 +438,7 @@ class DateTimePicker extends React.Component {
           onSelect={this.handleOnSelect}
           onClickOutside={this.handleOnClickOutside}
           onBlur={this.handleOnDateBlur}
-          onInputFocus={this.handleOnDateInputFocus}
+          onFocus={this.handleOnDateInputFocus}
           excludeDates={excludeDates}
           filterDate={filterDate}
           includeDates={includeDates}
@@ -446,7 +456,7 @@ class DateTimePicker extends React.Component {
           <TimeInput
             onBlur={this.handleOnTimeBlur}
             onChange={this.handleTimeChange}
-            onInputFocus={this.handleOnTimeInputFocus}
+            onFocus={this.handleOnTimeInputFocus}
             inputAttributes={timeInputAttributes}
             name="input"
             value={this.timeValue}

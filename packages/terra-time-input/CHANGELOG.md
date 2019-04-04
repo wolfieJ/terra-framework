@@ -3,6 +3,11 @@ Changelog
 
 Unreleased
 ----------
+### Added
+* Added 'onFocus' prop.
+
+### Removed
+* Removed the 'onInputFocus' custom prop in favor of the first-class 'onFocus' prop.
 
 3.6.0 - (March 26, 2019)
 ------------------
