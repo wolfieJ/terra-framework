@@ -10,6 +10,7 @@ const layout = () => (
         <div
           style={{
             width: '100%',
+            maxWidth: '100%',
             backgroundColor: 'red',
             display: 'flex',
             justifyContent: 'space-evenly',
@@ -23,10 +24,11 @@ const layout = () => (
               margin: '5px',
               overflow: 'hidden',
               wordBreak: 'break-word',
-              flex: '0 1 auto',
+              flex: '100 1 auto',
+              width: '100px',
             }}
           >
-            wallaby
+            wallaby wallaby wallaby wallaby wallaby
           </div>
           <div
             style={{
@@ -36,10 +38,11 @@ const layout = () => (
               margin: '5px',
               overflow: 'hidden',
               wordBreak: 'break-word',
-              flex: '0 1 auto',
+              flex: '100 1 auto',
+              width: '100px',
             }}
           >
-            wallaby
+            wallaby wallaby
           </div>
           <div
             style={{
@@ -49,7 +52,8 @@ const layout = () => (
               margin: '5px',
               overflow: 'hidden',
               wordBreak: 'break-word',
-              flex: '0 1 auto',
+              flex: '100 1 auto',
+              width: '100px',
             }}
           >
             wallaby
@@ -73,6 +77,8 @@ const layout = () => (
               width: '100%',
               backgroundColor: 'pink',
               margin: '5px',
+              flex: '100 1 auto',
+              width: '100px',
             }}
           />
           <div
@@ -81,6 +87,8 @@ const layout = () => (
               width: '100%',
               backgroundColor: 'pink',
               margin: '5px',
+              flex: '100 1 auto',
+              width: '100px',
             }}
           />
           <div
@@ -89,6 +97,8 @@ const layout = () => (
               width: '100%',
               backgroundColor: 'pink',
               margin: '5px',
+              flex: '100 1 auto',
+              width: '100px',
             }}
           />
         </div>,
