@@ -27,6 +27,8 @@ const defaultProps = {
 };
 
 // const derp = {
+//   selectionKey,
+//   columnWidths,
 //   header: {
 //     [
 //       {
@@ -35,8 +37,10 @@ const defaultProps = {
 //         isSelected,
 //         isSelectable,
 //         node,
-//       }
-//     ]
+//         width, //  ??
+//         onColumnResize,
+//       },
+//     ],
 //   },
 //   items: [
 //     {
@@ -45,11 +49,18 @@ const defaultProps = {
 //       isSelected,
 //       isSelectable,
 //       cells: [
-//         node,
+//         {
+//           metaData,
+//           onSelect,
+//           isSelected,
+//           isSelectable,
+//           colSpan,
+//           node,
+//         },
 //       ],
-//     }
+//     },
 //   ],
-// }
+// };
 
 // const makeChildren = (children) => {
 
@@ -65,6 +76,10 @@ const Table = ({
     customProps.className,
   ]);
 
+  // -ms-flex: {width} 0 auto;
+  // flex: {width} 0 auto;
+  // width: {width};
+  // const style = { msFlex: `${newWidth} 0 auto`, flex: `${newWidth} 0 auto`, width: newWidth};
   return (
     <ContentContainer
       {...customProps}

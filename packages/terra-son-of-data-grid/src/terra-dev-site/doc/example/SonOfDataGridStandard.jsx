@@ -5,6 +5,8 @@ import SonOfDataGrid from 'terra-son-of-data-grid/lib/SonOfDataGrid';
 
 const layout = () => (
   <SonOfDataGrid
+    fill
+    style={{ height: '150px', border: '1px solid black' }}
     headerConfig={
       (
         <div
@@ -18,13 +20,14 @@ const layout = () => (
         >
           <div
             style={{
-              minHeight: '50px',
+              border: '1px solid black',
+              // minHeight: '50px',
               // width: '100%',
-              backgroundColor: 'pink',
-              margin: '5px',
+              // backgroundColor: 'pink',
+              // margin: '5px',
               overflow: 'hidden',
               wordBreak: 'break-word',
-              flex: '100 1 auto',
+              flex: '100 0 auto',
               width: '100px',
             }}
           >
@@ -32,13 +35,14 @@ const layout = () => (
           </div>
           <div
             style={{
-              minHeight: '50px',
+              border: '1px solid black',
+              // minHeight: '50px',
               // width: '100%',
-              backgroundColor: 'pink',
-              margin: '5px',
+              // backgroundColor: 'pink',
+              // margin: '5px',
               overflow: 'hidden',
               wordBreak: 'break-word',
-              flex: '100 1 auto',
+              flex: '100 0 auto',
               width: '100px',
             }}
           >
@@ -46,13 +50,14 @@ const layout = () => (
           </div>
           <div
             style={{
-              minHeight: '50px',
+              border: '1px solid black',
+              // minHeight: '50px',
               // width: '100%',
-              backgroundColor: 'pink',
-              margin: '5px',
+              // backgroundColor: 'pink',
+              // margin: '5px',
               overflow: 'hidden',
               wordBreak: 'break-word',
-              flex: '100 1 auto',
+              flex: '100 0 auto',
               width: '100px',
             }}
           >
@@ -66,56 +71,264 @@ const layout = () => (
         <div
           style={{
             width: '100%',
-            backgroundColor: 'green',
+            backgroundColor: 'darksalmon',
             display: 'flex',
             justifyContent: 'space-evenly',
           }}
         >
           <div
             style={{
-              height: '50px',
-              width: '100%',
-              backgroundColor: 'pink',
-              margin: '5px',
-              flex: '100 1 auto',
-              width: '100px',
+              border: '1px solid black',
+              // height: '50px',
+              // width: '100%',
+              // backgroundColor: 'pink',
+              // margin: '5px',
+              flex: '200 1 auto',
+              width: '200px',
             }}
-          />
+          >
+            Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens
+          </div>
           <div
             style={{
-              height: '50px',
-              width: '100%',
-              backgroundColor: 'pink',
-              margin: '5px',
+              border: '1px solid black',
+              // height: '50px',
+              // width: '100%',
+              // backgroundColor: 'pink',
+              // margin: '5px',
               flex: '100 1 auto',
               width: '100px',
             }}
-          />
-          <div
-            style={{
-              height: '50px',
-              width: '100%',
-              backgroundColor: 'pink',
-              margin: '5px',
-              flex: '100 1 auto',
-              width: '100px',
-            }}
-          />
+          >
+            Spicy Kittens
+          </div>
         </div>,
         <div
           style={{
-            height: '50px',
             width: '100%',
-            backgroundColor: 'orange',
+            backgroundColor: 'lightsalmon',
+            display: 'flex',
+            justifyContent: 'space-evenly',
           }}
-        />,
+        >
+          <div
+            style={{
+              border: '1px solid black',
+              // height: '50px',
+              // width: '100%',
+              // backgroundColor: 'pink',
+              // margin: '5px',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens
+          </div>
+          <div
+            style={{
+              border: '1px solid black',
+              // height: '50px',
+              // width: '100%',
+              // backgroundColor: 'pink',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens
+          </div>
+          <div
+            style={{
+              border: '1px solid black',
+              // height: '50px',
+              // width: '100%',
+              // backgroundColor: 'pink',
+              // margin: '5px',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens
+          </div>
+        </div>,
         <div
           style={{
-            height: '50px',
             width: '100%',
-            backgroundColor: 'green',
+            backgroundColor: 'darksalmon',
+            display: 'flex',
+            justifyContent: 'space-evenly',
           }}
-        />,
+        >
+          <div
+            style={{
+              border: '1px solid black',
+              // height: '50px',
+              // width: '100%',
+              // backgroundColor: 'pink',
+              // margin: '5px',
+              flex: '100 0 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens
+          </div>
+          <div
+            style={{
+              border: '1px solid black',
+              // height: '50px',
+              // width: '100%',
+              // backgroundColor: 'pink',
+              // margin: '5px',
+              flex: '200 0 auto',
+              width: '200px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens
+          </div>
+        </div>,
+        <div
+          style={{
+            width: '100%',
+            backgroundColor: 'lightsalmon',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+          }}
+        >
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens
+          </div>
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens
+          </div>
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens
+          </div>
+        </div>,
+        <div
+          style={{
+            width: '100%',
+            backgroundColor: 'darksalmon',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+          }}
+        >
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens
+          </div>
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens
+          </div>
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens
+          </div>
+        </div>,
+        <div
+          style={{
+            width: '100%',
+            backgroundColor: 'lightsalmon',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+          }}
+        >
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens
+          </div>
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens
+          </div>
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens
+          </div>
+        </div>,
+        <div
+          style={{
+            width: '100%',
+            backgroundColor: 'darksalmon',
+            display: 'flex',
+            justifyContent: 'space-evenly',
+          }}
+        >
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens
+          </div>
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens Spicy Kittens
+          </div>
+          <div
+            style={{
+              border: '1px solid black',
+              flex: '100 1 auto',
+              width: '100px',
+            }}
+          >
+            Spicy Kittens
+          </div>
+        </div>,
       ])
     }
   />

@@ -1,0 +1,33 @@
+:local {
+  .header {
+    background-color: red;
+    display: flex;
+    justify-content: space-evenly;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .header-cell {
+    background-color: pink;
+    flex: 100 1 auto;
+    margin: 5px;
+    overflow: hidden;
+    word-break: break-word;
+    width: 100px;
+  }
+
+  .row {
+    background-color: green;
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+  }
+
+  .row-cell {
+    background-color: pink;
+    flex: 100 1 auto;
+    height: 50px;
+    margin: 5px;
+    width: 200px;
+  }
+}

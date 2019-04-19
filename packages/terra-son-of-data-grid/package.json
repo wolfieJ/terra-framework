@@ -29,6 +29,7 @@
     "classnames": "^2.2.5",
     "keycode-js": "^1.0.4",
     "prop-types": "^15.5.8",
+    "react-draggable": "^3.0.5",
     "terra-content-container": "^3.6.0",
     "terra-doc-template": "^2.5.0",
     "terra-mixins": "^1.27.0"
