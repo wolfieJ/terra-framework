@@ -11,19 +11,37 @@ const propTypes = {
   /**
    * The children passed to the component
    */
-  childConfig: PropTypes.any,
+  children: PropTypes.node,
+  /**
+   * The children passed to the component
+   */
+  columnWidths: PropTypes.array,
   /**
    * The header passed to the table
    */
-  headerConfig: PropTypes.any,
+  header: PropTypes.element,
   /**
    * The header passed to the table
    */
   fill: PropTypes.bool,
+  // /**
+  //  * Function that is called when a resizable column is resized. Parameters: `onRequestColumnResize(columnId, requestedWidth)`
+  //  */
+  // onRequestColumnResize: PropTypes.func,
+  // /**
+  //  * Function that is called when a collapsible section is selected. Parameters: `onRequestSectionCollapse(sectionId)`
+  //  */
+  // onRequestSectionCollapse: PropTypes.func,
 };
 
 const defaultProps = {
   fill: false,
+};
+
+const API = {
+  columnWidths: [],
+  header: element,
+  children: [],
 };
 
 // const derp = {
