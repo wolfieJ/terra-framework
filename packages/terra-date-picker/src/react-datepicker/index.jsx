@@ -155,6 +155,9 @@ export default class DatePicker extends React.Component {
     this.datePickerHookShotContainer = React.createRef();
     this.datePickerOverlayContainer = React.createRef();
     this.escapeKey = KeyCode.KEY_ESCAPE;
+    this.handleMonthSelectKeyDown = this.handleMonthSelectKeyDown.bind(this);
+    this.handleYearSelectKeyDown = this.handleYearSelectKeyDown.bind(this);
+    this.handleCalendarKeyDown = this.handleCalendarKeyDown.bind(this);
   }
 
   componentDidMount() {
@@ -391,6 +394,7 @@ export default class DatePicker extends React.Component {
   }
 
   onInputKeyDown = (event) => {
+    /*
     this.props.onKeyDown(event)
     const eventKey = event.key
     if (!this.state.open && !this.props.inline) {
@@ -454,6 +458,81 @@ export default class DatePicker extends React.Component {
       }
       this.setPreSelection(newSelection)
     }
+    */
+  }
+
+  handleMonthSelectKeyDown = (event) => {
+    console.log('month keyed');
+    event.stopPropagation();
+  }
+
+  handleYearSelectKeyDown = (event) => {
+    console.log('year keyed');
+    event.stopPropagation();
+  }
+
+  handleCalendarKeyDown = (event) => {
+    console.log('calendar keyed')
+    this.props.onKeyDown(event)
+    const eventKey = event.key
+    const copy = newDate(this.state.preSelection)
+    console.log(event.target)
+    if (eventKey === 'Tab') {
+      // Allows focus shift between month/year selects and calendar
+      return;
+    } else if (eventKey === 'Enter') {
+      event.preventDefault()
+      if (isMoment(this.state.preSelection) || isDate(this.state.preSelection)) {
+        this.handleSelect(copy, event)
+        !this.props.shouldCloseOnSelect && this.setPreSelection(copy)
+      } else {
+        this.setOpen(false)
+      }
+    } else if (eventKey === 'Escape') {
+      event.preventDefault()
+      this.setOpen(false)
+    } else if (!this.props.disabledKeyboardNavigation) {
+      let newSelection
+      switch (eventKey) {
+        case 'ArrowLeft':
+          event.preventDefault()
+          newSelection = subtractDays(copy, 1)
+          break
+        case 'ArrowRight':
+          event.preventDefault()
+          newSelection = addDays(copy, 1)
+          break
+        case 'ArrowUp':
+          event.preventDefault()
+          newSelection = subtractWeeks(copy, 1)
+          break
+        case 'ArrowDown':
+          event.preventDefault()
+          newSelection = addWeeks(copy, 1)
+          break
+        case 'PageUp':
+          event.preventDefault()
+          newSelection = subtractMonths(copy, 1)
+          break
+        case 'PageDown':
+          event.preventDefault()
+          newSelection = addMonths(copy, 1)
+          break
+        case 'Home':
+          event.preventDefault()
+          newSelection = subtractYears(copy, 1)
+          break
+        case 'End':
+          event.preventDefault()
+          newSelection = addYears(copy, 1)
+          break
+      }
+      if (this.props.adjustDateOnChange) {
+        this.setSelected(newSelection)
+      }
+      this.setPreSelection(newSelection)
+      // document.querySelector('[data-terra-date-picker-month-calendar]').focus();
+    }
   }
 
   onClearClick = (event) => {
@@ -477,6 +556,9 @@ export default class DatePicker extends React.Component {
       selected={this.props.selected}
       preSelection={this.state.preSelection}
       onSelect={this.handleSelect}
+      onMonthSelectKeyDown={this.handleMonthSelectKeyDown}
+      onYearSelectKeyDown={this.handleYearSelectKeyDown}
+      onCalendarKeyDown={this.handleCalendarKeyDown}
       onWeekSelect={this.props.onWeekSelect}
       openToDate={this.props.openToDate}
       minDate={this.props.minDate}
@@ -622,6 +704,7 @@ export default class DatePicker extends React.Component {
                 data-placement="bottom"
                 ref={this.datePickerHookShotContainer}
                 tabIndex="-1"
+                onKeyDown={this.handleCalendarKeyDown}
               >
                 {calendar}
               </div>

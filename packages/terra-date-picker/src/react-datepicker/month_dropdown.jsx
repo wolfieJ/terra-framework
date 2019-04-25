@@ -25,7 +25,7 @@ export default class MonthDropdown extends React.Component {
     ))
 
   renderSelectMode = monthNames => (
-    <select value={this.props.month} className="react-datepicker__month-select" onChange={e => this.onChange(e.target.value)}>
+    <select value={this.props.month} className="react-datepicker__month-select" onChange={e => this.onChange(e.target.value)} data-terra-date-picker-month-select>
       {this.renderSelectOptions(monthNames)}
     </select>
   )
@@ -85,6 +85,7 @@ export default class MonthDropdown extends React.Component {
 
     return (
       <div
+        onKeyDown={this.props.onKeyDown}
         className={`react-datepicker__month-dropdown-container react-datepicker__month-dropdown-container--${this.props.dropdownMode}`}>
         {renderedDropdown}
       </div>

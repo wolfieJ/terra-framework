@@ -43,6 +43,7 @@ export default class YearDropdown extends React.Component {
   renderSelectMode = () => (
     <select
       value={this.props.year}
+      data-terra-date-picker-year-select
       className="react-datepicker__year-select"
       onChange={this.onSelectChange}>
       {this.renderSelectOptions()}
@@ -124,6 +125,7 @@ export default class YearDropdown extends React.Component {
 
     return (
       <div
+        onKeyDown={this.props.onKeyDown}
         className={`react-datepicker__year-dropdown-container react-datepicker__year-dropdown-container--${this.props.dropdownMode}`}>
         {renderedDropdown}
       </div>

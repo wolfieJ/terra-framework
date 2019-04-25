@@ -124,7 +124,7 @@ export default class Month extends React.Component {
 
   render () {
     return (
-      <div className={this.getClassNames()} onMouseLeave={this.handleMouseLeave} role="listbox">
+      <div data-terra-date-picker-month-calendar onKeyDown={this.props.onKeyDown} className={this.getClassNames()} onMouseLeave={this.handleMouseLeave} role="listbox" tabIndex="0">
         {this.renderWeeks()}
       </div>
     )

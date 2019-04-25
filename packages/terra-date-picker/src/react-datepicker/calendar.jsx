@@ -67,6 +67,9 @@ export default class Calendar extends React.Component {
     monthsShown: PropTypes.number,
     onClickOutside: PropTypes.func.isRequired,
     onMonthChange: PropTypes.func,
+    onMonthSelectKeyDown: PropTypes.func,
+    onYearSelectKeyDown: PropTypes.func,
+    onCalendarKeyDown: PropTypes.func,
     forceShowMonthNavigation: PropTypes.bool,
     onDropdownFocus: PropTypes.func,
     onSelect: PropTypes.func.isRequired,
@@ -113,6 +116,9 @@ export default class Calendar extends React.Component {
       selectingDate: null,
       monthContainer: this.monthContainer
     }
+    this.handleMonthSelectKeyDown = this.handleMonthSelectKeyDown.bind(this);
+    this.handleYearSelectKeyDown = this.handleYearSelectKeyDown.bind(this);
+    this.handleCalendarKeyDown = this.handleCalendarKeyDown.bind(this);
   }
 
   componentDidMount () {
@@ -146,6 +152,25 @@ export default class Calendar extends React.Component {
   handleDropdownFocus = (event) => {
     if (isDropdownSelect(event.target)) {
       this.props.onDropdownFocus()
+    }
+  }
+
+  handleMonthSelectKeyDown = (event) => {
+    console.log('wat')
+    if (this.props.onMonthSelectKeyDown) {
+      this.props.onMonthSelectKeyDown(event)
+    }
+  }
+
+  handleYearSelectKeyDown = (event) => {
+    if (this.props.onYearSelectKeyDown) {
+      this.props.onYearSelectKeyDown(event)
+    }
+  }
+
+  handleCalendarKeyDown = (event) => {
+    if (this.props.onCalendarKeyDown) {
+      this.props.onCalendarKeyDown(event)
     }
   }
 
@@ -292,6 +317,7 @@ export default class Calendar extends React.Component {
         setOpen={this.props.setOpen}
         dropdownMode={this.props.dropdownMode}
         onChange={this.changeYear}
+        onKeyDown={this.handleYearSelectKeyDown}
         minDate={this.props.minDate}
         maxDate={this.props.maxDate}
         year={getYear(this.state.date)}
@@ -310,6 +336,7 @@ export default class Calendar extends React.Component {
         locale={this.props.locale}
         dateFormat={this.props.dateFormat}
         onChange={this.changeMonth}
+        onKeyDown={this.handleMonthSelectKeyDown}
         month={getMonth(this.state.date)} />
     )
   }
@@ -349,6 +376,7 @@ export default class Calendar extends React.Component {
           <Month
             day={monthDate}
             dayClassName={this.props.dayClassName}
+            onKeyDown={this.handleCalendarKeyDown}
             onDayClick={this.handleDayClick}
             onDayMouseEnter={this.handleDayMouseEnter}
             onMouseLeave={this.handleMonthMouseLeave}
