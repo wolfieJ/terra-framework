@@ -6,6 +6,7 @@
       "ignore": [
         "DEPENDENCIES.md",
         "terra-form-validation",
+        "terra-component-integration-tests",
         "*.tgz"
       ]
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import DisclosureComponent from './DisclosureIntegrationComponent';
-import ModalManager from '../../../ModalManager';
+import ModalManager from '../../../../../terra-modal-manager/src/ModalManager';
 
 const ModalManagerDefault = () => (
   <div role="main" style={{ height: '100%' }}>

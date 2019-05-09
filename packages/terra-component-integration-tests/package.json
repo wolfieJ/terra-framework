@@ -1,0 +1,55 @@
+{
+  "name": "terra-component-integration-tests",
+  "main": "lib/ComponentIntegrationTests.js",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Package for terra framework component integration tests",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cerner/terra-framework.git"
+  },
+  "keywords": [
+    "Cerner",
+    "Terra",
+    "Framework",
+    "terra-component-integration-tests",
+    "ComponentIntegrationTests",
+    "UI"
+  ],
+  "author": "Cerner Corporation",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/cerner/terra-framework/issues"
+  },
+  "homepage": "https://github.com/cerner/terra-framework#readme",
+  "peerDependencies": {
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5",
+    "terra-disclosure-manager": "^4.9.0"
+  },
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "prop-types": "^15.5.8",
+    "terra-doc-template": "^2.0.0"
+  },
+  "devDependencies": {
+    "terra-action-header": "^2.0.0",
+    "terra-action-footer": "^2.0.0",
+    "terra-button": "^3.0.0",
+    "terra-content-container": "^3.0.0",
+    "terra-dialog-modal": "^2.11.0",
+    "terra-form-select": "^5.15.0",
+    "terra-modal-manager": "^5.11.0"
+  },
+  "scripts": {
+    "compile": "npm run compile:clean && npm run compile:build",
+    "compile:clean": "rimraf lib",
+    "compile:build": "babel src --out-dir lib --copy-files",
+    "lint": "npm run lint:js && npm run lint:scss",
+    "lint:js": "eslint --ext .js,.jsx . --ignore-path ../../.eslintignore",
+    "lint:scss": "stylelint src/**/*.scss",
+    "test": "npm run test:jest && npm run test:wdio",
+    "test:jest": "jest --config ../../jestconfig.js",
+    "test:wdio": "../../node_modules/.bin/wdio ../../node_modules/terra-dev-site/config/wdio/wdio.conf.js"
+  }
+}
