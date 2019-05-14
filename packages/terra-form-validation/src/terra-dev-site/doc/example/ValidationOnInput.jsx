@@ -6,18 +6,17 @@ import InputField from 'terra-form-input/lib/InputField';
 import Button from 'terra-button';
 import Spacer from 'terra-spacer';
 
-const validateUniqueUser = async (name) => {
-  const response = new Promise((resolve) => {
-    if (name !== 'TerraUser') {
-      return resolve('');
-    }
+const normalizeNumbers = (value) => {
+  if (!value) return value;
+  const numericValue = isNaN(value);
+  if (!numericValue && Number(value) > 3 && Number(value) < 8) {
+    return value.replace(/[^\d]/g, '');
+  }
 
-    return resolve('Name is Unavailable');
-  });
-
-  await response;
-  return response;
+  return;
 };
+
+const required = value => (value ? undefined : 'Required');
 
 export default class MainEntry extends React.Component {
   constructor(props) {
@@ -28,6 +27,7 @@ export default class MainEntry extends React.Component {
   }
 
   submitForm(values) {
+    console.log("Submit Clicked!");
     this.setState({
       submittedValues: values,
     });
@@ -39,39 +39,23 @@ export default class MainEntry extends React.Component {
         onSubmit={handleSubmit}
       >
         <Field
-          name="description"
+          name="quantity"
+          validate={required}
+          parse={normalizeNumbers}
         >
           {({ input, meta }) => (
             <InputField
-              inputId="profile-description"
-              label="Description"
+              inputId="quantity"
+              label="Quantity"
               error={meta.error}
               isInvalid={!meta.valid}
               inputAttrs={{
-                placeholder: 'Description',
+                placeholder: 'Quantity',
                 ...input,
               }}
-              onChange={(e) => { input.onChange(e.target.value); }}
-              value={input.value}
-              required
-            />
-          )}
-        </Field>
-        <Field
-          name="user_name"
-          validate={validateUniqueUser}
-        >
-          {({ input, meta }) => (
-            <InputField
-              inputId="user-name"
-              label="User Name"
-              error={meta.error}
-              isInvalid={meta.error !== undefined}
-              inputAttrs={{
-                placeholder: 'Description',
-                ...input,
+              onChange={(e) => {
+                input.onChange(e.target.value);
               }}
-              onChange={(e) => { input.onChange(e.target.value); }}
               value={input.value}
               required
             />
@@ -88,27 +72,13 @@ export default class MainEntry extends React.Component {
         <Form
           onSubmit={this.submitForm}
           render={this.renderForm}
-          initialValues={{ description: '' }}
-          validate={(values) => {
-            const errors = {};
-
-            if (!values.description) {
-              errors.description = 'Required';
-            }
-
-            if (!values.user_name) {
-              errors.user_name = 'Required';
-            }
-
-            return errors;
-          }}
         />
         {this.state.submittedValues
           && (
-          <div>
-            <p>Form Submitted Successfully With</p>
-            <pre>{JSON.stringify(this.state.submittedValues, 0, 2)}</pre>
-          </div>
+            <div>
+              <p>Form Submitted Successfully With</p>
+              <pre>{JSON.stringify(this.state.submittedValues, 0, 2)}</pre>
+            </div>
           )
         }
       </Spacer>
