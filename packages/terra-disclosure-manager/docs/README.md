@@ -7,8 +7,6 @@ The DisclosureManager is a stateful component used to manage disclosure presenta
 - Install with [npmjs](https://www.npmjs.com):
   - `npm install terra-disclosure-manager`
 
-This package uses React's Context for inter-component communication. A single instance of this package must be installed to ensure that communication occurs between all Context Providers and Consumers. To help ensure a single instance is installed, this package should be defined as a peer dependency in packages that are reusable libraries or otherwise consumed by other packages.
-
 ## Usage
 
 ### Rendering
@@ -41,6 +39,7 @@ The DisclosureManager does not implement a traditional render function. A `rende
 |`size`|The String size of the disclosure.|
 
 Example (using the Modal and SlideGroup):
+
 ```javascript
 <DisclosureManager
   supportedDisclosureTypes={['modal']}
@@ -160,7 +159,7 @@ disclosureManager.disclose({
 |---|---|---|
 |`preferredType`|optional|The String describing the preferred disclosure type. This will be used to match the disclosure request to an appropriate DisclosureManager. Depending on the structuring of managers in a given component, the `preferredType` value may not be honored. If the provided `preferredType` is not supported by any present disclosure managers, the root disclosure manager will perform the disclosure using its own disclosure type, regardless of the `preferredType` value.|
 |`size`|optional|The String size desired for the disclosure. One of `tiny`, `small`, `medium`, `large`, `huge`, or `fullscreen`. The functional implementation of this size is determined by the rendering component. `size` should not be provided if `dimensions` are specified.|
-|`dimensions`|optional|An Object containing explicit `height` and `width` values for the disclosure. These values may not be honored due to the disclosure type or the available viewport size. `dimensions` should not be provided if a `size` is specified.<br />Supported `height` values include: `'240'`, `'420'`, `'600'`, `'690'`, `'780'`, `'870'`, `'960'`, `'1140'`.<br />Supported `width` values include: `'320'`, `'480'`, `'560'`, `'640'`, `'800'`, `'960'`, `'1120'`, `'1280'`, `'1440'`, `'1600'`, `'1760'`, `'1920'`.|
+|`dimensions`|optional|An Object containing explicit `height` and `width` values for the disclosure. These values may not be honored due to the disclosure type or the available viewport size. `dimensions` should not be provided if a `size` is specified.<br />Supported `height` values include: `'240'`, `'420'`, `'600'`, `'690'`, `'780'`, `'870'`, `'960'`, `'1140'`.<br />Supported `width` values include: `'320'`, `'480'`, `'640'`, `'800'`, `'960'`, `'1120'`, `'1280'`, `'1440'`, `'1600'`, `'1760'`, `'1920'`.|
 |`content`|**required**|An Object containing a key and a component describing the component to be disclosed. See the `content` API below.|
 
 `content` Object API:
@@ -188,7 +187,13 @@ In addition to a `disclose` function, a number of other functions are exposed to
 
 Each of these functions returns a Promise that can be used for chaining, if necessary.
 
+##### `NavigationPrompt` Integration
+
+The DisclosureManager responds to NavigationPrompts rendered by the disclosure components. If a disclosed component renders a NavigationPrompt, the DisclosureManager will prompt the user before dismissal requests for that component are handled. Please see the `terra-navigation-prompt` documentation for more information.
+
 ##### A Note on `registerDismissCheck`
+
+> The NavigationPrompt is the recommended solution for components requiring user intervention before dismissal. `registerDismissCheck` is supported as a legacy solution but may be removed in a subsequent major release.
 
 The function given to registerDismissCheck must return a resolved or rejected Promise. If the Promise is resolved, the component is guaranteed to be dismissed. If cleanup logic needs to execute before the component is dismissed, it is a good idea to execute before returning the resolved Promise. If a rejected Promise is returned, the component will not be dismissed. Components can render a prompt or confirmation window to give users control over the dismissal, if desired.
 
@@ -255,6 +260,7 @@ import CustomDisclosure from './my/custom/disclosure';
 ```
 
 ## Component Features
-* [Cross-Browser Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#cross-browser-support)
-* [Responsive Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#responsive-support)
-* [Mobile Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#mobile-support)
+
+- [Cross-Browser Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#cross-browser-support)
+- [Responsive Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#responsive-support)
+- [Mobile Support](https://github.com/cerner/terra-ui/blob/master/src/terra-dev-site/contributing/ComponentStandards.e.contributing.md#mobile-support)

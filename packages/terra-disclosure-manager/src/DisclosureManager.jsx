@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { NavigationPromptCheckpoint } from 'terra-navigation-prompt';
 import DisclosureManagerDelegate from './DisclosureManagerDelegate';
 import DisclosureManagerContext from './DisclosureManagerContext';
 import withDisclosureManager from './withDisclosureManager';
@@ -65,6 +66,7 @@ class DisclosureManager extends React.Component {
     newState.disclosureComponentKeys = Object.assign([], newState.disclosureComponentKeys);
     newState.disclosureComponentData = Object.assign({}, newState.disclosureComponentData);
     newState.disclosureComponentDelegates = Object.assign([], newState.disclosureComponentDelegates);
+    newState.checkpointRefs = Object.assign({}, newState.checkpointRefs);
 
     return newState;
   }
@@ -105,6 +107,7 @@ class DisclosureManager extends React.Component {
       disclosureComponentKeys: [],
       disclosureComponentData: {},
       disclosureComponentDelegates: [],
+      checkpointRefs: {},
     };
   }
 
@@ -274,6 +277,9 @@ class DisclosureManager extends React.Component {
           component: data.content.component,
         },
       },
+      checkpointRefs: {
+        [data.content.key]: React.createRef(),
+      },
     };
     newState.disclosureComponentDelegates = [this.generateDisclosureComponentDelegate(data.content.key, newState)];
 
@@ -291,6 +297,7 @@ class DisclosureManager extends React.Component {
       component: data.content.component,
     };
     newState.disclosureComponentDelegates = newState.disclosureComponentDelegates.concat(this.generateDisclosureComponentDelegate(data.content.key, newState));
+    newState.checkpointRefs[data.content.key] = React.createRef();
 
     this.setState(newState);
   }
@@ -298,8 +305,10 @@ class DisclosureManager extends React.Component {
   popDisclosure() {
     const newState = DisclosureManager.cloneDisclosureState(this.state);
 
-    newState.disclosureComponentData[newState.disclosureComponentKeys.pop()] = undefined;
+    const poppedComponentKey = newState.disclosureComponentKeys.pop();
+    newState.disclosureComponentData[poppedComponentKey] = undefined;
     newState.disclosureComponentDelegates.pop();
+    newState.checkpointRefs[poppedComponentKey] = undefined;
 
     this.setState(newState);
   }
@@ -314,6 +323,7 @@ class DisclosureManager extends React.Component {
       disclosureComponentKeys: [],
       disclosureComponentData: {},
       disclosureComponentDelegates: [],
+      checkpointRefs: {},
     });
   }
 
@@ -366,20 +376,18 @@ class DisclosureManager extends React.Component {
    * reject on the first detected rejection. This ensures that checks do not occur for components after the first rejection.
    */
   resolveDismissChecksInSequence(keys) {
+    if (!keys.length) {
+      return Promise.resolve();
+    }
+
+    const localKeys = keys.slice(0);
+
     return new Promise((resolve, reject) => {
-      if (!keys.length) {
-        resolve();
-        return;
-      }
-
-      const key = keys.pop();
-
-      this.generatePopFunction(key)()
-        .then(() => {
-          this.resolveDismissChecksInSequence(keys).then(resolve).catch(reject);
-        })
-        .catch(() => {
-          reject();
+      this.generatePopFunction(localKeys.pop())()
+        .then(() => this.resolveDismissChecksInSequence(localKeys))
+        .then(resolve)
+        .catch((...e) => {
+          reject(e);
         });
     });
   }
@@ -426,8 +434,18 @@ class DisclosureManager extends React.Component {
 
       return promiseRoot
         .then(() => {
-          this.dismissChecks[key] = undefined;
-          this.resolveDismissPromise(key);
+          const checkpointRef = this.state.checkpointRefs[key];
+
+          if (checkpointRef && checkpointRef.current) {
+            return checkpointRef.current.resolvePrompts(prompts => ({
+              title: 'Unsaved Changes',
+              message: `The taken action will result in the loss of data in the following areas: ${prompts.map(prompt => prompt.description).join(', ')}`,
+              acceptButtonText: 'Continue without Saving',
+              rejectButtonText: 'Return',
+            }));
+          }
+
+          return undefined;
         })
         .then(() => {
           if (disclosureComponentKeys.length === 1) {
@@ -454,6 +472,7 @@ class DisclosureManager extends React.Component {
       disclosureComponentKeys,
       disclosureComponentData,
       disclosureComponentDelegates,
+      checkpointRefs,
     } = this.state;
 
     if (!render) {
@@ -478,7 +497,11 @@ class DisclosureManager extends React.Component {
         dimensions: disclosureDimensions,
         components: disclosureComponentKeys.map((key, index) => (
           <DisclosureManagerContext.Provider value={disclosureComponentDelegates[index]} key={key}>
-            {disclosureComponentData[key].component}
+            <NavigationPromptCheckpoint
+              ref={checkpointRefs[key]}
+            >
+              {disclosureComponentData[key].component}
+            </NavigationPromptCheckpoint>
           </DisclosureManagerContext.Provider>
         )),
       },
