@@ -27,7 +27,8 @@
     "terra-navigation-prompt": "^1.0.0"
   },
   "dependencies": {
-    "prop-types": "^15.5.8"
+    "prop-types": "^15.5.8",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "terra-doc-template": "^2.2.0"

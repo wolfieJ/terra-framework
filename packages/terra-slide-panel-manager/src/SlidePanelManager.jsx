@@ -17,6 +17,16 @@ const propTypes = {
    * The desired panel behavior. Either 'squish' or 'overlay'.
    */
   panelBehavior: PropTypes.oneOf(['overlay', 'squish']),
+  /**
+   * An Object (or a function that returns an Object) that defines the strings presented to the user by the DisclosureManager's NavigationPromptCheckpoints.
+   */
+  navigationPromptOptions: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({
+    title: PropTypes.string,
+    message: PropTypes.string,
+    rejectButtonText: PropTypes.string,
+    acceptButtonText: PropTypes.string,
+    emphasizedAction: PropTypes.oneOf(['accept', 'reject']),
+  })]).isRequired,
 };
 
 const defaultProps = {
@@ -83,12 +93,13 @@ class SlidePanelManager extends React.Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, navigationPromptOptions } = this.props;
 
     return (
       <DisclosureManager
         supportedDisclosureTypes={[disclosureType]}
         render={this.renderSlidePanel}
+        navigationPromptOptions={navigationPromptOptions}
       >
         {children}
       </DisclosureManager>

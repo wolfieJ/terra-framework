@@ -17,6 +17,16 @@ const propTypes = {
    * disclosure capabilities through the DisclosureManger's context API.
    */
   children: PropTypes.node,
+  /**
+   * An Object (or a function that returns an Object) that defines the strings presented to the user by the DisclosureManager's NavigationPromptCheckpoints.
+   */
+  navigationPromptOptions: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({
+    title: PropTypes.string,
+    message: PropTypes.string,
+    rejectButtonText: PropTypes.string,
+    acceptButtonText: PropTypes.string,
+    emphasizedAction: PropTypes.oneOf(['accept', 'reject']),
+  })]).isRequired,
 };
 
 const heightFromSize = {
@@ -81,12 +91,13 @@ class ModalManager extends React.Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, navigationPromptOptions } = this.props;
 
     return (
       <DisclosureManager
         supportedDisclosureTypes={[disclosureType]}
         render={this.renderModal}
+        navigationPromptOptions={navigationPromptOptions}
         trapNestedDisclosureRequests
       >
         {children}

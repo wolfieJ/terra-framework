@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import uuidv4 from 'uuid/v4';
 import { NavigationPromptCheckpoint } from 'terra-navigation-prompt';
 import DisclosureManagerDelegate from './DisclosureManagerDelegate';
 import DisclosureManagerContext from './DisclosureManagerContext';
@@ -43,10 +44,21 @@ const propTypes = {
   supportedDisclosureTypes: PropTypes.array,
   /**
    * A boolean indicating whether or not the DisclosureManager should handle all nested disclosure requests. When enabled, the DisclosureManager will handle all
-   * disclose requests coming from disclosured components, regardless of the preferred disclosure type.
+   * disclose requests coming from disclosed components, regardless of the preferred disclosure type.
    */
   trapNestedDisclosureRequests: PropTypes.bool,
   /**
+   * An Object (or a function that returns an Object) that defines the strings presented to the user by the DisclosureManager's NavigationPromptCheckpoints.
+   */
+  navigationPromptOptions: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({
+    title: PropTypes.string,
+    message: PropTypes.string,
+    rejectButtonText: PropTypes.string,
+    acceptButtonText: PropTypes.string,
+    emphasizedAction: PropTypes.oneOf(['accept', 'reject']),
+  })]).isRequired,
+  /**
+   * @private
    * A DisclosureManagerDelegate instance provided by a parent DisclosureManager. This prop is automatically provided by `withDisclosureManager` and should not
    * be explicitly given to the component.
    */
@@ -93,7 +105,7 @@ class DisclosureManager extends React.Component {
     this.maximizeDisclosure = this.maximizeDisclosure.bind(this);
     this.minimizeDisclosure = this.minimizeDisclosure.bind(this);
 
-    // These cached functions are stored outside of state to prevent unnecessary rerenders.
+    // These cached functions are stored outside of state to prevent unnecessary rendering.
     this.dismissChecks = {};
     this.onDismissResolvers = {};
 
@@ -115,9 +127,11 @@ class DisclosureManager extends React.Component {
     return DisclosureManagerDelegate.create({
       disclose: (data) => {
         if (this.disclosureTypeIsSupported(data.preferredType)) {
+          const disclosedContentKey = uuidv4();
+
           return this.safelyCloseDisclosure()
             .then(() => {
-              this.openDisclosure(data);
+              this.openDisclosure(data, disclosedContentKey);
               /**
                * The disclose Promise chain is resolved with a set of APIs that the disclosing content can use to
                * manipulate the disclosure, if necessary.
@@ -127,7 +141,7 @@ class DisclosureManager extends React.Component {
                  * The afterDismiss value is a deferred Promise that will be resolved when the disclosed component is dismissed.
                  */
                 afterDismiss: new Promise((resolve) => {
-                  this.onDismissResolvers[data.content.key] = resolve;
+                  this.onDismissResolvers[disclosedContentKey] = resolve;
                 }),
                 /**
                  * The dismissDisclosure value is a function that the disclosing component can use to manually close the disclosure.
@@ -160,15 +174,17 @@ class DisclosureManager extends React.Component {
      */
     delegate.disclose = (data) => {
       if (this.props.trapNestedDisclosureRequests || this.disclosureTypeIsSupported(data.preferredType)) {
+        const disclosedContentKey = uuidv4();
+
         return Promise.resolve()
           .then(() => {
-            this.pushDisclosure(data);
+            this.pushDisclosure(data, disclosedContentKey);
 
             return {
               afterDismiss: new Promise((resolve) => {
-                this.onDismissResolvers[data.content.key] = resolve;
+                this.onDismissResolvers[disclosedContentKey] = resolve;
               }),
-              dismissDisclosure: this.generatePopFunction(data.content.key),
+              dismissDisclosure: this.generatePopFunction(disclosedContentKey),
             };
           });
       }
@@ -244,7 +260,7 @@ class DisclosureManager extends React.Component {
     return supportedDisclosureTypes.indexOf(type) >= 0 || !disclosureManager;
   }
 
-  openDisclosure(data) {
+  openDisclosure(data, key) {
     let { dimensions } = data;
     if (dimensions && !isValidDimensions(dimensions)) {
       // dimensions were provided, but are invalid, set the default
@@ -268,36 +284,36 @@ class DisclosureManager extends React.Component {
       disclosureIsFocused: true,
       disclosureSize: size,
       disclosureDimensions: dimensions,
-      disclosureComponentKeys: [data.content.key],
+      disclosureComponentKeys: [key],
       disclosureComponentData: {
-        [data.content.key]: {
-          key: data.content.key,
+        [key]: {
+          key,
           name: data.content.name,
           props: data.content.props,
           component: data.content.component,
         },
       },
       checkpointRefs: {
-        [data.content.key]: React.createRef(),
+        [key]: React.createRef(),
       },
     };
-    newState.disclosureComponentDelegates = [this.generateDisclosureComponentDelegate(data.content.key, newState)];
+    newState.disclosureComponentDelegates = [this.generateDisclosureComponentDelegate(key, newState)];
 
     this.setState(newState);
   }
 
-  pushDisclosure(data) {
+  pushDisclosure(data, key) {
     const newState = DisclosureManager.cloneDisclosureState(this.state);
 
-    newState.disclosureComponentKeys.push(data.content.key);
-    newState.disclosureComponentData[data.content.key] = {
-      key: data.content.key,
+    newState.disclosureComponentKeys.push(key);
+    newState.disclosureComponentData[key] = {
+      key,
       name: data.content.name,
       props: data.content.props,
       component: data.content.component,
     };
-    newState.disclosureComponentDelegates = newState.disclosureComponentDelegates.concat(this.generateDisclosureComponentDelegate(data.content.key, newState));
-    newState.checkpointRefs[data.content.key] = React.createRef();
+    newState.disclosureComponentDelegates = newState.disclosureComponentDelegates.concat(this.generateDisclosureComponentDelegate(key, newState));
+    newState.checkpointRefs[key] = React.createRef();
 
     this.setState(newState);
   }
@@ -397,14 +413,12 @@ class DisclosureManager extends React.Component {
    * @return A Promise, resolved if the close was performed or rejected if it was not.
    */
   safelyCloseDisclosure() {
-    const disclosureKeys = Object.assign([], this.state.disclosureComponentKeys);
-
     /**
      * Before closing the disclosure, the dismiss checks for components in the stack are
      * executed in stack order. Components will be dismissed in order up until a rejection occurs, at which point
      * the blocking component will be presented.
      */
-    return this.resolveDismissChecksInSequence(disclosureKeys).then(() => {
+    return this.resolveDismissChecksInSequence(this.state.disclosureComponentKeys).then(() => {
       this.dismissChecks = {};
       this.closeDisclosure();
     });
@@ -437,12 +451,7 @@ class DisclosureManager extends React.Component {
           const checkpointRef = this.state.checkpointRefs[key];
 
           if (checkpointRef && checkpointRef.current) {
-            return checkpointRef.current.resolvePrompts(prompts => ({
-              title: 'Unsaved Changes',
-              message: `The taken action will result in the loss of data in the following areas: ${prompts.map(prompt => prompt.description).join(', ')}`,
-              acceptButtonText: 'Continue without Saving',
-              rejectButtonText: 'Return',
-            }));
+            return checkpointRef.current.resolvePrompts(this.props.navigationPromptOptions);
           }
 
           return undefined;
