@@ -72,6 +72,9 @@ class DisclosureComponent extends React.Component {
                   content: {
                     key: `Nested ${name}`,
                     component: <WrappedDisclosureComponent name={`Nested ${name}`} disclosureType={disclosureType} />,
+                    onDismiss: () => {
+                      alert('content was dismissed');
+                    },
                   },
                 });
               }}

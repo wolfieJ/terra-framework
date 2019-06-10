@@ -78,7 +78,6 @@ class DisclosureManager extends React.Component {
     newState.disclosureComponentKeys = Object.assign([], newState.disclosureComponentKeys);
     newState.disclosureComponentData = Object.assign({}, newState.disclosureComponentData);
     newState.disclosureComponentDelegates = Object.assign([], newState.disclosureComponentDelegates);
-    newState.checkpointRefs = Object.assign({}, newState.checkpointRefs);
 
     return newState;
   }
@@ -119,7 +118,6 @@ class DisclosureManager extends React.Component {
       disclosureComponentKeys: [],
       disclosureComponentData: {},
       disclosureComponentDelegates: [],
-      checkpointRefs: {},
     };
   }
 
@@ -176,17 +174,16 @@ class DisclosureManager extends React.Component {
       if (this.props.trapNestedDisclosureRequests || this.disclosureTypeIsSupported(data.preferredType)) {
         const disclosedContentKey = uuidv4();
 
-        return Promise.resolve()
-          .then(() => {
-            this.pushDisclosure(data, disclosedContentKey);
-
-            return {
-              afterDismiss: new Promise((resolve) => {
-                this.onDismissResolvers[disclosedContentKey] = resolve;
+        return new Promise((resolve) => {
+          this.pushDisclosure(data, disclosedContentKey, () => {
+            resolve({
+              afterDismiss: new Promise((afterDismissResolve) => {
+                this.onDismissResolvers[disclosedContentKey] = afterDismissResolve;
               }),
               dismissDisclosure: this.generatePopFunction(disclosedContentKey),
-            };
+            });
           });
+        });
       }
 
       return this.props.disclosureManager.disclose(data);
@@ -291,10 +288,9 @@ class DisclosureManager extends React.Component {
           name: data.content.name,
           props: data.content.props,
           component: data.content.component,
+          onDismiss: data.content.onDismiss,
+          checkpointRef: React.createRef(),
         },
-      },
-      checkpointRefs: {
-        [key]: React.createRef(),
       },
     };
     newState.disclosureComponentDelegates = [this.generateDisclosureComponentDelegate(key, newState)];
@@ -302,7 +298,7 @@ class DisclosureManager extends React.Component {
     this.setState(newState);
   }
 
-  pushDisclosure(data, key) {
+  pushDisclosure(data, key, callback) {
     const newState = DisclosureManager.cloneDisclosureState(this.state);
 
     newState.disclosureComponentKeys.push(key);
@@ -311,25 +307,25 @@ class DisclosureManager extends React.Component {
       name: data.content.name,
       props: data.content.props,
       component: data.content.component,
+      onDismiss: data.content.onDismiss,
+      checkpointRef: React.createRef(),
     };
     newState.disclosureComponentDelegates = newState.disclosureComponentDelegates.concat(this.generateDisclosureComponentDelegate(key, newState));
-    newState.checkpointRefs[key] = React.createRef();
 
-    this.setState(newState);
+    this.setState(newState, callback);
   }
 
-  popDisclosure() {
+  popDisclosure(callback) {
     const newState = DisclosureManager.cloneDisclosureState(this.state);
 
     const poppedComponentKey = newState.disclosureComponentKeys.pop();
     newState.disclosureComponentData[poppedComponentKey] = undefined;
     newState.disclosureComponentDelegates.pop();
-    newState.checkpointRefs[poppedComponentKey] = undefined;
 
-    this.setState(newState);
+    this.setState(newState, callback);
   }
 
-  closeDisclosure() {
+  closeDisclosure(callback) {
     this.setState({
       disclosureIsOpen: false,
       disclosureIsFocused: false,
@@ -339,8 +335,7 @@ class DisclosureManager extends React.Component {
       disclosureComponentKeys: [],
       disclosureComponentData: {},
       disclosureComponentDelegates: [],
-      checkpointRefs: {},
-    });
+    }, callback);
   }
 
   requestDisclosureFocus() {
@@ -429,7 +424,9 @@ class DisclosureManager extends React.Component {
    */
   generatePopFunction(key) {
     return () => {
-      const { disclosureComponentKeys } = this.state;
+      const { disclosureComponentKeys, disclosureComponentData } = this.state;
+
+      const disclosedComponentData = disclosureComponentData[key];
 
       if (disclosureComponentKeys[disclosureComponentKeys.length - 1] !== key) {
         /**
@@ -448,10 +445,8 @@ class DisclosureManager extends React.Component {
 
       return promiseRoot
         .then(() => {
-          const checkpointRef = this.state.checkpointRefs[key];
-
-          if (checkpointRef && checkpointRef.current) {
-            return checkpointRef.current.resolvePrompts(this.props.navigationPromptOptions);
+          if (disclosedComponentData.checkpointRef.current) {
+            return disclosedComponentData.checkpointRef.current.resolvePrompts(this.props.navigationPromptOptions);
           }
 
           return undefined;
@@ -461,9 +456,21 @@ class DisclosureManager extends React.Component {
             /**
              * If there is only one disclosed component, the disclosure is closed and all state is reset.
              */
-            this.closeDisclosure();
+            this.closeDisclosure(() => {
+              this.resolveDismissPromise(key);
+
+              if (disclosedComponentData.onDismiss) {
+                disclosedComponentData.onDismiss();
+              }
+            });
           } else {
-            this.popDisclosure();
+            this.popDisclosure(() => {
+              this.resolveDismissPromise(key);
+
+              if (disclosedComponentData.onDismiss) {
+                disclosedComponentData.onDismiss();
+              }
+            });
           }
         });
     };
@@ -481,7 +488,6 @@ class DisclosureManager extends React.Component {
       disclosureComponentKeys,
       disclosureComponentData,
       disclosureComponentDelegates,
-      checkpointRefs,
     } = this.state;
 
     if (!render) {
@@ -507,7 +513,7 @@ class DisclosureManager extends React.Component {
         components: disclosureComponentKeys.map((key, index) => (
           <DisclosureManagerContext.Provider value={disclosureComponentDelegates[index]} key={key}>
             <NavigationPromptCheckpoint
-              ref={checkpointRefs[key]}
+              ref={disclosureComponentData[key].checkpointRef}
             >
               {disclosureComponentData[key].component}
             </NavigationPromptCheckpoint>
