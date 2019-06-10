@@ -496,7 +496,7 @@ class DisclosureManager extends React.Component {
 
     return render({
       dismissPresentedComponent: this.generatePopFunction(disclosureComponentKeys ? disclosureComponentKeys[disclosureComponentKeys.length - 1] : undefined),
-      closeDisclosure: this.safelyCloseDisclosure,
+      closeDisclosure: this.safelyCloseDisclosure, // TODO: Evaluate whether closing a stack of disclosures all at one time makes functional sense. It might be better to close one at a time, even from the X button (or only showing back if back is available)
       children: {
         components: (
           <DisclosureManagerContext.Provider value={childComponentDelegate}>
