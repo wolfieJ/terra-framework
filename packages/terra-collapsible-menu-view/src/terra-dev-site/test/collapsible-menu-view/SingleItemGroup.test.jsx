@@ -17,14 +17,15 @@ const CollapsibleMenuViewSingleItem = () => {
     </CollapsibleMenuView.ItemGroup>,
   );
   return (
-  /* Both of these methods works for both one large single item group and more than one item group
-    What I have found with the previous implementation is that with only calling items in the collapse menu
-    it gives different results for different browser window size */
-
   // Previous Implementation try with 67% till 100% browser size
-    /* <CollapsibleMenuView key="menu">
+  /* <CollapsibleMenuView key="menu">
       {items}
     </CollapsibleMenuView> */
+
+  /* Both of these methods works for both one large single item group and more than one item group
+     What I have found with the previous implementation is that with only calling items in the collapse menu
+    it gives different results for different browser window size */
+
     <CollapsibleMenuView key="menu">
       {items.map(item => (
         <div>
