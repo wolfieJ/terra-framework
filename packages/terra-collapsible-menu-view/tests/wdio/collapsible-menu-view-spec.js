@@ -45,7 +45,7 @@ describe('Collapsible Menu View', () => {
     });
   });
 
-  Terra.viewports().forEach((viewport) => {
+  Terra.viewports('enormous').forEach((viewport) => {
     describe('Single large item', () => {
       before(() => {
         browser.url('/#/raw/tests/terra-collapsible-menu-view/collapsible-menu-view/single-item-group');
@@ -53,6 +53,19 @@ describe('Collapsible Menu View', () => {
       });
 
       Terra.it.matchesScreenshot();
+      Terra.it.isAccessible();
+    });
+  });
+
+  Terra.viewports().forEach((viewport) => {
+    describe('Single large item Hidden Open', () => {
+      before(() => {
+        browser.url('/#/raw/tests/terra-collapsible-menu-view/collapsible-menu-view/single-item-group');
+        browser.setViewportSize(viewport);
+        browser.click('[data-collapsible-menu-toggle]');
+      });
+
+      Terra.it.matchesScreenshot({ selector: '#root' });
       Terra.it.isAccessible();
     });
   });
