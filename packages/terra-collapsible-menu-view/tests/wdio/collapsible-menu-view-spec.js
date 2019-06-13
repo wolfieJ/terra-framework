@@ -44,4 +44,16 @@ describe('Collapsible Menu View', () => {
       Terra.it.isAccessible();
     });
   });
+
+  Terra.viewports().forEach((viewport) => {
+    describe('Single large item', () => {
+      before(() => {
+        browser.url('/#/raw/tests/terra-collapsible-menu-view/collapsible-menu-view/single-item-group');
+        browser.setViewportSize(viewport);
+      });
+
+      Terra.it.matchesScreenshot();
+      Terra.it.isAccessible();
+    });
+  });
 });
