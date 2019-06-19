@@ -1,4 +1,4 @@
-// Color contrast will be resolved in https://github.com/cerner/terra-core/issues/1670
+// Color contrast will be resolved in https://github.com/cerner/terra-framework/issues/744
 const ignoredA11y = {
   'color-contrast': { enabled: false },
 };
