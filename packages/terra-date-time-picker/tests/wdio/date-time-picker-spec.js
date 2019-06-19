@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 const moment = require('moment-timezone');
 
+// Color contrast will be resolved in https://github.com/cerner/terra-framework/issues/744
 const ignoredA11y = {
   label: { enabled: false },
 };
