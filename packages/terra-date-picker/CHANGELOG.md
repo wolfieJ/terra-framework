@@ -3,15 +3,12 @@ Changelog
 
 Unreleased
 ----------
-<<<<<<< HEAD
 ### Added
 * Added issue reference to disabled axe rule
 
-=======
 
 4.4.0 - (June 19, 2019)
 ------------------
->>>>>>> master
 ### Changed
 * Updated to use terra-responsive-element v5
 * Update wdio spec to use Terra.describeViewports
