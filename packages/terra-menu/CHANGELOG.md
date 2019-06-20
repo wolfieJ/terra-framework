@@ -9,6 +9,7 @@ Unreleased
 
 ### Removed 
 * Removed React.Fragment from MenuContent to improve the accessibility
+* Disabled axe rule that was resolved in https://github.com/cerner/terra-core/issues/1585
 
 6.2.0 - (June 12, 2019)
 ------------------

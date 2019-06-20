@@ -1,10 +1,3 @@
-const ignoredA11y = {
-  // https://github.com/cerner/terra-core/issues/1061
-  'aria-allowed-attr': { enabled: false },
-};
-
-// Verify tabs collapse appropriately
-
 Terra.describeViewports('Tabs - Responsive', ['tiny', 'small', 'medium', 'large', 'huge', 'enormous'], () => {
   describe('Default', () => {
     it('Default', () => {
@@ -40,10 +33,10 @@ Terra.describeViewports('Responsive Hidden Open', ['tiny', 'small', 'medium', 'l
     browser.waitForVisible('[data-terra-tabs-menu]');
     browser.click('[data-terra-tabs-menu]');
 
-    Terra.validates.element('0', { rules: ignoredA11y, selector: '#root' });
+    Terra.validates.element('0', { selector: '#root' });
     browser.click('#tab12');
 
-    Terra.validates.element('1', { rules: ignoredA11y, selector: '#root' });
+    Terra.validates.element('1', { selector: '#root' });
   });
 });
 

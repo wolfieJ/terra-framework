@@ -8,6 +8,9 @@ Unreleased
 * Removed all inline styles and implemented the same styles using external css.
 * Update tests for terra-toolkit v5 and terra-dev-site v5 changes
 
+### Removed
+* Disabled axe rule that was resolved in https://github.com/cerner/terra-core/issues/1585
+
 6.2.0 - (June 12, 2019)
 ------------------
 ### Added

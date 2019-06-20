@@ -1,5 +1,6 @@
 // This issue should be resolved once the following axe-core issue is resolved:
 // https://github.com/dequelabs/axe-core/issues/1583
+// https://github.com/cerner/terra-framework/issues/715
 const ignoredA11y = {
   'landmark-banner-is-top-level': { enabled: false },
   'landmark-main-is-top-level': { enabled: false },

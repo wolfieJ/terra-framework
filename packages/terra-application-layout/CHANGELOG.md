@@ -3,6 +3,9 @@ Changelog
 
 Unreleased
 ----------
+### Added
+* Added issue reference to disabled axe rule
+
 ### Changed
 * Update wdio specs to use Terra.describeViewports
 

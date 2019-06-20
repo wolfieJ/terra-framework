@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 const moment = require('moment-timezone');
 
-// Color contrast will be resolved in https://github.com/cerner/terra-framework/issues/744
 const ignoredA11y = {
   label: { enabled: false },
 };
@@ -109,8 +108,7 @@ Terra.describeViewports('DateTimePicker', ['tiny', 'large'], () => {
       browser.moveToObject('#root', 0, 0);
     });
 
-    const ignoredDisabledAlly = Object.assign({ 'color-contrast': { enabled: false } }, ignoredA11y);
-    Terra.it.isAccessible({ rules: ignoredDisabledAlly });
+    Terra.it.isAccessible({ rules: ignoredA11y });
     Terra.it.matchesScreenshot();
   });
 

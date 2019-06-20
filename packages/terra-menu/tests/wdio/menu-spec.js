@@ -1,8 +1,3 @@
-const ignoredA11y = {
-  // Issue logged here: https://github.com/cerner/terra-core/issues/1585
-  'button-name': { enabled: false },
-};
-
 Terra.describeViewports('Menu', ['medium'], () => {
   describe('Menu-Default', () => {
     before(() => {
@@ -23,14 +18,14 @@ Terra.describeViewports('Menu', ['medium'], () => {
     });
 
     Terra.it.matchesScreenshot();
-    Terra.it.isAccessible({ rules: ignoredA11y });
+    Terra.it.isAccessible();
 
     it('opens submenu', () => {
       browser.click('.TestNestedMenu');
       browser.hasFocus('[role="button"][aria-label="Back"]');
     });
     Terra.it.matchesScreenshot('submenu', { selector: '#root' });
-    Terra.it.isAccessible({ rules: ignoredA11y });
+    Terra.it.isAccessible();
   });
 
   describe('Menu-Small Height', () => {

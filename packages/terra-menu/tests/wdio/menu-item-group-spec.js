@@ -1,7 +1,3 @@
-const ignoredA11y = {
-  'aria-required-parent': { enabled: false },
-};
-
 Terra.describeViewports('Menu Item Group', ['medium'], () => {
   before(() => {
     browser.url('/#/raw/tests/terra-menu/menu/menu-item-group/menu-item-group-default');
@@ -9,7 +5,7 @@ Terra.describeViewports('Menu Item Group', ['medium'], () => {
 
   describe('Menu Item Group-Default', () => {
     Terra.it.matchesScreenshot();
-    Terra.it.isAccessible({ rules: ignoredA11y });
+    Terra.it.isAccessible();
   });
 
   describe('Menu Item Group-Selectable Via Click', () => {
@@ -17,7 +13,7 @@ Terra.describeViewports('Menu Item Group', ['medium'], () => {
       browser.click('.TestGroupItem3');
     });
     Terra.it.matchesScreenshot('Item 3 Selected');
-    Terra.it.isAccessible({ rules: ignoredA11y });
+    Terra.it.isAccessible();
 
     it('selects Item 1 and deselects Item 3', () => {
       browser.click('.TestGroupItem1');

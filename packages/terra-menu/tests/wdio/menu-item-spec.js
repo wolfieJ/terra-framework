@@ -1,13 +1,9 @@
-const ignoredA11y = {
-  'aria-required-parent': { enabled: false },
-};
-
 Terra.describeViewports('Menu Item', ['medium'], () => {
   describe('Menu Item-Default', () => {
     before(() => browser.url('/#/raw/tests/terra-menu/menu/menu-item/menu-item-default'));
 
     Terra.it.matchesScreenshot();
-    Terra.it.isAccessible({ rules: ignoredA11y });
+    Terra.it.isAccessible();
   });
 
   describe('Menu Item-Selectable', () => {
@@ -19,14 +15,14 @@ Terra.describeViewports('Menu Item', ['medium'], () => {
       });
 
       Terra.it.matchesScreenshot('selected');
-      Terra.it.isAccessible({ rules: ignoredA11y });
+      Terra.it.isAccessible();
 
       it('is deselected', () => {
         browser.click('.TestSelectableItem');
       });
 
       Terra.it.matchesScreenshot('deselected');
-      Terra.it.isAccessible({ rules: ignoredA11y });
+      Terra.it.isAccessible();
     });
 
     describe('Menu Item-Selectable Via Enter', () => {
@@ -35,14 +31,14 @@ Terra.describeViewports('Menu Item', ['medium'], () => {
       });
 
       Terra.it.matchesScreenshot('selected');
-      Terra.it.isAccessible({ rules: ignoredA11y });
+      Terra.it.isAccessible();
 
       it('is deselected', () => {
         browser.keys('Enter');
       });
 
       Terra.it.matchesScreenshot('deselected');
-      Terra.it.isAccessible({ rules: ignoredA11y });
+      Terra.it.isAccessible();
     });
   });
 });
@@ -51,7 +47,7 @@ describe('Menu Item-Disabled', () => {
   before(() => browser.url('/#/raw/tests/terra-menu/menu/menu-item/menu-item-disabled'));
 
   Terra.it.matchesScreenshot();
-  Terra.it.isAccessible({ rules: ignoredA11y });
+  Terra.it.isAccessible();
 
   it('does not check item when clicked', () => {
     browser.click('.TestDisabledItem');
@@ -63,14 +59,14 @@ describe('Menu Item-Submenu Indicator', () => {
   before(() => browser.url('/#/raw/tests/terra-menu/menu/menu-item/menu-item-sub-menu'));
 
   Terra.it.matchesScreenshot();
-  Terra.it.isAccessible({ rules: ignoredA11y });
+  Terra.it.isAccessible();
 });
 
 describe('Menu Item-Wrapped Text', () => {
   before(() => browser.url('/#/raw/tests/terra-menu/menu/menu-item/menu-item-wrapped-text'));
 
   Terra.it.matchesScreenshot();
-  Terra.it.isAccessible({ rules: ignoredA11y });
+  Terra.it.isAccessible();
 });
 
 describe('Menu Item-Triggers onClick Function', () => {
