@@ -5,6 +5,8 @@ import { NavigationPromptCheckpoint } from 'terra-navigation-prompt';
 import DisclosureManagerDelegate from './DisclosureManagerDelegate';
 import DisclosureManagerContext from './DisclosureManagerContext';
 import withDisclosureManager from './withDisclosureManager';
+import DisclosureHeaderContext from './DisclosureHeaderContext';
+import DisclosureHeaderAdapter from './DisclosureHeaderAdapter';
 
 const availableDisclosureSizes = {
   TINY: 'tiny',
@@ -58,6 +60,11 @@ const propTypes = {
     emphasizedAction: PropTypes.oneOf(['accept', 'reject']),
   })]).isRequired,
   /**
+   * A React component definition that will be instantiated to detect rendered NavigationPrompts.
+   * The API of the provided component definition must match that of the default NavigationPromptCheckpoint.
+   */
+  navigationPromptCheckpointComponent: PropTypes.node,
+  /**
    * @private
    * A DisclosureManagerDelegate instance provided by a parent DisclosureManager. This prop is automatically provided by `withDisclosureManager` and should not
    * be explicitly given to the component.
@@ -67,6 +74,7 @@ const propTypes = {
 
 const defaultProps = {
   supportedDisclosureTypes: [],
+  navigationPromptCheckpointComponent: NavigationPromptCheckpoint,
 };
 
 class DisclosureManager extends React.Component {
@@ -118,6 +126,7 @@ class DisclosureManager extends React.Component {
       disclosureComponentKeys: [],
       disclosureComponentData: {},
       disclosureComponentDelegates: [],
+      disclosureComponentHeaderContextValues: {},
     };
   }
 
@@ -195,16 +204,16 @@ class DisclosureManager extends React.Component {
      */
     delegate.dismiss = popContent;
 
-    /**
-     * Allows a component to close the entire disclosure stack.
-     */
-    delegate.closeDisclosure = this.safelyCloseDisclosure;
+    // /**
+    //  * Allows a component to close the entire disclosure stack.
+    //  */
+    // delegate.closeDisclosure = popContent;
 
     /**
      * Allows a component to remove itself from the disclosure stack. Functionally similar to `dismiss`, however `onBack` is
      * only provided to components in the stack that have a previous sibling.
      */
-    delegate.goBack = componentIndex > 0 ? popContent : undefined;
+    // delegate.goBack = componentIndex > 0 ? popContent : undefined;
 
     /**
      * Allows a component to request focus from the disclosure in the event that the disclosure mechanism in use utilizes a focus trap.
@@ -285,15 +294,30 @@ class DisclosureManager extends React.Component {
       disclosureComponentData: {
         [key]: {
           key,
-          name: data.content.name,
-          props: data.content.props,
-          component: data.content.component,
-          onDismiss: data.content.onDismiss,
+          name: data.content ? data.content.name : undefined,
+          props: data.content ? data.content.props : undefined,
+          component: data.component || (data.content ? data.content.component : undefined),
+          size: data.size,
+          dimensions: data.dimensions,
+          onDismiss: data.onDismiss,
           checkpointRef: React.createRef(),
         },
       },
     };
     newState.disclosureComponentDelegates = [this.generateDisclosureComponentDelegate(key, newState)];
+    newState.disclosureComponentHeaderContextValues = {
+      [key]: (title, actions) => {
+        this.setState(state => ({
+          registeredHeaderData: Object.assign({}, state.registeredHeaderData, {
+            [key]: {
+              title, actions,
+            },
+          }),
+        }));
+      },
+    };
+
+    debugger;
 
     this.setState(newState);
   }
@@ -304,13 +328,24 @@ class DisclosureManager extends React.Component {
     newState.disclosureComponentKeys.push(key);
     newState.disclosureComponentData[key] = {
       key,
-      name: data.content.name,
-      props: data.content.props,
-      component: data.content.component,
-      onDismiss: data.content.onDismiss,
+      name: data.content ? data.content.name : undefined,
+      props: data.content ? data.content.props : undefined,
+      component: data.component || (data.content ? data.content.component : undefined),
+      onDismiss: data.onDismiss,
+      size: data.size,
+      dimensions: data.dimensions,
       checkpointRef: React.createRef(),
     };
     newState.disclosureComponentDelegates = newState.disclosureComponentDelegates.concat(this.generateDisclosureComponentDelegate(key, newState));
+    newState.disclosureComponentHeaderContextValues[key] = (title, actions) => {
+      this.setState(state => ({
+        registeredHeaderData: Object.assign({}, state.registeredHeaderData, {
+          [key]: {
+            title, actions,
+          },
+        }),
+      }));
+    };
 
     this.setState(newState, callback);
   }
@@ -321,6 +356,8 @@ class DisclosureManager extends React.Component {
     const poppedComponentKey = newState.disclosureComponentKeys.pop();
     newState.disclosureComponentData[poppedComponentKey] = undefined;
     newState.disclosureComponentDelegates.pop();
+    newState.disclosureComponentHeaderContextValues[poppedComponentKey] = undefined;
+    newState.registeredHeaderData[poppedComponentKey] = undefined;
 
     this.setState(newState, callback);
   }
@@ -477,7 +514,7 @@ class DisclosureManager extends React.Component {
   }
 
   render() {
-    const { render, children } = this.props;
+    const { render, children, navigationPromptCheckpointComponent } = this.props;
     const {
       childComponentDelegate,
       disclosureIsOpen,
@@ -494,9 +531,37 @@ class DisclosureManager extends React.Component {
       return null;
     }
 
+    const popFunction = this.generatePopFunction(disclosureComponentKeys ? disclosureComponentKeys[disclosureComponentKeys.length - 1] : undefined);
+
+    const disclosureComponents = disclosureComponentKeys.reduce((accumulator, key, index) => {
+      const componentData = {};
+
+      componentData.component = (
+        <DisclosureHeaderContext.Provider value={this.state.disclosureComponentHeaderContextValues[key]} key={key}>
+          <DisclosureManagerContext.Provider value={disclosureComponentDelegates[index]} key={key}>
+            {React.createElement(navigationPromptCheckpointComponent, {
+              ref: disclosureComponentData[key].checkpointRef,
+              key,
+            }, disclosureComponentData[key].component)}
+          </DisclosureManagerContext.Provider>
+        </DisclosureHeaderContext.Provider>
+      );
+
+      componentData.size = disclosureComponentData[key].size;
+      componentData.dimensions = disclosureComponentData[key].dimensions;
+
+      accumulator[key] = componentData;
+      return accumulator;
+    }, {});
+
     return render({
-      dismissPresentedComponent: this.generatePopFunction(disclosureComponentKeys ? disclosureComponentKeys[disclosureComponentKeys.length - 1] : undefined),
-      closeDisclosure: this.safelyCloseDisclosure, // TODO: Evaluate whether closing a stack of disclosures all at one time makes functional sense. It might be better to close one at a time, even from the X button (or only showing back if back is available)
+      dismissPresentedComponent: popFunction,
+      closeDisclosure: popFunction, // TODO: Evaluate whether closing a stack of disclosures all at one time makes functional sense. It might be better to close one at a time, even from the X button (or only showing back if back is available)
+      maximizeDisclosure: !disclosureIsMaximized ? this.maximizeDisclosure : undefined,
+      minimizeDisclosure: disclosureIsMaximized ? this.minimizeDisclosure : undefined,
+      headerData: this.state.registeredHeaderData || {},
+      disclosureComponentKeys,
+      disclosureComponents,
       children: {
         components: (
           <DisclosureManagerContext.Provider value={childComponentDelegate}>
@@ -510,15 +575,7 @@ class DisclosureManager extends React.Component {
         isMaximized: disclosureIsMaximized,
         size: disclosureSize,
         dimensions: disclosureDimensions,
-        components: disclosureComponentKeys.map((key, index) => (
-          <DisclosureManagerContext.Provider value={disclosureComponentDelegates[index]} key={key}>
-            <NavigationPromptCheckpoint
-              ref={disclosureComponentData[key].checkpointRef}
-            >
-              {disclosureComponentData[key].component}
-            </NavigationPromptCheckpoint>
-          </DisclosureManagerContext.Provider>
-        )),
+        components: disclosureComponentKeys.map(key => disclosureComponents[key].component),
       },
     });
   }
@@ -530,4 +587,6 @@ DisclosureManager.defaultProps = defaultProps;
 const disclosureManagerShape = DisclosureManagerDelegate.propType;
 
 export default withDisclosureManager(DisclosureManager);
-export { withDisclosureManager, disclosureManagerShape };
+export {
+  withDisclosureManager, disclosureManagerShape, DisclosureHeaderAdapter, DisclosureHeaderContext,
+};

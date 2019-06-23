@@ -24,6 +24,11 @@ const ModalManagerExample = () => (
         rejectButtonText: exampleRejectButtonText,
         acceptButtonText: exampleAcceptButtonText,
       }}
+      disclosureAccessory={(
+        <div style={{ backgroundColor: 'navy', height: '50px' }}>
+          <span style={{ color: 'white' }}>Demographics Here</span>
+        </div>
+      )}
     >
       <ContentComponent disclosureType="modal" />
     </ModalManager>

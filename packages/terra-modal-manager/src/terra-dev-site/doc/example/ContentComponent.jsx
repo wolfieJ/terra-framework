@@ -58,12 +58,9 @@ class ContentComponent extends React.Component {
           disclosureManager.disclose({
             preferredType: disclosureType,
             size,
-            content: {
-              key: `Content-Disclosure-${size}`,
-              component: <DisclosureComponent name={`Disclosure Component (${size})`} disclosureType={disclosureType} />,
-              onDismiss: () => {
-                alert('content was dismissed');
-              },
+            component: <DisclosureComponent name={`Disclosure Component (${size})`} disclosureType={disclosureType} />,
+            onDismiss: () => {
+              console.log('onDismiss: content was dismissed');
             },
           });
         }}
