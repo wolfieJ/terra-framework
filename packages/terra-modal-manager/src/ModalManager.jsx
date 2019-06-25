@@ -58,7 +58,7 @@ class ModalManager extends React.Component {
     const { children, ...customProps } = this.props;
 
     const topComponentKey = manager.disclosureComponentKeys[manager.disclosureComponentKeys.length - 1];
-    const topComponentData = manager.disclosureComponents[topComponentKey] || {};
+    const topComponentData = manager.disclosureComponentData[topComponentKey] || {};
     const headerDataForDisclosedComponent = manager.headerData[topComponentKey];
 
     const containerClassNames = cx([
@@ -76,8 +76,6 @@ class ModalManager extends React.Component {
         classArray.push(`height-${heightFromSize[topComponentData.size]}`, `width-${widthFromSize[topComponentData.size]}`);
       }
     }
-
-    debugger;
 
     return (
       <div {...customProps} className={containerClassNames}>
@@ -101,8 +99,8 @@ class ModalManager extends React.Component {
                   title={headerDataForDisclosedComponent && headerDataForDisclosedComponent.title}
                   onClose={manager.disclosureComponentKeys.length === 1 ? manager.dismissPresentedComponent : undefined}
                   onBack={manager.disclosureComponentKeys.length > 1 ? manager.dismissPresentedComponent : undefined}
-                  onMaximize={manager.maximizeDisclosure}
-                  onMinimize={manager.minimizeDisclosure}
+                  // onMaximize={manager.maximizeDisclosure}
+                  // onMinimize={manager.minimizeDisclosure}
                 >
                   {headerDataForDisclosedComponent && headerDataForDisclosedComponent.actions}
                 </ActionHeader>
@@ -117,7 +115,7 @@ class ModalManager extends React.Component {
                   height: '100%', overflow: 'auto', backgroundColor: 'white', position: 'relative', display: (index !== manager.disclosureComponentKeys.length - 1 ? 'none' : 'block'), width: '100%',
                 }}
               >
-                {manager.disclosureComponents[key].component}
+                {manager.disclosureComponentData[key].component}
               </div>
             ))}
           </ContentContainer>

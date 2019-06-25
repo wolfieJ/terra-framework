@@ -166,13 +166,12 @@ class DisclosureManager extends React.Component {
 
   generateDisclosureComponentDelegate(componentKey, disclosureState) {
     const {
-      disclosureComponentKeys, disclosureComponentData, disclosureIsMaximized, disclosureIsFocused, disclosureSize,
+      disclosureComponentData, disclosureIsMaximized, disclosureIsFocused, disclosureSize,
     } = disclosureState;
 
     const componentData = disclosureComponentData[componentKey];
     const isFullscreen = disclosureSize === availableDisclosureSizes.FULLSCREEN;
     const popContent = this.generatePopFunction(componentData.key);
-    const componentIndex = disclosureComponentKeys.indexOf(componentKey);
 
     const delegate = {};
 
@@ -316,8 +315,6 @@ class DisclosureManager extends React.Component {
         }));
       },
     };
-
-    debugger;
 
     this.setState(newState);
   }
@@ -531,6 +528,12 @@ class DisclosureManager extends React.Component {
       return null;
     }
 
+    const childComponents = (
+      <DisclosureManagerContext.Provider value={childComponentDelegate}>
+        {children}
+      </DisclosureManagerContext.Provider>
+    );
+
     const popFunction = this.generatePopFunction(disclosureComponentKeys ? disclosureComponentKeys[disclosureComponentKeys.length - 1] : undefined);
 
     const disclosureComponents = disclosureComponentKeys.reduce((accumulator, key, index) => {
@@ -561,13 +564,10 @@ class DisclosureManager extends React.Component {
       minimizeDisclosure: disclosureIsMaximized ? this.minimizeDisclosure : undefined,
       headerData: this.state.registeredHeaderData || {},
       disclosureComponentKeys,
-      disclosureComponents,
+      disclosureComponentData: disclosureComponents,
+      childComponents,
       children: {
-        components: (
-          <DisclosureManagerContext.Provider value={childComponentDelegate}>
-            {children}
-          </DisclosureManagerContext.Provider>
-        ),
+        components: childComponents,
       },
       disclosure: {
         isOpen: disclosureIsOpen,
