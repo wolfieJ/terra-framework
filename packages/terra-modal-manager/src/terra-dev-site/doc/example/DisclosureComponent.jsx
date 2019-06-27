@@ -18,6 +18,7 @@ const propTypes = {
   name: PropTypes.string,
   disclosureType: PropTypes.string,
   disclosureManager: disclosureManagerShape,
+  onSubmitValue: PropTypes.func,
 };
 
 const defaultProps = {
@@ -29,7 +30,7 @@ class DisclosureComponent extends React.Component {
     super(props);
 
     this.state = {
-      text: undefined,
+      text: '',
     };
   }
 
@@ -37,12 +38,13 @@ class DisclosureComponent extends React.Component {
     const { disclosureManager, name, disclosureType } = this.props;
     const { text } = this.state;
 
+    console.log('Rendering DisclosureComponent');
+
     return (
       <div style={{ height: '1000px' }}>
-        {text && text.length ? <NavigationPrompt description={name} /> : undefined}
         <DisclosureHeaderAdapter
           title={name}
-          actions={name === 'Nested Disclosure Component (small)' ? (
+          actions={name === 'Nested Disclosure Component ()' ? (
             <CollapsibleMenuView>
               <CollapsibleMenuView.Toggle
                 text="Toggle Item 1"
@@ -76,42 +78,112 @@ class DisclosureComponent extends React.Component {
         />
         <div className={cx('content-wrapper')}>
           <h3>{name}</h3>
-          <p>The disclosed component can disclose content within the same panel.</p>
-          <p>It can also render a header (like above) that implements the various DisclosureManager control functions.</p>
-          <Button
-            text="Dismiss"
-            onClick={() => {
-              disclosureManager.dismiss()
-                .catch(() => {
-                  console.log('Dismiss failed. A lock must be in place.'); // eslint-disable-line no-console
-                });
-            }}
-          />
+          <p>The disclosed component can disclose content within the same disclosure view.</p>
           <Button
             text="Disclose Again"
             onClick={() => {
-              disclosureManager.disclose({
-                preferredType: disclosureType,
-                size: 'large',
-                component: <WrappedDisclosureComponent name={`Nested ${name}`} disclosureType={disclosureType} />,
-                onDismiss: () => {
-                  console.log('onDismiss - content was dismissed');
-                },
+              this.setState({
+                valueFromDisclosure: undefined,
+              }, () => {
+                disclosureManager.disclose({
+                  preferredType: disclosureType,
+                  size: 'large',
+                  component: (
+                    <WrappedDisclosureComponent
+                      name={`Nested ${name}`}
+                      disclosureType={disclosureType}
+                      onSubmitValue={(value) => {
+                        this.setState({
+                          valueFromDisclosure: value,
+                        }, this.dismissDisclosure);
+                      }}
+                    />
+                  ),
+                  onDismiss: () => {
+                    if (!this.state.valueFromDisclosure) {
+                      console.log('onDismiss - content was dismissed without submitting value');
+                    }
+                  },
+                }).then(({ dismissDisclosure }) => {
+                  this.dismissDisclosure = dismissDisclosure;
+                });
               });
             }}
           />
           <br />
           <br />
-          <p>The disclosed component can register a dismiss check function that can interrupt and prevent dismissal. This component will prompt the user if text is detected in the input field below.</p>
+          <p>The disclosed component can provide callbacks to and receive data from the component it discloses.</p>
+          <p>
+            Value from disclosed component:
+            {' '}
+            <b>{this.state.valueFromDisclosure}</b>
+          </p>
+          <br />
+          <br />
+          <Button
+            text="Update Size - tiny"
+            onClick={() => {
+              disclosureManager.setSize('tiny');
+            }}
+          />
+          <Button
+            text="Update Size - small"
+            onClick={() => {
+              disclosureManager.setSize('small');
+            }}
+          />
+          <Button
+            text="Update Size - medium"
+            onClick={() => {
+              disclosureManager.setSize('medium');
+            }}
+          />
+          <Button
+            text="Update Size - large"
+            onClick={() => {
+              disclosureManager.setSize('large');
+            }}
+          />
+          <Button
+            text="Update Size - huge"
+            onClick={() => {
+              disclosureManager.setSize('huge');
+            }}
+          />
+          <Button
+            text="Update Size - fullscreen"
+            onClick={() => {
+              disclosureManager.setSize('fullscreen');
+            }}
+          />
+          <br />
+          <br />
+          <p>The disclosed component can render a NavigationPrompt to prevent navigation away from the view when unsaved state is present.</p>
+          <p>Navigating away from this view with input present in the field below will prompt the user for confirmation.</p>
+          <p>When the Submit Value button is pressed, a callback to the previous component is executed.</p>
           <Input
             value={this.state.text || ''}
             onChange={(event) => {
               this.setState({
-                text: event.target.value,
+                text: event.target.value || '',
               });
             }}
           />
-          {this.state.text && this.state.text.length ? <p>Component has unsaved changes!</p> : null}
+          <Button
+            text="Submit Value"
+            isDisabled={!text.length}
+            onClick={() => {
+              if (this.props.onSubmitValue) {
+                const textValue = this.state.text;
+                this.setState({
+                  text: '',
+                }, () => {
+                  this.props.onSubmitValue(textValue);
+                });
+              }
+            }}
+          />
+          {text.length ? <NavigationPrompt description={name} /> : undefined}
         </div>
       </div>
     );

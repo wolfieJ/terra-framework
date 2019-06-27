@@ -10,6 +10,7 @@ const supportedAttributes = [
   'requestFocus',
   'releaseFocus',
   'registerDismissCheck',
+  'setSize',
 ];
 
 class DisclosureManagerDelegateInstance {

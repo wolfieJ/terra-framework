@@ -21,20 +21,27 @@ const arrayReducer = (mappingObject, value) => Object.assign({ [`${value}`]: val
 const availableDisclosureHeights = [240, 420, 600, 690, 780, 870, 960, 1140].reduce(arrayReducer, {});
 const availableDisclosureWidths = [320, 480, 560, 640, 800, 960, 1120, 1280, 1440, 1600, 1760, 1920].reduce(arrayReducer, {});
 
-const defaultDimensions = { height: availableDisclosureHeights['690'], width: availableDisclosureWidths['1120'] };
-const defaultSize = availableDisclosureSizes.SMALL;
-
-const isValidDimensions = dimensions => availableDisclosureHeights[dimensions.height] && availableDisclosureWidths[dimensions.width];
-
-// const isValidSize = size => !!availableDisclosureSizes[size.toUpperCase()];
-
-const isValidSize = (size) => {
-  if (typeof size === 'Object') {
-    return isValidDimensions(size);
-  } if (typeof size === 'String') {
-    return availableDisclosureSizes[size.toUpperCase()];
+const logWarning = (message) => {
+  if (process.env.NODE_ENV !== 'production') {
+    /* eslint-disable no-console */
+    console.warn(message);
+    /* eslint-enable no-console */
   }
-  return false;
+};
+
+const validateSize = (size) => {
+  if (typeof size === 'object') {
+    if (availableDisclosureHeights[size.height] && availableDisclosureWidths[size.width]) {
+      return size;
+    }
+  } else if (typeof size === 'string') {
+    if (availableDisclosureSizes[size.toUpperCase()]) {
+      return size;
+    }
+  }
+
+  logWarning(`DisclosureManager: Invalid size provided - ${size}. The default size will be used instead.`);
+  return availableDisclosureSizes.SMALL;
 };
 
 export { availableDisclosureSizes, availableDisclosureHeights, availableDisclosureWidths };
@@ -86,14 +93,14 @@ const defaultProps = {
   navigationPromptCheckpointComponent: NavigationPromptCheckpoint,
 };
 
-class DisclosureManager extends React.Component {
+class DisclosureManagerV2 extends React.Component {
   /**
    * Clones the current disclosure component state objects and returns the structure for further mutation.
    */
   static cloneDisclosureState(state) {
     const newState = Object.assign({}, state);
-    newState.disclosureComponentKeys = Object.assign([], newState.disclosureComponentKeys);
-    newState.disclosureComponentData = Object.assign({}, newState.disclosureComponentData);
+    newState.disclosureComponentKeys = [...newState.disclosureComponentKeys];
+    newState.disclosureComponentData = { ...newState.disclosureComponentData };
 
     return newState;
   }
@@ -104,17 +111,15 @@ class DisclosureManager extends React.Component {
     this.generateChildComponentDelegate = this.generateChildComponentDelegate.bind(this);
     this.generateDisclosureComponentDelegate = this.generateDisclosureComponentDelegate.bind(this);
 
-    this.disclosureTypeIsSupported = this.disclosureTypeIsSupported.bind(this);
     this.generatePopFunction = this.generatePopFunction.bind(this);
+    this.buildPublicDisclosureComponentObject = this.buildPublicDisclosureComponentObject.bind(this);
+    this.buildStateForDisclosureComponent = this.buildStateForDisclosureComponent.bind(this);
 
-    this.openDisclosure = this.openDisclosure.bind(this);
     this.pushDisclosure = this.pushDisclosure.bind(this);
     this.popDisclosure = this.popDisclosure.bind(this);
-    this.closeDisclosure = this.closeDisclosure.bind(this);
 
     this.state = {
       childComponentDelegate: this.generateChildComponentDelegate(),
-      disclosureIsOpen: false,
       disclosureComponentKeys: [],
       disclosureComponentData: {},
     };
@@ -123,49 +128,35 @@ class DisclosureManager extends React.Component {
   generateChildComponentDelegate() {
     return DisclosureManagerDelegate.create({
       disclose: (data) => {
-        if (this.state.disclosureIsOpen) {
-          /**
-           * A component is already disclosed, so we cannot present a new component.
-           * The presented component must be dismissed first.
-           */
+        /**
+         * If the disclosure is already open, a component must have been disclosed already.
+         * Another disclosure cannot be presented until the previous disclosure is dismissed,
+         * so the request is rejected.
+         */
+
+        if (this.state.disclosureComponentKeys.length) {
+          logWarning('DisclosureManager: Disclosure request from within stack was ignored.');
           return Promise.reject();
         }
 
-        if (this.disclosureTypeIsSupported(data.preferredType)) {
-          const disclosedContentKey = uuidv4();
-
-          return new Promise((resolve) => {
-            this.openDisclosure(data, disclosedContentKey, () => {
-              resolve({
-                dismissDisclosure: this.generatePopFunction(disclosedContentKey),
-              });
-            });
-          });
+        /**
+         * If the component is missing from the disclose request, the disclosure stack is not manipulated
+         * and the request is rejected.
+         */
+        if (!data.component) {
+          logWarning('DisclosureManager: Disclosure request without component was ignored.');
+          return Promise.reject();
         }
 
-        return this.props.disclosureManager.disclose(data);
-      },
-    });
-  }
-
-  generateDisclosureComponentDelegate(componentKey) {
-    const popContent = this.generatePopFunction(componentKey);
-
-    const delegate = {};
-
-    /**
-     * The disclose function provided will push content onto the disclosure stack.
-     */
-    delegate.disclose = (data) => {
-      if (componentKey !== this.state.disclosureComponentKeys[this.state.disclosureComponentKeys.length - 1]) {
         /**
-         * A component is already disclosed, so we cannot present a new component.
-         * The presented component must be dismissed first.
+         * If the preferred disclosure type is not supported by this instance of the
+         * DisclosureManager, the disclose request is deferred to the disclosureManager prop,
+         * if available.
          */
-        return Promise.reject();
-      }
+        if (this.props.supportedDisclosureTypes.indexOf(data.preferredType) === -1 && this.props.disclosureManager) {
+          return this.props.disclosureManager.disclose(data);
+        }
 
-      if (this.disclosureTypeIsSupported(data.preferredType) || this.props.trapNestedDisclosureRequests) {
         const disclosedContentKey = uuidv4();
 
         return new Promise((resolve) => {
@@ -175,30 +166,66 @@ class DisclosureManager extends React.Component {
             });
           });
         });
-      }
+      },
+    });
+  }
 
-      return this.props.disclosureManager.disclose(data);
-    };
+  generateDisclosureComponentDelegate(componentKey) {
+    const delegate = {};
 
     /**
-     * Allows a component to remove itself from the disclosure stack. If the component is the only element in the disclosure stack,
-     * the disclosure is closed.
+     * The disclose function provided will push content onto the disclosure stack.
      */
-    delegate.dismiss = popContent;
+    delegate.disclose = (data) => {
+      /**
+       * If the component calling disclose is not the top-most component in the disclosure stack,
+       * it must have disclosed something already. Another disclosure cannot be presented until the
+       * previous disclosure is dismissed, so the request is rejected.
+       */
+      if (componentKey !== this.state.disclosureComponentKeys[this.state.disclosureComponentKeys.length - 1]) {
+        logWarning('DisclosureManager: Disclosure request from interior stack component was ignored.');
+        return Promise.reject();
+      }
+
+      /**
+       * If the component is missing from the disclose request, the disclosure stack is not manipulated
+       * and the request is rejected.
+       */
+      if (!data.component) {
+        logWarning('DisclosureManager: Disclosure request without component was ignored.');
+        return Promise.reject();
+      }
+
+      /**
+       * If the preferred disclosure type is not supported by this instance of the
+       * DisclosureManager, and the trapNestedDisclosureRequests prop is not active,
+       * the disclose request is deferred to the disclosureManager prop, if available.
+       */
+      if (this.props.supportedDisclosureTypes.indexOf(data.preferredType) === -1
+          && this.props.disclosureManager
+          && !this.props.trapNestedDisclosureRequests) {
+        return this.props.disclosureManager.disclose(data);
+      }
+
+      const disclosedContentKey = uuidv4();
+
+      return new Promise((resolve) => {
+        this.pushDisclosure(data, disclosedContentKey, () => {
+          resolve({
+            dismissDisclosure: this.generatePopFunction(disclosedContentKey),
+          });
+        });
+      });
+    };
 
     /**
      * Allows a component to update its currently presented size.
      */
-    delegate.setSize = size => new Promise((resolve, reject) => {
-      // TODO: validate size here
-      if (false) {
-        reject();
-      }
-
+    delegate.setSize = size => new Promise((resolve) => {
       this.setState(state => ({
         disclosureComponentData: Object.assign({}, state.disclosureComponentData, {
           [componentKey]: Object.assign({}, state.disclosureComponentData[componentKey], {
-            size,
+            size: validateSize(size),
           }),
         }),
       }), resolve);
@@ -207,55 +234,11 @@ class DisclosureManager extends React.Component {
     return DisclosureManagerDelegate.create(delegate);
   }
 
-  /**
-   * Determines if the provided disclosure type is supported by the DisclosureManager.
-   * @return `true` if the type is supported or if there is no fallback `disclosureManager` present. `false` is returned otherwise.
-   */
-  disclosureTypeIsSupported(type) {
-    const { disclosureManager, supportedDisclosureTypes } = this.props;
-
-    return supportedDisclosureTypes.indexOf(type) >= 0 || !disclosureManager;
-  }
-
-  openDisclosure(data, key) {
-    const newState = {
-      disclosureIsOpen: true,
-      disclosureComponentKeys: [key],
-      disclosureComponentData: {
-        [key]: {
-          key,
-          name: data.content ? data.content.name : undefined,
-          props: data.content ? data.content.props : undefined,
-          component: data.component || (data.content ? data.content.component : undefined),
-          size: data.size,
-          onDismiss: data.onDismiss,
-          checkpointRef: React.createRef(),
-          delegateValue: this.generateDisclosureComponentDelegate(key),
-          headerAdapterContextValue: (title, actions) => {
-            this.setState(state => ({
-              disclosureComponentData: Object.assign({}, state.disclosureComponentData, {
-                [key]: Object.assign({}, state.disclosureComponentData[key], {
-                  headerAdapterData: { title, actions },
-                }),
-              }),
-            }));
-          },
-          headerAdapterData: undefined,
-        },
-      },
-    };
-
-    this.setState(newState);
-  }
-
-  pushDisclosure(data, key, callback) {
-    const newState = DisclosureManager.cloneDisclosureState(this.state);
-
-    newState.disclosureComponentKeys.push(key);
-    newState.disclosureComponentData[key] = {
+  buildStateForDisclosureComponent(data, key) {
+    return {
       key,
-      size: data.size,
       component: data.component,
+      size: validateSize(data.size),
       onDismiss: data.onDismiss,
       checkpointRef: React.createRef(),
       delegateValue: this.generateDisclosureComponentDelegate(key),
@@ -270,19 +253,22 @@ class DisclosureManager extends React.Component {
       },
       headerAdapterData: undefined,
     };
+  }
+
+  pushDisclosure(data, key, callback) {
+    const newState = DisclosureManagerV2.cloneDisclosureState(this.state);
+
+    newState.disclosureComponentKeys.push(key);
+    newState.disclosureComponentData[key] = this.buildStateForDisclosureComponent(data, key);
 
     this.setState(newState, callback);
   }
 
   popDisclosure(callback) {
-    const newState = DisclosureManager.cloneDisclosureState(this.state);
+    const newState = DisclosureManagerV2.cloneDisclosureState(this.state);
 
     const poppedComponentKey = newState.disclosureComponentKeys.pop();
     delete newState.disclosureComponentData[poppedComponentKey];
-
-    if (!newState.disclosureComponentKeys.length) {
-      newState.disclosureIsOpen = false;
-    }
 
     this.setState(newState, callback);
   }
@@ -291,7 +277,7 @@ class DisclosureManager extends React.Component {
    * Creates an instance of a pop function for the component represented by the given key.
    */
   generatePopFunction(key) {
-    return (dismissData) => {
+    return () => {
       const { disclosureComponentKeys, disclosureComponentData } = this.state;
 
       const disclosedComponentData = disclosureComponentData[key];
@@ -306,34 +292,24 @@ class DisclosureManager extends React.Component {
 
       return new Promise((resolve, reject) => {
         disclosedComponentData.checkpointRef.current.resolvePrompts(this.props.navigationPromptOptions).then(() => {
-          this.popDisclosure(() => {
-            resolve();
-          });
+          this.popDisclosure(resolve);
         }).catch(reject);
       }).then(() => {
         if (disclosedComponentData.onDismiss) {
-          disclosedComponentData.onDismiss(dismissData);
+          disclosedComponentData.onDismiss();
         }
       });
     };
   }
 
-  render() {
-    const { render, children, navigationPromptCheckpointComponent } = this.props;
+  buildPublicDisclosureComponentObject() {
+    const { navigationPromptCheckpointComponent } = this.props;
     const {
-      childComponentDelegate,
-      disclosureIsOpen,
       disclosureComponentKeys,
       disclosureComponentData,
     } = this.state;
 
-    if (!render) {
-      return null;
-    }
-
-    const dismissTopDisclosure = this.generatePopFunction(disclosureIsOpen ? disclosureComponentKeys[disclosureComponentKeys.length - 1] : undefined);
-
-    const disclosureComponents = disclosureComponentKeys.reduce((accumulator, key) => {
+    return disclosureComponentKeys.reduce((accumulator, key) => {
       const componentData = {};
 
       componentData.component = (
@@ -348,32 +324,43 @@ class DisclosureManager extends React.Component {
       );
 
       componentData.size = disclosureComponentData[key].size;
-      componentData.headerAdapter = disclosureComponentData[key].registeredHeaderData;
+      componentData.headerAdapter = disclosureComponentData[key].headerAdapterData;
 
       accumulator[key] = componentData;
       return accumulator;
     }, {});
+  }
+
+  render() {
+    const { render, children } = this.props;
+    const {
+      childComponentDelegate,
+      disclosureComponentKeys,
+    } = this.state;
+
+    if (!render) {
+      return null;
+    }
 
     return render({
-      disclosureIsOpen,
       disclosureComponentKeys,
-      disclosureComponentData: disclosureComponents,
-      children: (
+      disclosureComponentData: this.buildPublicDisclosureComponentObject(),
+      wrappedChildren: (
         <DisclosureManagerContext.Provider value={childComponentDelegate}>
           {children}
         </DisclosureManagerContext.Provider>
       ),
-      dismissPresentedComponent: dismissTopDisclosure,
+      popDisclosureStack: this.generatePopFunction(disclosureComponentKeys.length ? disclosureComponentKeys[disclosureComponentKeys.length - 1] : undefined),
     });
   }
 }
 
-DisclosureManager.propTypes = propTypes;
-DisclosureManager.defaultProps = defaultProps;
+DisclosureManagerV2.propTypes = propTypes;
+DisclosureManagerV2.defaultProps = defaultProps;
 
 const disclosureManagerShape = DisclosureManagerDelegate.propType;
 
-export default withDisclosureManager(DisclosureManager);
+export default withDisclosureManager(DisclosureManagerV2);
 export {
   withDisclosureManager, disclosureManagerShape, DisclosureHeaderAdapter, DisclosureHeaderContext,
 };

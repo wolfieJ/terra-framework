@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames/bind';
 
 /* eslint-disable import/no-extraneous-dependencies, import/no-unresolved, import/extensions */
-import ModalManager from 'terra-modal-manager/lib/ModalManager';
+import ModalManager from 'terra-modal-manager/lib/v2/ModalManagerV2';
 import styles from 'terra-modal-manager/lib/terra-dev-site/doc/example/example-styles.scss';
 /* eslint-enable import/no-extraneous-dependencies, import/no-unresolved, import/extensions */
 

@@ -7,6 +7,7 @@ import DisclosureManagerContext from './DisclosureManagerContext';
 import withDisclosureManager from './withDisclosureManager';
 import DisclosureHeaderContext from './DisclosureHeaderContext';
 import DisclosureHeaderAdapter from './DisclosureHeaderAdapter';
+import DisclosureManagerV2 from './v2/DisclosureManagerV2';
 
 const availableDisclosureSizes = {
   TINY: 'tiny',
@@ -459,7 +460,6 @@ class DisclosureManager extends React.Component {
   generatePopFunction(key) {
     return () => {
       const { disclosureComponentKeys, disclosureComponentData } = this.state;
-
       const disclosedComponentData = disclosureComponentData[key];
 
       if (disclosureComponentKeys[disclosureComponentKeys.length - 1] !== key) {
@@ -588,5 +588,5 @@ const disclosureManagerShape = DisclosureManagerDelegate.propType;
 
 export default withDisclosureManager(DisclosureManager);
 export {
-  withDisclosureManager, disclosureManagerShape, DisclosureHeaderAdapter, DisclosureHeaderContext,
+  DisclosureManagerV2, withDisclosureManager, disclosureManagerShape, DisclosureHeaderAdapter, DisclosureHeaderContext,
 };

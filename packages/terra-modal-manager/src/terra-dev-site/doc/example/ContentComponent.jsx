@@ -58,10 +58,22 @@ class ContentComponent extends React.Component {
           disclosureManager.disclose({
             preferredType: disclosureType,
             size,
-            component: <DisclosureComponent name={`Disclosure Component (${size})`} disclosureType={disclosureType} />,
             onDismiss: () => {
               console.log('onDismiss: content was dismissed');
             },
+            component: (
+              <DisclosureComponent
+                name={`Disclosure Component (${name})`}
+                disclosureType={disclosureType}
+                onSubmitValue={(value) => {
+                  this.setState({
+                    valueFromDisclosure: value,
+                  }, this.dismissDisclosure);
+                }}
+              />
+            ),
+          }).then(({ dismissDisclosure }) => {
+            this.dismissDisclosure = dismissDisclosure;
           });
         }}
       />
@@ -78,11 +90,24 @@ class ContentComponent extends React.Component {
         onClick={() => {
           disclosureManager.disclose({
             preferredType: disclosureType,
-            dimensions: { height: this.state.disclosureHeight, width: this.state.disclosureWidth },
-            content: {
-              key: 'Content-Disclosure-Dimensions',
-              component: <DisclosureComponent name={`Disclosure Component (${name})`} disclosureType={disclosureType} />,
+            size: { height: this.state.disclosureHeight, width: this.state.disclosureWidth },
+            onDismiss: () => {
+              console.log('onDismiss: content was dismissed');
             },
+            component: (
+              <DisclosureComponent
+                name={`Disclosure Component (${name})`}
+                disclosureType={disclosureType}
+                onSubmitValue={(value) => {
+                  this.setState({
+                    valueFromDisclosure: value,
+                  }, this.dismissDisclosure);
+                }}
+
+              />
+            ),
+          }).then(({ dismissDisclosure }) => {
+            this.dismissDisclosure = dismissDisclosure;
           });
         }}
       />
@@ -109,6 +134,8 @@ class ContentComponent extends React.Component {
   }
 
   render() {
+    console.log('Rendering Content Component');
+
     return (
       <ContentContainer
         header={(
@@ -132,6 +159,13 @@ class ContentComponent extends React.Component {
           {this.renderForm()}
           {this.renderFormButton()}
         </div>
+        <p>The disclosed component can provide callbacks to and receive data from the component it discloses.</p>
+        <p>
+          Value from disclosed component:
+          {' '}
+          <b>{this.state.valueFromDisclosure}</b>
+        </p>
+
       </ContentContainer>
     );
   }
