@@ -84,7 +84,9 @@ class ModalManagerV2 extends React.Component {
           isFullscreen={isFullscreen}
           classNameModal={cx(classArray)}
           onRequestClose={() => {
-            manager.popDisclosureStack();
+            if (!headerDataForDisclosedComponent.blockNavigation) {
+              manager.popDisclosureStack();
+            }
           }}
           closeOnEsc
           closeOnOutsideClick={false}
@@ -96,8 +98,8 @@ class ModalManagerV2 extends React.Component {
               <React.Fragment>
                 <ActionHeader
                   title={headerDataForDisclosedComponent && headerDataForDisclosedComponent.title}
-                  onClose={manager.disclosureComponentKeys.length === 1 ? manager.popDisclosureStack : undefined}
-                  onBack={manager.disclosureComponentKeys.length > 1 ? manager.popDisclosureStack : undefined}
+                  onClose={manager.disclosureComponentKeys.length === 1 && !headerDataForDisclosedComponent.blockNavigation ? manager.popDisclosureStack : undefined}
+                  onBack={manager.disclosureComponentKeys.length > 1 && !headerDataForDisclosedComponent.blockNavigation ? manager.popDisclosureStack : undefined}
                 >
                   {headerDataForDisclosedComponent && headerDataForDisclosedComponent.actions}
                 </ActionHeader>

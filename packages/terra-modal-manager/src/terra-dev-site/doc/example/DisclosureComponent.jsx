@@ -34,6 +34,12 @@ class DisclosureComponent extends React.Component {
     };
   }
 
+  updateDate(date) {
+    this.setState({
+      currentDate: date,
+    });
+  }
+
   render() {
     const { disclosureManager, name, disclosureType } = this.props;
     const { text } = this.state;
@@ -44,7 +50,7 @@ class DisclosureComponent extends React.Component {
       <div style={{ height: '1000px' }}>
         <DisclosureHeaderAdapter
           title={name}
-          actions={name === 'Nested Disclosure Component ()' ? (
+          actions={name === 'Nested Disclosure Component (small)' ? (
             <CollapsibleMenuView>
               <CollapsibleMenuView.Toggle
                 text="Toggle Item 1"
@@ -78,6 +84,12 @@ class DisclosureComponent extends React.Component {
         />
         <div className={cx('content-wrapper')}>
           <h3>{name}</h3>
+          <p>
+            Data from presenting component:
+            {' '}
+            <b>{this.state.currentDate}</b>
+          </p>
+          <br />
           <p>The disclosed component can disclose content within the same disclosure view.</p>
           <Button
             text="Disclose Again"
@@ -174,12 +186,7 @@ class DisclosureComponent extends React.Component {
             isDisabled={!text.length}
             onClick={() => {
               if (this.props.onSubmitValue) {
-                const textValue = this.state.text;
-                this.setState({
-                  text: '',
-                }, () => {
-                  this.props.onSubmitValue(textValue);
-                });
+                this.props.onSubmitValue(this.state.text);
               }
             }}
           />
@@ -195,4 +202,4 @@ DisclosureComponent.defaultProps = defaultProps;
 
 const WrappedDisclosureComponent = withDisclosureManager(DisclosureComponent);
 
-export default withDisclosureManager(WrappedDisclosureComponent);
+export default WrappedDisclosureComponent;

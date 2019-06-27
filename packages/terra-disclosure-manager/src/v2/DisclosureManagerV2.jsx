@@ -162,7 +162,7 @@ class DisclosureManagerV2 extends React.Component {
         return new Promise((resolve) => {
           this.pushDisclosure(data, disclosedContentKey, () => {
             resolve({
-              dismissDisclosure: this.generatePopFunction(disclosedContentKey),
+              dismissDisclosure: this.generatePopFunction(disclosedContentKey, { unsafe: true }),
             });
           });
         });
@@ -212,7 +212,7 @@ class DisclosureManagerV2 extends React.Component {
       return new Promise((resolve) => {
         this.pushDisclosure(data, disclosedContentKey, () => {
           resolve({
-            dismissDisclosure: this.generatePopFunction(disclosedContentKey),
+            dismissDisclosure: this.generatePopFunction(disclosedContentKey, { unsafe: true }),
           });
         });
       });
@@ -242,11 +242,11 @@ class DisclosureManagerV2 extends React.Component {
       onDismiss: data.onDismiss,
       checkpointRef: React.createRef(),
       delegateValue: this.generateDisclosureComponentDelegate(key),
-      headerAdapterContextValue: (title, actions) => {
+      headerAdapterContextValue: ({ title, actions, blockNavigation }) => {
         this.setState(state => ({
           disclosureComponentData: Object.assign({}, state.disclosureComponentData, {
             [key]: Object.assign({}, state.disclosureComponentData[key], {
-              headerAdapterData: { title, actions },
+              headerAdapterData: { title, actions, blockNavigation },
             }),
           }),
         }));
@@ -264,11 +264,21 @@ class DisclosureManagerV2 extends React.Component {
     this.setState(newState, callback);
   }
 
-  popDisclosure(callback) {
+  popDisclosure(callback, startIndex) {
     const newState = DisclosureManagerV2.cloneDisclosureState(this.state);
 
-    const poppedComponentKey = newState.disclosureComponentKeys.pop();
-    delete newState.disclosureComponentData[poppedComponentKey];
+    if (startIndex !== undefined) {
+      const poppedKeys = newState.disclosureComponentKeys.slice(startIndex);
+
+      newState.disclosureComponentKeys = newState.disclosureComponentKeys.slice(0, startIndex);
+
+      poppedKeys.forEach((key) => {
+        delete newState.disclosureComponentData[key];
+      });
+    } else {
+      const poppedComponentKey = newState.disclosureComponentKeys.pop();
+      delete newState.disclosureComponentData[poppedComponentKey];
+    }
 
     this.setState(newState, callback);
   }
@@ -276,24 +286,28 @@ class DisclosureManagerV2 extends React.Component {
   /**
    * Creates an instance of a pop function for the component represented by the given key.
    */
-  generatePopFunction(key) {
+  generatePopFunction(key, options = {}) {
     return () => {
       const { disclosureComponentKeys, disclosureComponentData } = this.state;
 
       const disclosedComponentData = disclosureComponentData[key];
 
-      if (disclosureComponentKeys[disclosureComponentKeys.length - 1] !== key) {
-        /**
-         * Only the top-most component can be dismissed. If the top component key in the disclosure stack does not match
-         * the key used to generate this function, then the pop action is rejected.
-         */
-        return Promise.reject();
-      }
+      // if (disclosureComponentKeys[disclosureComponentKeys.length - 1] !== key) {
+      //   /**
+      //    * Only the top-most component can be dismissed. If the top component key in the disclosure stack does not match
+      //    * the key used to generate this function, then the pop action is rejected.
+      //    */
+      //   return Promise.reject();
+      // }
 
       return new Promise((resolve, reject) => {
-        disclosedComponentData.checkpointRef.current.resolvePrompts(this.props.navigationPromptOptions).then(() => {
-          this.popDisclosure(resolve);
-        }).catch(reject);
+        if (options.unsafe) {
+          this.popDisclosure(resolve, disclosureComponentKeys.indexOf(key));
+        } else {
+          disclosedComponentData.checkpointRef.current.resolvePrompts(this.props.navigationPromptOptions).then(() => {
+            this.popDisclosure(resolve);
+          }).catch(reject);
+        }
       }).then(() => {
         if (disclosedComponentData.onDismiss) {
           disclosedComponentData.onDismiss();

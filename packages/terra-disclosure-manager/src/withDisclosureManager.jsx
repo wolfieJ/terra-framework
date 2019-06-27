@@ -4,11 +4,11 @@ import DisclosureManagerContext from './DisclosureManagerContext';
 const getDisplayName = Component => Component.displayName || Component.name || 'Component';
 
 const withDisclosureManager = (WrappedComponent) => {
-  const WithDisclosureManagerComp = props => (
+  const WithDisclosureManagerComp = React.forwardRef((props, ref) => (
     <DisclosureManagerContext.Consumer>
-      {disclosureManager => <WrappedComponent {...props} disclosureManager={disclosureManager} />}
+      {disclosureManager => <WrappedComponent {...props} ref={ref} disclosureManager={disclosureManager} />}
     </DisclosureManagerContext.Consumer>
-  );
+  ));
 
   WithDisclosureManagerComp.displayName = `withDisclosureManager(${getDisplayName(WrappedComponent)})`;
   WithDisclosureManagerComp.WrappedComponent = WrappedComponent;

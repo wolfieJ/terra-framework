@@ -37,7 +37,19 @@ class ContentComponent extends React.Component {
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.getId = this.getId.bind(this);
 
+    this.disclosedComponentRef = React.createRef();
+
     this.state = { id: `dimensions${Math.floor(Math.random() * 100000)}`, disclosureHeight: HEIGHT_KEYS[0], disclosureWidth: WIDTH_KEYS[0] };
+  }
+
+  componentDidMount() {
+    setInterval(() => {
+      const dateNow = (new Date()).toLocaleString();
+
+      if (this.disclosedComponentRef.current) {
+        this.disclosedComponentRef.current.updateDate(dateNow);
+      }
+    }, 1000);
   }
 
   getId(name) {
@@ -63,7 +75,8 @@ class ContentComponent extends React.Component {
             },
             component: (
               <DisclosureComponent
-                name={`Disclosure Component (${name})`}
+                ref={this.disclosedComponentRef}
+                name={`Disclosure Component (${size})`}
                 disclosureType={disclosureType}
                 onSubmitValue={(value) => {
                   this.setState({
@@ -96,6 +109,7 @@ class ContentComponent extends React.Component {
             },
             component: (
               <DisclosureComponent
+                ref={this.disclosedComponentRef}
                 name={`Disclosure Component (${name})`}
                 disclosureType={disclosureType}
                 onSubmitValue={(value) => {
