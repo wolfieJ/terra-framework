@@ -6,6 +6,9 @@ Unreleased
 ### Added
 * Added `aria-haspopup` attribute to menu items that contain sub-navigation
 
+### Changed
+* Replaced .visually-hidden-text class with terra-visually-hidden-text component
+
 2.11.0 - (July 2, 2019)
 ------------------
 ### Changed

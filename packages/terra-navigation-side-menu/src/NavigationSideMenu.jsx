@@ -4,6 +4,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import classNames from 'classnames/bind';
 import ActionHeader from 'terra-action-header';
 import ContentContainer from 'terra-content-container';
+import VisuallyHiddenText from 'terra-visually-hidden-text';
 import KeyCode from 'keycode-js';
 import MenuItem from './_MenuItem';
 
@@ -250,12 +251,11 @@ class NavigationSideMenu extends Component {
 
     return (
       <Fragment>
-        <span
+        <VisuallyHiddenText
           aria-atomic="true"
           aria-live="assertive"
           aria-relevant="additions text"
-          className={cx('visually-hidden-text')}
-          ref={this.visuallyHiddenComponent}
+          refCallback={(ref) => { this.visuallyHiddenComponent = ref; }}
         />
         <ContentContainer {...customProps} header={header} fill className={sideMenuContentContainerClassNames}>
           {this.buildListContent(currentItem)}
