@@ -69,12 +69,13 @@ class TabMenu extends React.Component {
     }
   }
 
-  wrapOnClick(child) {
+  wrapOnClick(child, metaData) {
     return (event) => {
+      event.preventDefault();
       event.stopPropagation();
 
-      if (child.props.onClick) {
-        child.props.onClick(event);
+      if (child.props.onSelect) {
+        child.props.onSelect(metaData);
       }
 
       this.setState({ isOpen: false });
@@ -88,7 +89,7 @@ class TabMenu extends React.Component {
 
     React.Children.forEach(this.props.children, (child) => {
       const {
-        label, customDisplay, icon, isIconOnly, isSelected, ...otherProps
+        label, customDisplay, icon, isIconOnly, isSelected, metaData, ...otherProps
       } = child.props;
 
       if (isSelected) {
@@ -99,7 +100,7 @@ class TabMenu extends React.Component {
         <Menu.Item
           {...otherProps}
           text={label}
-          onClick={this.wrapOnClick(child)}
+          onClick={this.wrapOnClick(child, metaData)}
           isSelected={isSelected}
           isSelectable
           key={child.key}

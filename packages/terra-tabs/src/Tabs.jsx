@@ -23,6 +23,11 @@ const propTypes = {
    * Currently active Tabs.Pane components to be displayed.
    */
   children: PropTypes.node.isRequired,
+  /**
+   * Tabs style. One of: `'modular-centered'`, `'modular-left-aligned'`, `'structural'`.
+   * NOTE: This is being commented out until discussions have been resolved around if we want modular tabs.
+   variant: PropTypes.oneOf(['modular-centered', 'modular-left-aligned', 'structural']),
+  */
 };
 
 const defaultProps = {
@@ -62,7 +67,7 @@ const Tabs = ({
       {...customProps}
       className={tabsClassNames}
       fill={fill}
-      header={React.cloneElement(tabBar, { onTruncationChange: value => setIsLabelTruncated(value) })}
+      header={React.cloneElement(tabBar, { onTruncationChange: value => setIsLabelTruncated(value), variant })}
     >
       <div
         role="tabpanel"

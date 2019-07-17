@@ -33,7 +33,13 @@ const propTypes = {
    * Indicates if the tab is currently selected.
    */
   isSelected: PropTypes.bool,
+  /**
+   * Callback function triggering on selection.
+   */
   onSelect: PropTypes.func,
+  /**
+   * Object to be returned in the onSelect.
+   */
   metaData: PropTypes.object,
 };
 
@@ -76,10 +82,17 @@ const Tab = ({
 
   if (isIconOnly) {
     attributes['aria-label'] = label;
-    attributes['aria-selected'] = isSelected;
+  }
+
+  if (onSelect) {
     attributes.tabIndex = isSelected ? 0 : -1;
     attributes.onClick = onSelect.bind(null, metaData);
     attributes.onKeyDown = onKeyDown;
+  }
+  attributes['aria-selected'] = isSelected;
+
+  if (isDisabled) {
+    attributes['aria-disabled'] = true;
   }
 
   return (

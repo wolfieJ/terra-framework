@@ -31,10 +31,6 @@ class CollapsibleTabs extends React.Component {
     this.resetCache = this.resetCache.bind(this);
     this.handleResize = this.handleResize.bind(this);
     this.handleSelectionAnimation = this.handleSelectionAnimation.bind(this);
-    this.handleOnKeyDown = this.handleOnKeyDown.bind(this);
-    this.handleMenuOnKeyDown = this.handleMenuOnKeyDown.bind(this);
-    this.handleFocusLeft = this.handleFocusLeft.bind(this);
-    this.handleFocusRight = this.handleFocusRight.bind(this);
     this.resetCache();
   }
 

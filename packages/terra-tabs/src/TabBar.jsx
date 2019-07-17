@@ -12,20 +12,18 @@ const propTypes = {
   /**
    * Callback function when label truncation state has changed.
    * Parameters: 1. Bool indicating if any of the tab labels have been truncated.
+   * @private
    */
   onTruncationChange: PropTypes.func,
   /**
    * Tabs style. One of: `'modular-centered'`, `'modular-left-aligned'`, `'structural'`.
-   * NOTE: This is being commented out until discussions have been resolved around if we want modular tabs.
-  variant: PropTypes.oneOf(['modular-centered', 'modular-left-aligned', 'structural']),
+   * @private
   */
+  variant: PropTypes.oneOf(['modular-centered', 'modular-left-aligned', 'structural']),
 };
 
-const TabBar = ({ children, onTruncationChange }) => {
+const TabBar = ({ children, onTruncationChange, variant }) => {
   const [breakpoint, setBreakpoint] = useState(null);
-
-  // NOTE: Hard-coding variant to structural until discussions have resolved around if we want modular tabs.
-  const variant = 'structural';
 
   let tabs;
   if (breakpoint) {

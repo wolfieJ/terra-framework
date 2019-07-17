@@ -6,7 +6,8 @@ import { name } from '../../../../package.json';
 /* eslint-disable import/no-webpack-loader-syntax, import/first, import/extensions, import/no-unresolved, import/no-duplicates */
 // Component Source
 import TabsSrc from '!raw-loader!../../../../src/Tabs';
-import PaneSrc from '!raw-loader!../../../../src/TabPane';
+import TabSrc from '!raw-loader!../../../../src/Tab';
+import TabBarSrc from '!raw-loader!../../../../src/TabBar';
 
 // Example Files
 import TabsTemplate from '../example/TabsTemplate';
@@ -50,8 +51,12 @@ const DocPage = () => (
         componentSrc: TabsSrc,
       },
       {
-        componentName: 'Tabs.Pane',
-        componentSrc: PaneSrc,
+        componentName: 'Tab',
+        componentSrc: TabSrc,
+      },
+      {
+        componentName: 'TabBar',
+        componentSrc: TabBarSrc,
       },
     ]}
   />
