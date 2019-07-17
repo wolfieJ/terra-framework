@@ -3,29 +3,23 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import Menu from 'terra-menu';
 import IconCaretDown from 'terra-icon/lib/icon/IconCaretDown';
-import KeyCode from 'keycode-js';
+import { KEY_SPACE, KEY_RETURN } from 'keycode-js';
 import { injectIntl, intlShape } from 'react-intl';
+import { handleArrows } from './_TabUtils';
 import styles from './Tabs.module.scss';
 
 const cx = classNames.bind(styles);
 
 const propTypes = {
   /**
-   * Key of the current active tab.
-   */
-  activeKey: PropTypes.string,
-
-  /**
    * Tabs that should be displayed collapsed as selectable menu items.
    */
   children: PropTypes.node,
-
   /**
    * @private
    * intl object programmatically imported through injectIntl from react-intl.
    * */
   intl: intlShape.isRequired,
-
   /**
    * Ref callback for menu toggle.
    */
@@ -67,8 +61,11 @@ class TabMenu extends React.Component {
   }
 
   handleOnKeyDown(event) {
-    if (event.nativeEvent.keyCode === KeyCode.KEY_RETURN) {
+    if (event.nativeEvent.keyCode === KEY_RETURN || event.nativeEvent.keyCode === KEY_SPACE) {
+      event.preventDefault();
       this.setState({ isOpen: true });
+    } else {
+      handleArrows(event);
     }
   }
 
@@ -91,13 +88,11 @@ class TabMenu extends React.Component {
 
     React.Children.forEach(this.props.children, (child) => {
       const {
-        label, customDisplay, icon, isIconOnly, ...otherProps
+        label, customDisplay, icon, isIconOnly, isSelected, ...otherProps
       } = child.props;
-      let isSelected = false;
 
-      if (this.props.activeKey === child.key) {
+      if (isSelected) {
         menuToggleText = label;
-        isSelected = true;
         menuActive = true;
       }
       menuItems.push((
@@ -116,7 +111,7 @@ class TabMenu extends React.Component {
       /* eslint-disable jsx-a11y/no-static-element-interactions */
       <div
         role="button"
-        tabIndex="0"
+        tabIndex={menuActive ? '0' : '-1'}
         ref={this.setTargetRef}
         onClick={this.handleOnClick}
         onKeyDown={this.handleOnKeyDown}
