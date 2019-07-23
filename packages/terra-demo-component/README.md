@@ -3,7 +3,7 @@
 [![NPM version](https://badgen.net/npm/v/terra-demo-component)](https://www.npmjs.org/package/terra-demo-component)
 [![Build Status](https://badgen.net/travis/cerner/terra-framework)](https://travis-ci.org/cerner/terra-framework)
 
-{insert description}
+This is a demo component.
 
 - [Getting Started](#getting-started)
 - [Documentation](https://github.com/cerner/terra-framework/tree/master/packages/terra-demo-component/docs)

@@ -1,16 +1,10 @@
 /* global browser, Terra, before */
-Terra.viewports('tiny', 'medium', 'large').forEach((viewport) => {
-  describe('DemoComponent', () => {
+Terra.describeViewports('Basic Test', ['huge', 'tiny'], () => {
+  describe('Default', () => {
     before(() => {
-      browser.setViewportSize(viewport);
+      browser.url('/#/raw/tests/terra-demo-component/demo-component/demo-component');
     });
 
-    describe('Default', () => {
-      before(() => {
-        browser.url('/#/raw/tests/terra-demo-component/default-demo-component');
-      });
-
-      Terra.should.validateElement();
-    });
+    Terra.it.validatesElement();
   });
 });

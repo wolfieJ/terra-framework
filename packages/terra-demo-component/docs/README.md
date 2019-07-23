@@ -1,6 +1,6 @@
 # Terra Demo Component
 
-{insert description}
+This is a demo component.
 
 ## Getting Started
 
