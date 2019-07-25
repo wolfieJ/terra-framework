@@ -3,8 +3,15 @@ ChangeLog
 
 Unreleased
 ----------
+
+3.7.1 - (July 23, 2019)
+------------------
+* a completely unremarkable update because lerna be lerna
+
+6.7.0 - (July 23, 2019)
+------------------
 ### Changed
-* Updated to interface with react-intl's Intl context rather than old React Context API
+* Minor dependency version bump
 
 6.6.0 - (July 16, 2019)
 ------------------
