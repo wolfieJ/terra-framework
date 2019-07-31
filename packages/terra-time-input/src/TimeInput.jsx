@@ -136,6 +136,7 @@ class TimeInput extends React.Component {
     this.handleMeridiemInputFocus = this.handleMeridiemInputFocus.bind(this);
     this.handleMeridiemSelectFocus = this.handleMeridiemSelectFocus.bind(this);
     this.handleMeridiemButtonChange = this.handleMeridiemButtonChange.bind(this);
+    this.preventMeridiemChange = false;
 
     let hour = TimeUtil.splitHour(value);
     let meridiem;
@@ -411,13 +412,15 @@ class TimeInput extends React.Component {
   }
 
   handleMeridiemChange(event) {
-    if (this.state.meridiemFocused) {
+    if (this.state.meridiemFocused && !this.preventMeridiemChange) {
       this.setState({
         meridiem: event.target.value,
       });
 
       this.handleValueChange(event, TimeUtil.inputType.HOUR, this.state.hour.toString(), event.target.value);
     }
+
+    this.preventMeridiemChange = false;
   }
 
   handleMeridiemInputFocus(event) {
@@ -697,7 +700,7 @@ class TimeInput extends React.Component {
       }
       event.preventDefault();
     } else if (event.keyCode === KeyCode.KEY_RIGHT) {
-      this.setState({ meridiemFocused: false });
+      this.preventMeridiemChange = true;
     }
   }
 
