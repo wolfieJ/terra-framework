@@ -53,7 +53,6 @@
       background-size: var(--terra-time-input-focus-background-size, 0 0);
       color: var(--terra-time-input-focus-color, #1c1f21);
 
-
       [dir=ltr] & {
         box-shadow: var(--terra-time-input-focus-ltr-box-shadow, 0 0 8px #a6d9f4);
       }
@@ -205,7 +204,7 @@
   }
 
   .meridiem-button {
-    background-color: var(--terra-time-input-meridiem-button-background-color, #dedfe0);
+    background-color: var(--terra-time-input-meridiem-button-background-color, transparent);
     border-color: var(--terra-time-input-meridiem-button-border-color, #c8cacb);
     color: var(--terra-time-input-meridiem-button-color, #1c1f21);
     font-size: var(--terra-time-input-meridiem-button-font-size, 1rem);
