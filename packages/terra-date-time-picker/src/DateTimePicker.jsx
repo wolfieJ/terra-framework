@@ -3,7 +3,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import DatePicker from 'terra-date-picker';
-import TimeInput from 'terra-time-input';
+import TimeInput from '../../terra-time-input/lib/TimeInput';
 import KeyCode from 'keycode-js';
 import DateUtil from 'terra-date-picker/lib/DateUtil';
 import styles from './DateTimePicker.module.scss';
@@ -552,26 +552,28 @@ class DateTimePicker extends React.Component {
           value={dateTime && dateTime.isValid() ? dateTime.format() : ''}
         />
 
-        <DatePicker
-          onCalendarButtonClick={this.handleOnCalendarButtonClick}
-          onChange={this.handleDateChange}
-          onChangeRaw={this.handleDateChangeRaw}
-          onSelect={this.handleOnSelect}
-          onClickOutside={onClickOutside}
-          onBlur={this.handleOnDateBlur}
-          onFocus={this.handleOnDateInputFocus}
-          excludeDates={excludeDates}
-          filterDate={filterDate}
-          includeDates={includeDates}
-          inputAttributes={dateInputAttributes}
-          maxDate={maxDate}
-          minDate={minDate}
-          selectedDate={dateValue}
-          name="input"
-          disabled={disabled}
-          disableButtonFocusOnClose
-        />
-
+        <div className={cx('date-facade')}>
+          <DatePicker
+            onCalendarButtonClick={this.handleOnCalendarButtonClick}
+            onChange={this.handleDateChange}
+            onChangeRaw={this.handleDateChangeRaw}
+            onSelect={this.handleOnSelect}
+            onClickOutside={onClickOutside}
+            onBlur={this.handleOnDateBlur}
+            onFocus={this.handleOnDateInputFocus}
+            excludeDates={excludeDates}
+            filterDate={filterDate}
+            includeDates={includeDates}
+            inputAttributes={dateInputAttributes}
+            maxDate={maxDate}
+            minDate={minDate}
+            selectedDate={dateValue}
+            name="input"
+            disabled={disabled}
+            disableButtonFocusOnClose
+            className={cx('date-facade')}
+          />
+        </div>
         <div className={cx('time-facade')}>
           <TimeInput
             onBlur={this.handleOnTimeBlur}
@@ -586,7 +588,7 @@ class DateTimePicker extends React.Component {
             showSeconds={showSeconds}
           />
 
-          {this.state.isAmbiguousTime ? this.renderTimeClarification() : null }
+          {this.state.isAmbiguousTime ? this.renderTimeClarification() : null}
         </div>
       </div>
     );

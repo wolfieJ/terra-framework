@@ -262,15 +262,6 @@ TimeUtil.inputType = {
   SECOND: 3,
 };
 
-TimeUtil.isConsideredMobileDevice = () => window.matchMedia('(max-width: 1024px)').matches
-  && (
-    'ontouchstart' in window
-    // eslint-disable-next-line no-undef
-    || (window.DocumentTouch && document instanceof DocumentTouch)
-    || navigator.maxTouchPoints > 0
-    || navigator.msMaxTouchPoints > 0
-  );
-
 // These formats are designed to be the possible props for the
 // variant prop of the TimeInput. They should not change.
 Object.defineProperty(TimeUtil, 'FORMAT_12_HOUR', {
