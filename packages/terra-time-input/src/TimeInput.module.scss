@@ -84,6 +84,8 @@
     .time-input-hour[disabled],
     .time-input-minute[disabled],
     .time-input-second[disabled] {
+      background-color: transparent;
+      border: 0;
       opacity: 1;
     }
   }
@@ -91,26 +93,26 @@
   .time-input-hour,
   .time-input-minute,
   .time-input-second {
-    background-color: var(--terra-time-input-background-color, #fff);
+    background-color: var(--terra-time-input-background-color, transparent);
     background-image: var(--terra-time-input-background-image, none);
     background-position: 0 100%;
     background-repeat: no-repeat;
     background-size: var(--terra-time-input-background-size, 0 0);
-    border-color: var(--terra-time-input-border-color, #dedfe0);
-    border-radius: var(--terra-time-input-border-radius, 3px);
-    border-style: var(--terra-time-input-border-style, solid);
-    border-width: var(--terra-time-input-border-width, 1px);
+    border-color: var(--terra-time-input-border-color);
+    border-radius: var(--terra-time-input-border-radius, 2px);
+    border-style: var(--terra-time-input-border-style);
+    border-width: var(--terra-time-input-border-width);
     box-sizing: border-box;
     caret-color: var(--terra-time-input-caret-color, #1c1f21);
     color: var(--terra-time-input-color, #1c1f21);
-    display: table;
-    height: var(--terra-time-input-mobile-height, 2.1428571429rem);
-    line-height: var(--terra-time-input-mobile-line-height, 1.429);
+    display: inline-block;
+    height: var(--terra-time-input-mobile-height, 1.5714285714rem);
+    line-height: var(--terra-time-input-mobile-line-height, 1.375);
     min-width: var(--terra-time-input-mobile-min-width, 4rem);
-    padding-bottom: var(--terra-time-input-mobile-padding-bottom, 0.2857142857rem);
-    padding-left: var(--terra-time-input-mobile-padding-left, 0.2857142857rem);
-    padding-right: var(--terra-time-input-mobile-padding-right, 0.2857142857rem);
-    padding-top: var(--terra-time-input-mobile-padding-top, 0.2857142857rem);
+    padding-bottom: var(--terra-time-input-mobile-padding-bottom, 0);
+    padding-left: var(--terra-time-input-mobile-padding-left, 0);
+    padding-right: var(--terra-time-input-mobile-padding-right, 0);
+    padding-top: var(--terra-time-input-mobile-padding-top, 0);
     transition-duration: var(--terra-time-input-transition-duration, 0.2s);
     transition-property: background-size;
     transition-timing-function: var(--terra-time-input-transition-timing-function, ease);
@@ -118,70 +120,50 @@
 
     &:hover {
       background-color: var(--terra-time-input-hover-background-color, #fff);
-      border: var(--terra-time-input-hover-border, 1px solid #dedfe0);
+      border: var(--terra-time-input-hover-border);
       color: var(--terra-time-input-hover-color, #1c1f21);
     }
 
     &:focus {
       @include focus-styles;
       background-size: var(--terra-time-input-focus-background-size, 0 0);
+      border-color: transparent;
 
       [dir=ltr] & {
-        box-shadow: var(--terra-time-input-focus-ltr-box-shadow, 0 0 8px #a6d9f4);
+        box-shadow: var(--terra-time-input-focus-ltr-box-shadow, none);
       }
 
       [dir=rtl] & {
-        box-shadow: var(--terra-time-input-focus-rtl-box-shadow, 0 0 8px #a6d9f4);
+        box-shadow: var(--terra-time-input-focus-rtl-box-shadow, none);
       }
     }
 
-    &.desktop {
+    &::selection {
       background-color: transparent;
+    }
+
+    &.initial-focus {
+      background-color: var(--terra-time-input-desktop-focused-input-background-color, rgba(139, 194, 249, 0.3));
       background-size: 0 0;
-      border: 0;
-      border-radius: var(--terra-time-input-desktop-input-border-radius, 2px);
-      display: inline-block;
-      height: var(--terra-time-input-desktop-input-height, 1.5714285714rem);
-      line-height: var(--terra-time-input-line-height, 1.375);
-      padding: 0;
-
-      &:hover {
-        background-color: var(--terra-time-input-hover-background-color, #fff);
-        color: var(--terra-time-input-hover-color, #1c1f21);
-      }
-
-      &:focus {
-        border-color: transparent;
-        box-shadow: none;
-      }
-
-      &::selection {
-        background-color: transparent;
-      }
-
-      &.initial-focus {
-        background-color: var(--terra-time-input-desktop-focused-input-background-color, rgba(139, 194, 249, 0.3));
-        background-size: 0 0;
-        border-color: transparent;
-        box-shadow: none;
-        color: var(--terra-time-input-focus-color, #1c1f21);
-      }
+      border-color: transparent;
+      box-shadow: none;
+      color: var(--terra-time-input-focus-color, #1c1f21);
     }
   }
 
-  .time-input-hour.desktop {
+  .time-input-hour {
     min-width: 1.7em;
     text-align: right;
     width: 1.7em;
   }
 
-  .time-input-minute.without-second.desktop {
+  .time-input-minute.without-second {
     min-width: 1.8em;
     text-align: left;
     width: 1.8em;
   }
 
-  .time-input-minute.with-second.desktop {
+  .time-input-minute.with-second {
     min-width: 1.1em;
     text-align: left;
     width: 1.1em;
@@ -193,7 +175,7 @@
     }
   }
 
-  .time-input-second.desktop {
+  .time-input-second {
     min-width: 1.8em;
     text-align: left;
     width: 1.8em;
