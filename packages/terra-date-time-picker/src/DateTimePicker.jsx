@@ -571,7 +571,6 @@ class DateTimePicker extends React.Component {
             name="input"
             disabled={disabled}
             disableButtonFocusOnClose
-            className={cx('date-facade')}
           />
         </div>
         <div className={cx('time-facade')}>

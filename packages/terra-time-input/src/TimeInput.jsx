@@ -707,7 +707,7 @@ class TimeInput extends React.Component {
       <div
         {...customProps}
         ref={this.timeInputContainer}
-        className={cx('time-picker')}
+        className={cx('time-input-container')}
       >
         <div className={timeInputClassNames}>
           <input

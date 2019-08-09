@@ -145,7 +145,7 @@ class TimeClarification extends React.Component {
             </div>
           </div>
         </AbstractModal>
-        <div className={cx('offset-button-wrapper')}>
+        <div className={cx('offset-button-container')}>
           <Button
             title={this.state.offsetLongDisplay}
             aria-label={this.state.offsetLongDisplay}
