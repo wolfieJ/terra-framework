@@ -707,6 +707,7 @@ class TimeInput extends React.Component {
       <div
         {...customProps}
         ref={this.timeInputContainer}
+        className={cx('time-picker')}
       >
         <div className={timeInputClassNames}>
           <input
@@ -784,7 +785,7 @@ class TimeInput extends React.Component {
           )}
         </div>
         {this.props.variant === TimeUtil.FORMAT_12_HOUR && (
-          <ButtonGroup selectedKeys={[this.state.meridiem]} onChange={this.handleMeridiemButtonChange}>
+          <ButtonGroup selectedKeys={[this.state.meridiem]} onChange={this.handleMeridiemButtonChange} className={cx('meridiem-button-group')}>
             <ButtonGroup.Button
               key={this.anteMeridiem}
               className={cx('meridiem-button')}

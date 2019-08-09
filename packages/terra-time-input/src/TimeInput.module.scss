@@ -10,6 +10,10 @@
     outline: none;
   }
 
+  .time-picker {
+    display: inline-block;
+  }
+
   .time-input {
     background-color: var(--terra-time-input-background-color, #fff);
     background-image: var(--terra-time-input-background-image, none);
@@ -201,6 +205,11 @@
     margin-left: var(--terra-time-input-time-spacer-margin-left, 0.14285714rem);
     margin-right: var(--terra-time-input-time-spacer-margin-right, 0.14285714rem);
     margin-top: var(--terra-time-input-time-spacer-margin-top, 0.3571428571rem);
+  }
+
+  .meridiem-button-group {
+    margin-right: var(--terra-time-input-meridiem-button-group-margin-right, 0.5rem);
+    margin-bottom: var(--terra-time-input-meridiem-button-group-margin-bottom, 0.5rem);
   }
 
   .meridiem-button {
