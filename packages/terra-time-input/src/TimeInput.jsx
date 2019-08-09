@@ -53,7 +53,7 @@ const propTypes = {
    */
   refCallback: PropTypes.func,
   /**
-   * Custom input attribues to apply to the seconds input
+   * Custom input attributes to apply to the seconds input
    */
   // eslint-disable-next-line react/forbid-prop-types
   secondAttributes: PropTypes.object,
@@ -366,7 +366,7 @@ class TimeInput extends React.Component {
         // Move focus to second if second is shown and minute input has a valid and complete entry
         this.secondInput.focus();
       } else if (this.props.variant === TimeUtil.FORMAT_12_HOUR && this.meridiemSelect) {
-        // Else move focus to the merdiem for 12 hours times if the minute input has a valid and complete entry.
+        // Else move focus to the meridiem for 12 hours times if the minute input has a valid and complete entry.
         this.meridiemSelect.focus();
       }
     }
@@ -468,7 +468,7 @@ class TimeInput extends React.Component {
    * Takes a key input from the minute input, and processes it based on the value of the keycode.
    * If the key is an up or down arrow, it increments/decrements the minute. If the left arrow
    * is pressed, it shifts focus to the hour input. If the right arrow is pressed, it shifts
-   * focus to the merdiem input.
+   * focus to the meridiem input.
    * @param {Object} event Event object generated from the event delegation.
    */
   handleMinuteInputKeyDown(event) {
@@ -544,7 +544,7 @@ class TimeInput extends React.Component {
    * Takes a key input from the second input, and processes it based on the value of the keycode.
    * If the key is an up or down arrow, it increments/decrements the second. If the left arrow
    * is pressed, it shifts focus to the minute input. If the right arrow is pressed, it shifts
-   * focus to the merdiem input.
+   * focus to the meridiem input.
    * @param {Object} event Event object generated from the event delegation.
    */
   handleSecondInputKeyDown(event) {
