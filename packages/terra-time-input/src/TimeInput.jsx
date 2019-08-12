@@ -170,7 +170,6 @@ class TimeInput extends React.Component {
       hourInitialFocused: false,
       minuteInitialFocused: false,
       secondInitialFocused: false,
-      meridiemFocused: false,
     };
   }
 
@@ -265,7 +264,6 @@ class TimeInput extends React.Component {
 
   handleMeridiemButtonBlur(event) {
     this.handleBlur(event, TimeUtil.inputType.MERIDIEM);
-    this.setState({ meridiemFocused: false });
   }
 
   handleBlur(event, type) {
