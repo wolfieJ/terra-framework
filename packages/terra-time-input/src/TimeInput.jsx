@@ -227,19 +227,25 @@ class TimeInput extends React.Component {
   handleSecondFocus(event) {
     this.handleFocus(event);
     this.setState({ secondInitialFocused: true });
-    this.secondInput.setSelectionRange(0, this.secondInput.value.length);
+    if (!TimeUtil.isConsideredMobileDevice()) {
+      this.secondInput.setSelectionRange(0, this.secondInput.value.length);
+    }
   }
 
   handleMinuteFocus(event) {
     this.handleFocus(event);
     this.setState({ minuteInitialFocused: true });
-    this.minuteInput.setSelectionRange(0, this.minuteInput.value.length);
+    if (!TimeUtil.isConsideredMobileDevice()) {
+      this.minuteInput.setSelectionRange(0, this.minuteInput.value.length);
+    }
   }
 
   handleHourFocus(event) {
     this.handleFocus(event);
     this.setState({ hourInitialFocused: true });
-    this.hourInput.setSelectionRange(0, this.hourInput.value.length);
+    if (!TimeUtil.isConsideredMobileDevice()) {
+      this.hourInput.setSelectionRange(0, this.hourInput.value.length);
+    }
   }
 
   handleHourBlur(event) {
