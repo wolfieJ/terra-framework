@@ -93,7 +93,7 @@
   .time-input-hour,
   .time-input-minute,
   .time-input-second {
-    background-color: var(--terra-time-input-background-color, transparent);
+    background-color: var(--terra-time-input-background-color, #fff);
     background-image: var(--terra-time-input-background-image, none);
     background-position: 0 100%;
     background-repeat: no-repeat;
@@ -106,9 +106,9 @@
     caret-color: var(--terra-time-input-caret-color, #1c1f21);
     color: var(--terra-time-input-color, #1c1f21);
     display: inline-block;
-    height: var(--terra-time-input-mobile-height, 1.5714285714rem);
-    line-height: var(--terra-time-input-mobile-line-height, 1.375);
-    min-width: var(--terra-time-input-mobile-min-width, 4rem);
+    height: var(--terra-time-input-height, 1.5714285714rem);
+    line-height: var(--terra-time-input-line-height, 1.375);
+    min-width: var(--terra-time-input-min-width, 4rem);
     padding-bottom: var(--terra-time-input-mobile-padding-bottom, 0);
     padding-left: var(--terra-time-input-mobile-padding-left, 0);
     padding-right: var(--terra-time-input-mobile-padding-right, 0);
@@ -143,7 +143,7 @@
     }
 
     &.initial-focus {
-      background-color: var(--terra-time-input-desktop-focused-input-background-color, rgba(139, 194, 249, 0.3));
+      background-color: var(--terra-time-input-focused-input-background-color, rgba(139, 194, 249, 0.3));
       background-size: 0 0;
       border-color: transparent;
       box-shadow: none;
@@ -199,8 +199,8 @@
     border-color: var(--terra-time-input-meridiem-button-border-color, #c8cacb);
     color: var(--terra-time-input-meridiem-button-color, #1c1f21);
     font-size: var(--terra-time-input-meridiem-button-font-size, 1rem);
-    height: var(--terra-time-input-mobile-height, 2.1428571429rem);
-    line-height: var(--terra-time-input-mobile-line-height, 1.67142);
+    height: var(--terra-time-input-meridiem-button-height, 2.1428571429rem);
+    line-height: var(--terra-time-input-meridiem-button-line-height, 1.67412);
     outline: none;
     padding-bottom: var(--terra-time-input-meridiem-button-padding-bottom, 0.286rem);
     padding-top: var(--terra-time-input-meridiem-button-padding-top, 0.286rem);
