@@ -365,14 +365,9 @@ class TimeInput extends React.Component {
       }
     }
 
-    if (inputValue.length === 2) {
-      if (this.props.showSeconds) {
-        // Move focus to second if second is shown and minute input has a valid and complete entry
-        this.secondInput.focus();
-      } else if (this.props.variant === TimeUtil.FORMAT_12_HOUR && this.meridiemSelect) {
-        // Else move focus to the meridiem for 12 hours times if the minute input has a valid and complete entry.
-        this.meridiemSelect.focus();
-      }
+    // Move focus to second if second is shown and minute input has a valid and complete entry
+    if (inputValue.length === 2 && this.props.showSeconds) {
+      this.secondInput.focus();
     }
 
     this.handleValueChange(event, TimeUtil.inputType.MINUTE, inputValue, this.state.meridiem);
@@ -401,11 +396,6 @@ class TimeInput extends React.Component {
       if (digitsToPrependZero.indexOf(inputValue) > -1) {
         inputValue = '0'.concat(inputValue);
       }
-    }
-
-    // Move focus to the meridiem for 12 hours times if the second input has a valid and complete entry.
-    if (this.props.variant === TimeUtil.FORMAT_12_HOUR && inputValue.length === 2 && this.meridiemSelect) {
-      this.meridiemSelect.focus();
     }
 
     this.handleValueChange(event, TimeUtil.inputType.SECOND, inputValue, this.state.meridiem);
@@ -497,12 +487,8 @@ class TimeInput extends React.Component {
       this.focusHour(event);
     }
 
-    if (event.keyCode === KeyCode.KEY_RIGHT) {
-      if (this.props.showSeconds) {
-        this.focusSecondFromMinute(event);
-      } else {
-        this.focusMeridiemFromMinute(event);
-      }
+    if (event.keyCode === KeyCode.KEY_RIGHT && this.props.showSeconds) {
+      this.focusSecondFromMinute(event);
     }
   }
 
@@ -516,17 +502,6 @@ class TimeInput extends React.Component {
         this.hourInput.setSelectionRange(this.state.hour.length, this.state.hour.length);
         event.preventDefault();
       }
-    }
-  }
-
-  focusMeridiemFromMinute(event) {
-    // If the minute is empty or the cursor is after the value, move focus to the meridiem.
-    if ((this.state.minute.length === 0
-      || this.state.minute.length === this.minuteInput.selectionEnd)
-      && this.meridiemSelect
-    ) {
-      this.meridiemSelect.focus();
-      event.preventDefault();
     }
   }
 
@@ -572,10 +547,6 @@ class TimeInput extends React.Component {
       || event.keyCode === KeyCode.KEY_BACK_SPACE) {
       this.focusMinuteFromSecond(event);
     }
-
-    if (event.keyCode === KeyCode.KEY_RIGHT) {
-      this.focusMeridiemFromSecond(event);
-    }
   }
 
   focusMinuteFromSecond(event) {
@@ -588,17 +559,6 @@ class TimeInput extends React.Component {
         this.minuteInput.setSelectionRange(this.state.minute.length, this.state.minute.length);
         event.preventDefault();
       }
-    }
-  }
-
-  focusMeridiemFromSecond(event) {
-    // If the second is empty or the cursor is after the value, move focus to the meridiem.
-    if ((this.state.second.length === 0
-      || this.state.second.length === this.secondInput.selectionEnd)
-      && this.meridiemSelect
-    ) {
-      this.meridiemSelect.focus();
-      event.preventDefault();
     }
   }
 
