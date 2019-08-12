@@ -3,7 +3,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import DatePicker from 'terra-date-picker';
-import TimeInput from '../../terra-time-input/lib/TimeInput';
+import TimeInput from 'terra-time-input';
 import KeyCode from 'keycode-js';
 import DateUtil from 'terra-date-picker/lib/DateUtil';
 import styles from './DateTimePicker.module.scss';
