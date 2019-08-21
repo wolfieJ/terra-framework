@@ -877,7 +877,6 @@ class DatePicker extends React.Component {
                     <div
                       ref={this.datePickerOverlayContainer}
                       className={cx('react-datepicker-portal')}
-                      tabIndex="-1"
                       onKeyDown={this.handleCalendarKeyDown}
                     >
                       {calendar}

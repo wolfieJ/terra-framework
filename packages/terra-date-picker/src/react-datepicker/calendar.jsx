@@ -551,6 +551,8 @@ export default class Calendar extends React.Component {
   render () {
     return (
       <div className={cx(['react-datepicker', this.props.className])} data-terra-date-picker-calendar>
+        {/* To Do: wire up button to close popup and get translations */}
+        <button className={cx('visually-hidden')} type="button">Close Date Picker</button>
         {this.renderPreviousMonthButton()}
         {this.renderNextMonthButton()}
         {this.renderMonths()}
