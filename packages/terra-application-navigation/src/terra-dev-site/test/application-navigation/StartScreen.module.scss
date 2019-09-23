@@ -1,0 +1,165 @@
+:local {
+  .start-screen {
+
+    &.base {
+      height: 100%;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      position: relative;
+      width: 100%;
+    }
+  
+    .card {
+      background-image: var(--pctouch-start-screen-card-background-image, url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20225%22%3E%3Cpath%20fill%3D%22rgba%2838%2C162%2C229%2C0.5%29%22%20d%3D%22M800%2C222V0H148.5C285.4%2C23.7%2C417.9%2C89.4%2C529%2C144%20C645%2C201%2C723%2C222%2C800%2C222z%22%2F%3E%3Cpath%20fill%3D%22rgba%2838%2C162%2C229%2C0.4%29%22%20d%3D%22M800%2C212V0H340c102%2C43%2C177%2C104.7%2C260%2C152%20C662.5%2C187.6%2C739%2C212%2C800%2C212z%22%2F%3E%3Cpath%20fill%3D%22rgba%2838%2C162%2C229%2C0.5%29%22%20d%3D%22M800%2C200V0H449c97%2C62%2C126%2C108%2C196%2C152%20C686.9%2C178.3%2C742%2C200%2C800%2C200z%22%2F%3E%3C%2Fsvg%3E%0A'));
+      background-position: var(--pctouch-start-screen-card-background-position, -10px 0);
+      background-repeat: var(--pctouch-start-screen-card-background-repeat, no-repeat);
+      background-size: var(--pctouch-start-screen-card-background-size, 104% auto);
+      border: var(--pctouch-start-screen-card-border, 0 none);
+      border-radius: var(--pctouch-start-screen-card-border-radius, 10px);
+      left: 50%;
+      overflow: hidden;
+      position: absolute;
+      top: 40%;
+      width: calc(100% - (2 * 80px));
+    }
+
+    .text-title-startline {
+      color: var(--pctouch-start-screen-title-startline-color, #0065a3);
+      display: block;
+      font-size: var(--pctouch-start-screen-title-startline-font-size, 2.14285rem);
+      font-weight: var(--pctouch-start-screen-title-startline-font-weight, 500);
+      line-height: var(--pctouch-start-screen-title-startline-line-height, 1.375);
+      margin-bottom: var(--pctouch-start-screen-title-startline-margin-bottom, -0.71428rem);
+      margin-top: var(--pctouch-start-screen-title-startline-margin-top, 7.85714rem);
+    } 
+
+    .text-title-emphasisline {
+      color: var(--pctouch-start-screen-title-emphasisline-color, #0065a3);
+      font-weight: var(--pctouch-start-screen-title-emphasisline-font-weight, 200);
+      font-size: var(--pctouch-start-screen-title-emphasisline-font-size, 5.14285rem);
+      display: block;
+      line-height: var(--pctouch-start-screen-title-emphasisline-line-height, 1.18);
+    }
+    
+    .text-instructions {
+      color: var(--pctouch-start-screen-instructions-color, #7a7f82);
+      display: block;
+      font-size: var(--pctouch-start-screen-instructions-font-size, 1.42857rem);
+      line-height: var(--pctouch-start-screen-instructions-line-height, 1.15);
+      padding-bottom: var(--pctouch-start-screen-instructions-padding-bottom, 0.35714rem);
+      padding-right: var(--pctouch-start-screen-instructions-padding-right, 2.85714rem);
+    }
+
+    .call-to-action {
+      margin-top: var(--pctouch-start-screen-call-to-action-margin-top, 2.5rem);
+      text-transform: var(--pctouch-start-screen-call-to-action-text-transform, uppercase);
+      padding-left: var(--pctouch-start-screen-call-to-action-padding-left, 0.375em);
+      padding-right: var(--pctouch-start-screen-call-to-action-padding-right, 0.25em);
+      span {
+        letter-spacing: var(--pctouch-start-screen-call-to-action-span-letter-spacing, 1.1px);
+        }
+    }
+
+    .visual-divider {
+      background-color: var(--pctouch-start-screen-visual-divider-background-color, #0092e0);
+      height: var(--pctouch-start-screen-visual-divider-height, 0.35714rem);
+      margin-top: var(--pctouch-start-screen-visual-divider-margin-top, 1rem);
+      margin-bottom: var(--pctouch-start-screen-visual-divider-margin-bottom, 2.85714rem);
+      width: var(--pctouch-start-screen-visual-divider-width, 5.35714rem);
+    }
+  }
+
+  .tiny {
+    &.base {
+      background-color: var(--pctouch-start-screen-tiny-base-background-color, #fff);
+      background-image: var(--pctouch-start-screen-tiny-base-background-image, url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20225%22%3E%3Cpath%20fill%3D%22rgba%2838%2C162%2C229%2C0.5%29%22%20d%3D%22M800%2C222V0H148.5C285.4%2C23.7%2C417.9%2C89.4%2C529%2C144%20C645%2C201%2C723%2C222%2C800%2C222z%22%2F%3E%3Cpath%20fill%3D%22rgba%2838%2C162%2C229%2C0.4%29%22%20d%3D%22M800%2C212V0H340c102%2C43%2C177%2C104.7%2C260%2C152%20C662.5%2C187.6%2C739%2C212%2C800%2C212z%22%2F%3E%3Cpath%20fill%3D%22rgba%2838%2C162%2C229%2C0.5%29%22%20d%3D%22M800%2C200V0H449c97%2C62%2C126%2C108%2C196%2C152%20C686.9%2C178.3%2C742%2C200%2C800%2C200z%22%2F%3E%3C%2Fsvg%3E%0A'));
+      background-position: var(--pctouch-start-screen-tiny-base-background-position, -20px 0);
+      background-repeat: var(--pctouch-start-screen-tiny-base-background-repeat, no-repeat);
+      background-size: var(--pctouch-start-screen-tiny-base-background-size, 110% auto);
+      box-shadow: var(--pctouch-start-screen-tiny-base-box-shadow, none);
+      padding: var(--pctouch-start-screen-tiny-base-padding, 2.14285rem);
+    }
+
+    .text-title-startline {
+      font-size: var(--pctouch-start-screen-tiny-title-startline-font-size, 1.57142rem);
+      margin-bottom: var(--pctouch-start-screen-tiny-title-startline-margin-bottom, -0.42857rem);
+      margin-top: var(--pctouch-start-screen-tiny-title-startline-margin-top, 6.07142rem);
+    }
+
+    .text-title-emphasisline {
+      font-size: var(--pctouch-start-screen-tiny-title-emphasisline-font-size, 3.57142rem);
+    }
+
+    .text-instructions {
+      font-size: var(--pctouch-start-screen-tiny-title-instructions-font-size, 1.14285rem);
+      padding-bottom: var(--pctouch-start-screen-tiny-title-instructions-padding-bottom, 0.5rem);
+      padding-right: var(--pctouch-start-screen-tiny-title-instructions-padding-right, 0);
+    }
+
+    .visual-divider {
+      margin-top: var(--pctouch-start-screen-tiny-visual-divider-margin-top, 1.28571rem);
+      margin-bottom: var(--pctouch-start-screen-tiny-visual-divider-margin-bottom, 2.28571rem);
+      width: var(--pctouch-start-screen-tiny-visual-divider-width, 3.92857rem);
+    }
+  }
+
+
+  .medium,
+  .large {
+    &.base {
+      background-color: var(--pctouch-start-screen-large-base-background-color, #f4f4f4);
+      background-image: var(--pctouch-start-screen-large-base-background-image, linear-gradient(180deg, #014979 0%, #117bc1 94%, #117bc1 100%));
+      background-repeat: var(--pctouch-start-screen-large-base-background-repeat, no-repeat);
+      background-size: var(--pctouch-start-screen-large-base-background-size, 100% calc((100% - 40px) * 0.67));
+      box-shadow: var(--pctouch-start-screen-large-base-box-shadow, inset 0 4px 1px -2px rgba(3, 43, 70, 0.4), inset 0 7px 5px -5px rgba(0, 0, 0, 0.25));
+
+      &:before{
+        background-image: var(--pctouch-start-screen-large-base-before-background-image, url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20992%20400%22%3E%3Cpath%20fill%3D%22%23f4f4f4%22%20d%3D%22M496%2C61.3C302.2%2C61.3%2C126.8%2C41.7%2C0%2C10v390h992V10%20C865.2%2C41.7%2C689.8%2C61.3%2C496%2C61.3z%22%2F%3E%3C%2Fsvg%3E%0A'));
+        background-repeat: var(--pctouch-start-screen-large-base-before-background-repeat, no-repeat);
+        background-size: var(--pctouch-start-screen-large-base-before-background-size, 100% auto);
+        content: '';
+        height: var(--pctouch-start-screen-large-base-before-height, 400px);
+        position: absolute;
+        width: var(--pctouch-start-screen-large-base-before-width, 102%);
+      }
+    }
+  }
+
+  .medium {
+    &.base {
+      background-size: var(--pctouch-start-screen-medium-base-background-size, 100% calc((100% - 40px) * 0.67));
+
+      &:before{
+        left: var(--pctouch-start-screen-medium-base-before-left, 50%);
+        min-width: var(--pctouch-start-screen-medium-base-before-min-width, 992px);
+        top: var(--pctouch-start-screen-medium-base-before-top, calc((100% - 40px - 120px) * 0.52));
+        transform: var(--pctouch-start-screen-medium-base-before-transform, translateX(-50%));
+      }
+    }
+
+    .card {
+      transform: translate(-50%, -40%);
+    }  
+
+    .text-title-startline {
+      margin-top: var(--pctouch-start-screen-medium-title-startline-margin-top, 5.71429rem);
+    }
+  }
+
+  .large {
+    &.base {
+      background-size: var(--pctouch-start-screen-large-base-background-size, 100% calc((100% - 50px) * 0.67));
+
+      &:before{
+        left: var(--pctouch-start-screen-large-base-before-left, -1%);
+        top: var(--pctouch-start-screen-large-base-before-top, calc((100% - 50px - 120px) * 0.52));
+      }
+    }
+
+    .card {
+      max-width: 850px;
+      transform: translate(-50%, -41%);
+    }  
+  }
+}
