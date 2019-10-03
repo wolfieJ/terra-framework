@@ -199,7 +199,7 @@
     }
 
     &--keyboard-selected {
-      background-color: lighten($datepicker-selected-color, 10%);
+      background-color: darken($datepicker-selected-color, 5%);
       border-radius: $datepicker-border-radius;
       color: #fff;
 
