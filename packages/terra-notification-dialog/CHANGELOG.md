@@ -3,6 +3,8 @@ Changelog
 
 Unreleased
 ----------
+### Changed
+* Minor dependency updates.
 
 3.14.0 - (October 3, 2019)
 ------------------
