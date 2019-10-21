@@ -5,6 +5,7 @@ Unreleased
 ----------
 ### Changed
 * Updated WDIO screenshots to account for button updates in terra-date-picker
+* Force update to render the missing hour.
 
 4.16.0 - (October 16, 2019)
 ------------------
