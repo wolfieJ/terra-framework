@@ -203,13 +203,13 @@ class DateTimePicker extends React.Component {
   }
 
   componentDidUpdate() {
-    // If the entered time (this.timeValue) is the missing hour during daylight savings, 
+    // If the entered time (this.timeValue) is the missing hour during daylight savings,
     // it needs to be updated to the time in this.state.dateTime to reflect the change and force a render.
     if (this.state.dateTime && DateTimeUtils.isValidTime(this.timeValue, this.props.showSeconds)) {
       const displayedTime = DateTimeUtils.getTime(this.state.dateTime.format(), this.props.showSeconds);
 
       if (this.timeValue !== displayedTime) {
-        this.timeValue = displayedTime
+        this.timeValue = displayedTime;
         this.forceUpdate();
       }
     }
