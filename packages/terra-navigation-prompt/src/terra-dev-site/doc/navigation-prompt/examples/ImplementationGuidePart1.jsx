@@ -40,6 +40,7 @@ const FormSwitcher = () => {
 
   function onSwitchForm(formKey) {
     formCheckpointRef.current.resolvePrompts({
+      header: 'Descriptive Header',
       title: 'Descriptive Notification Prompt Title',
       startMessage: 'Descriptive Notification Prompt Message',
       rejectButtonText: 'Descriptive Reject Button Action',
