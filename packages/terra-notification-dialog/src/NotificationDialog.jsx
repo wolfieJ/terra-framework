@@ -29,20 +29,46 @@ const propTypes = {
    */
   title: PropTypes.string,
   /**
-   * Message of the notification-dialog.
+   * @private Message of the notification-dialog
    */
   message: PropTypes.string,
   /**
-   * The Action of the primary button.
+   * Start Message of the notification-dialog.
+   */
+  startMessage: PropTypes.string,
+  /**
+   * End Message of the notification-dialog.
+   */
+  endMessage: PropTypes.string,
+  /**
+   * Content of the notification-dialog.
+   */
+  content: PropTypes.node,
+  /**
+   * @private The Action of the primary button.
    */
   primaryAction: PropTypes.shape({
     text: PropTypes.string,
     onClick: PropTypes.func,
+  }),
+  /**
+   * The Action of the accept button.
+   */
+  acceptAction: PropTypes.shape({
+    text: PropTypes.string,
+    onClick: PropTypes.func,
   }).isRequired,
   /**
-   * The Action of the secondary button.
+   * @private The Action of the secondary button.
    */
   secondaryAction: PropTypes.shape({
+    text: PropTypes.string,
+    onClick: PropTypes.func,
+  }),
+  /**
+   * The Action of the reject button.
+   */
+  rejectAction: PropTypes.shape({
     text: PropTypes.string,
     onClick: PropTypes.func,
   }),
@@ -66,31 +92,62 @@ const propTypes = {
    * Toggle to show notification-dialog or not.
    */
   isOpen: PropTypes.bool.isRequired,
+  /**
+   * Reverses the order of notification action buttons
+   */
+  buttonOrder: PropTypes.oneOf([
+    'acceptFirst',
+    'rejectFirst',
+  ]).isRequired,
+  /**
+   * Determines whether acceptAction, rejectAction or neither is emphasizedAction
+   */
+  emphasizedAction: PropTypes.oneOf([
+    'none',
+    'accept',
+    'reject',
+  ]),
 };
 
 const defaultProps = {
   title: null,
-  message: null,
+  startMessage: null,
+  endMessage: null,
+  content: null,
   variant: variants.CUSTOM,
+  emphasizedAction: 'none',
 };
 
-const actionSection = (primaryAction, secondaryAction) => {
-  let actionButton = null;
-  let dismissButton = null;
-  if (!primaryAction && !secondaryAction) {
+const actionSection = (acceptAction, rejectAction, buttonOrder, emphasizedAction) => {
+  let acceptButton = null;
+  let rejectButton = null;
+  if (!acceptAction && !rejectAction) {
     return null;
   }
-  if (primaryAction) {
-    actionButton = <Button text={primaryAction.text} variant={Button.Opts.Variants.EMPHASIS} onClick={primaryAction.onClick} />;
+  if (acceptAction) {
+    acceptButton = (emphasizedAction === 'accept')
+      ? <Button text={acceptAction.text} variant={Button.Opts.Variants.EMPHASIS} onClick={acceptAction.onClick} />
+      : <Button text={acceptAction.text} onClick={acceptAction.onClick} />;
   }
-  if (secondaryAction) {
-    dismissButton = <Button text={secondaryAction.text} onClick={secondaryAction.onClick} />;
+  if (rejectAction) {
+    rejectButton = (emphasizedAction === 'reject')
+      ? <Button text={rejectAction.text} variant={Button.Opts.Variants.EMPHASIS} onClick={rejectAction.onClick} />
+      : <Button text={rejectAction.text} onClick={rejectAction.onClick} />;
+  }
+
+  if (buttonOrder === 'rejectFirst') {
+    return (
+      <div className={cx('actions')}>
+        {rejectButton}
+        {acceptButton}
+      </div>
+    );
   }
 
   return (
     <div className={cx('actions')}>
-      {actionButton}
-      {dismissButton}
+      {acceptButton}
+      {rejectButton}
     </div>
   );
 };
@@ -150,12 +207,19 @@ class NotificationDialog extends React.Component {
     const {
       header,
       title,
-      message,
-      primaryAction,
-      secondaryAction,
+      startMessage,
+      endMessage,
+      content,
+      acceptAction,
+      rejectAction,
       variant,
       customIcon,
       isOpen,
+      buttonOrder,
+      emphasizedAction,
+      primaryAction,
+      secondaryAction,
+      message,
       ...customProps
     } = this.props;
 
@@ -186,11 +250,22 @@ class NotificationDialog extends React.Component {
                 <div className={cx('text-wrapper')}>
                   {title
                     && <div id="notification-dialog-title" className={cx('title')}>{title}</div>}
-                  {message
-                    && <div className={cx('message')}>{message}</div>}
+                  {(startMessage || message)
+                    && <div className={cx('message')}>{(startMessage || message)}</div>}
+                  {content
+                    && <div>{content}</div>}
+                  {endMessage
+                    && <div className={cx('message')}>{endMessage}</div>}
                 </div>
               </div>
-              <div className={cx('footer-body')}>{actionSection(primaryAction, secondaryAction)}</div>
+              <div className={cx('footer-body')}>
+                {actionSection(
+                  acceptAction || primaryAction,
+                  rejectAction || secondaryAction,
+                  buttonOrder,
+                  emphasizedAction,
+                )}
+              </div>
             </div>
           </div>
         </FocusTrap>

@@ -133,10 +133,13 @@ class NavigationPromptCheckpoint extends React.Component {
       this.setState({
         notificationDialogProps: {
           title: showDialogOptions.title,
-          message: showDialogOptions.message,
+          startMessage: showDialogOptions.startMessage,
+          content: showDialogOptions.content,
+          endMessage: showDialogOptions.endMessage,
           acceptButtonText: showDialogOptions.acceptButtonText,
           rejectButtonText: showDialogOptions.rejectButtonText,
           emphasizedAction: showDialogOptions.emphasizedAction,
+          buttonOrder: showDialogOptions.buttonOrder,
           onAccept: resolve,
           onReject: reject,
         },
@@ -146,7 +149,7 @@ class NavigationPromptCheckpoint extends React.Component {
 
   renderNotificationDialog() {
     const {
-      title, message, acceptButtonText, rejectButtonText, emphasizedAction, onAccept, onReject,
+      title, startMessage, endMessage, content, acceptButtonText, rejectButtonText, emphasizedAction, buttonOrder, onAccept, onReject,
     } = this.state.notificationDialogProps;
 
     const acceptButton = {
@@ -163,15 +166,17 @@ class NavigationPromptCheckpoint extends React.Component {
       },
     };
 
-    const acceptActionIsEmphasized = !emphasizedAction || emphasizedAction === 'accept';
-
     return (
       <NotificationDialog
         isOpen
         title={title}
-        message={message}
-        primaryAction={acceptActionIsEmphasized ? acceptButton : rejectButton}
-        secondaryAction={acceptActionIsEmphasized ? rejectButton : acceptButton}
+        startMessage={startMessage}
+        endMessage={endMessage}
+        content={content}
+        acceptAction={acceptButton}
+        rejectAction={rejectButton}
+        buttonOrder={buttonOrder}
+        emphasizedAction={emphasizedAction}
         variant="warning"
       />
     );

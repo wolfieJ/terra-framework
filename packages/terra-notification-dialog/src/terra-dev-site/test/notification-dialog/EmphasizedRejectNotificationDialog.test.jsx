@@ -6,7 +6,7 @@ const clickConfirm = () => {
   alert('You clicked confirm'); // eslint-disable-line no-alert
 };
 
-class CompleteNotificationDialogWithLongMessage extends React.Component {
+class ReversedActionNotificationDialog extends React.Component {
   constructor() {
     super();
 
@@ -30,10 +30,10 @@ class CompleteNotificationDialogWithLongMessage extends React.Component {
     return (
       <div>
         <NotificationDialog
-          variant={NotificationDialogVariants.SUCCESS}
+          variant={NotificationDialogVariants.ALERT}
           isOpen={this.state.isOpen}
-          title="This is the titleThis is the titleThis is the titleThis is the titleThis is the titleThis is the titleThis is the titleThis is the title"
-          startMessage="This is the messageThis is the messageThis is the messageThis is the messageThis is the messageThis is the messageThis is the messageThis is the messageThis is the messageThis is the message"
+          title="Make sure that the title relates directly to the choices."
+          startMessage="The Main Instruction is text used to provide more detail or define terminology. Don’t repeat the title verbatim."
           acceptAction={{
             text: 'Confirm',
             onClick: clickConfirm,
@@ -43,7 +43,7 @@ class CompleteNotificationDialogWithLongMessage extends React.Component {
             onClick: this.handleCloseModal,
           }}
           buttonOrder="acceptFirst"
-          emphasizedAction="accept"
+          emphasizedAction="reject"
         />
         <Button id="trigger-notification-dialog" text="Trigger NotificationDialog" onClick={this.handleOpenModal} />
       </div>
@@ -51,4 +51,4 @@ class CompleteNotificationDialogWithLongMessage extends React.Component {
   }
 }
 
-export default CompleteNotificationDialogWithLongMessage;
+export default ReversedActionNotificationDialog;

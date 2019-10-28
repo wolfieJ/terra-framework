@@ -3,6 +3,9 @@ Changelog
 
 Unreleased
 ----------
+### Breaking Changes
+* Changed 'NavigationPromptCheckpoint' to have the same logic as 'notification-dialog' changes
+
 ### Changed
 * Missing aria-labels added in examples.
 
