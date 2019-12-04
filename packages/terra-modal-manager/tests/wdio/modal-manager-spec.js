@@ -487,7 +487,7 @@ Terra.describeViewports('ModalManager - Disclosure Accessory', ['large'], () => 
 
     it('opens a nested slide-panel', () => {
       browser.click('[class*="slide-group"] #DemoContainer-1 .disclose-tiny');
-      browser.waitForVisible('[class*="slide-group"] #DemoContainer-2 .disclose-tiny', 1000);
+      browser.waitForVisible('[class*="slide-group"] #DemoContainer-2', 1000);
     });
 
     it('renders each disclosed component in a disclosure container', () => {
