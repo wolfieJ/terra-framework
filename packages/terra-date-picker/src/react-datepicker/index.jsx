@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import FocusTrap from 'focus-trap-react';
 import { Portal } from 'react-portal';
 import * as KeyCode from 'keycode-js';
+import moment from "moment"
 import Popup from 'terra-popup';
 import classNames from 'classnames/bind';
 import { injectIntl, intlShape } from 'react-intl';
@@ -480,14 +481,16 @@ class DatePicker extends React.Component {
     if (this.props.withPortal) { event.preventDefault() }
   }
 
-  handleChange = (event) => {
+  handleChange = (event, value) => {
+    console.log("ReactDatePicker.handleChange", { eventTargetValue: event.target.value, value })
     if (this.props.onChangeRaw) {
-      this.props.onChangeRaw(event, event.target.value)
+      this.props.onChangeRaw(event, value)
       if (event.isDefaultPrevented()) {
         return
       }
     }
-    this.setState({ inputValue: event.target.value })
+    this.setState({ inputValue: value })
+
     const date = parseDate(event.target.value, this.props)
     if (date || !event.target.value) {
       this.setSelected(date, event, true)
@@ -758,7 +761,7 @@ class DatePicker extends React.Component {
     const inputValue =
       typeof this.props.value === 'string' ? this.props.value
         : typeof this.state.inputValue === 'string' ? this.state.inputValue
-          : safeDateFormat(this.props.selected, this.props)
+          : safeDateFormat(this.props.selected, { dateFormat: "YYYY-MM-DD", locale: this.props.locale })
 
     return React.cloneElement(customInput, {
       [customInputRef]: (input) => { this.input = input },

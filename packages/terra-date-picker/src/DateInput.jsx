@@ -104,11 +104,9 @@ class DatePickerInput extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      day: this.props.value.slice(3, 5),
-      month: this.props.value.slice(0, 2),
-      year: this.props.value.slice(6, 10),
-    };
+    const [year, month, day] = props.value.split("-");
+
+    this.state = { day, month, year };
 
     this.handleOnButtonClick = this.handleOnButtonClick.bind(this);
     this.handleOnChange = this.handleOnChange.bind(this);
@@ -121,6 +119,12 @@ class DatePickerInput extends React.Component {
   componentDidUpdate(prevProps) {
     if (this.shouldShowPicker && !prevProps.shouldShowPicker && this.props.onClick) {
       this.props.onClick();
+    }
+
+    if (prevProps.value !== this.props.value) {
+      const [year, month, day] = this.props.value.split("-");
+
+      this.setState({ day, month, year });
     }
   }
 
@@ -149,15 +153,18 @@ class DatePickerInput extends React.Component {
   }
 
   handleDayChange(event) {
-    this.handleDateChange(event, DateUtil.inputType.DAY, event.target.value);
+    const day = event.target.value.replace(/\D/gm, "");
+    this.handleDateChange(event, DateUtil.inputType.DAY, day);
   }
 
   handleMonthChange(event) {
-    this.handleDateChange(event, DateUtil.inputType.MONTH, event.target.value);
+    const month = event.target.value.replace(/\D/gm, "");
+    this.handleDateChange(event, DateUtil.inputType.MONTH, month);
   }
 
   handleYearChange(event) {
-    this.handleDateChange(event, DateUtil.inputType.YEAR, event.target.value);
+    const year = event.target.value.replace(/\D/gm, "");
+    this.handleDateChange(event, DateUtil.inputType.YEAR, year);
   }
 
   handleDateChange(event, type, value) {
@@ -179,11 +186,13 @@ class DatePickerInput extends React.Component {
     const month = type === DateUtil.inputType.MONTH ? value : this.state.month;
     const year = type === DateUtil.inputType.YEAR ? value : this.state.year;
 
+
+    const computedDate = (year || "").concat('-', month || "").concat('-', day || "");
+
     if (day === '' && month === '' && year === '') {
       this.props.onChange(event, '');
     } else if (year.length === 4) {
-      event.target.value = year.concat('-', month).concat('-', day); // eslint-disable-line no-param-reassign
-      this.props.onChange(event, event.target.value);
+      this.props.onChange(event, computedDate);
     }
   }
 
