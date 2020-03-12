@@ -708,6 +708,18 @@ class TimeInput extends React.Component {
       customProps.className,
     ]);
 
+    const hourClassNames = cx([
+      'time-input-hour',
+      { 'with-second': showSeconds },
+      { 'initial-focus': this.state.hourInitialFocused },
+    ]);
+
+    const minuteClassNames = cx([
+      'time-input-minute',
+      { 'with-second': showSeconds },
+      { 'initial-focus': this.state.minuteInitialFocused },
+    ]);
+
     /* eslint-disable jsx-a11y/no-static-element-interactions */
     return (
       <div
@@ -731,7 +743,7 @@ class TimeInput extends React.Component {
               this.hourInput = inputRef;
               if (refCallback) refCallback(inputRef);
             }}
-            className={cx('time-input-hour', { 'initial-focus': this.state.hourInitialFocused })}
+            className={hourClassNames}
             type="text"
             value={this.state.hour}
             name={'terra-time-hour-'.concat(name)}
@@ -751,7 +763,7 @@ class TimeInput extends React.Component {
             {...minuteAttributes}
             refCallback={(inputRef) => { this.minuteInput = inputRef; }}
             aria-label={intl.formatMessage({ id: 'Terra.timeInput.minutes' })}
-            className={cx('time-input-minute', showSeconds ? 'with-second' : 'without-second', { 'initial-focus': this.state.minuteInitialFocused })}
+            className={minuteClassNames}
             type="text"
             value={this.state.minute}
             name={'terra-time-minute-'.concat(name)}

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ContentContainer from 'terra-content-container';
 import SelectField from 'terra-form-select';
+import TimeInput from 'terra-time-input';
 import {
   availableDisclosureHeights, availableDisclosureWidths, withDisclosureManager, disclosureManagerShape,
 } from 'terra-disclosure-manager';
@@ -111,6 +112,19 @@ class DisclosureComponent extends React.Component {
         <select id={this.getId('width')} name="disclosureWidth" value={this.state.disclosureWidth} onChange={this.handleSelectChange}>
           {this.generateOptions(WIDTH_KEYS, 'width')}
         </select>
+        <br />
+        <br />
+        <TimeInput
+          id="timeInput"
+          name="time-input"
+          showSeconds
+        />
+        <br />
+        <br />
+        <TimeInput
+          id="timeInput"
+          name="time-input"
+        />
         <br />
         <br />
       </form>
