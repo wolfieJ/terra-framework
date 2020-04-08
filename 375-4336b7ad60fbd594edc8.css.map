@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///packages/terra-embedded-content-consumer/lib/terra-dev-site/test/embedded-content-consumer/consumers/Consumer.module.scss"],"names":[],"mappings":"AAAA,wCAIM,UAAW,CAJjB,8CAGM,QACW","file":"375-4336b7ad60fbd594edc8.css","sourcesContent":[":local {\n  .iframe {\n    iframe {\n      border: 0;\n      width: 100%;\n    }\n  }\n}\n"]}

@@ -1,0 +1,2 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[481],{2124:function(e,t,u){"use strict";var n=u(6);Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var a=n(u(0)),l=n(u(1107)),d=function(){return a.default.createElement(l.default,null,a.default.createElement(l.default.Item,{text:"-----------------------------------------------------------------------------------------------------------------",key:"button"}))};t.default=d}}]);
+//# sourceMappingURL=481-51b86009fe3e35b47598.js.map
